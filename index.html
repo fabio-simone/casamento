@@ -1011,13 +1011,13 @@ function rBCTable(){
         ${subRow('Total Receita',totRec,'var(--teal)')}
 
         ${secRow('Custos Pessoais')}
-        ${cusNoivoItems.length?grpHeaderM(nmN,cusNoivoItems,getPlanCusM,'cus-n','var(--orange)')+grpDetailsM(cusNoivoItems,getPlanCusM,'cus-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem custos</td>${emptyCells}</tr>`}
-        ${cusNoivaItems.length?grpHeaderM(nmA,cusNoivaItems,getPlanCusM,'cus-a','var(--purple)')+grpDetailsM(cusNoivaItems,getPlanCusM,'cus-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem custos</td>${emptyCells}</tr>`}
+        ${(()=>{const raw=S.custos.filter(c=>c.resp!=='noiva');const gp=(c,m)=>c.resp==='noivo'?c.val||0:(c.val||0)/2;return raw.length?grpHeaderM(nmN,raw,gp,'cus-n','var(--orange)')+grpDetailsM(raw,gp,'cus-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem custos</td>${emptyCells}</tr>`;})()}
+        ${(()=>{const raw=S.custos.filter(c=>c.resp!=='noivo');const gp=(c,m)=>c.resp==='noiva'?c.val||0:(c.val||0)/2;return raw.length?grpHeaderM(nmA,raw,gp,'cus-a','var(--purple)')+grpDetailsM(raw,gp,'cus-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem custos</td>${emptyCells}</tr>`;})()}
         ${subTotM('Total Custos Pessoais',S.custos,(c)=>planValCus(c),null,'var(--red)')}
 
         ${secRow('Gastos do Casamento')}
-        ${wdNoivoItems.length?grpHeaderM(nmN,S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva'),getPlanWedM,'wed-n','var(--orange)')+grpDetailsM(S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva'),getPlanWedM,'wed-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem gastos</td>${emptyCells}</tr>`}
-        ${wdNoivaItems.length?grpHeaderM(nmA,S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo'),getPlanWedM,'wed-a','var(--purple)')+grpDetailsM(S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo'),getPlanWedM,'wed-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem gastos</td>${emptyCells}</tr>`}
+        ${(()=>{const raw=S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva');const gp=(g,m)=>{const v=wExp(g,m);return g.resp==='noivo'?v:v*(g.pn!=null?+g.pn:50)/100;};return raw.length?grpHeaderM(nmN,raw,gp,'wed-n','var(--orange)')+grpDetailsM(raw,gp,'wed-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem gastos</td>${emptyCells}</tr>`;})()}
+        ${(()=>{const raw=S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo');const gp=(g,m)=>{const v=wExp(g,m);return g.resp==='noiva'?v:v*(g.pa!=null?+g.pa:50)/100;};return raw.length?grpHeaderM(nmA,raw,gp,'wed-a','var(--purple)')+grpDetailsM(raw,gp,'wed-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem gastos</td>${emptyCells}</tr>`;})()}
         ${subTotM('Total Gastos Casamento',S.casamento.filter(g=>g.resp!=='presente'),getPlanWedM,null,'var(--warn)')}
 
         ${secRow('Total Gastos (Custos + Casamento)')}
