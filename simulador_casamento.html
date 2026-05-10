@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>#kafamento</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0c0b13;--card:#12101e;--card2:#18162a;--card3:#1e1b30;
+  --border:#252040;--border2:#352f58;
+  --orange:#f97316;--orange-bg:rgba(249,115,22,.08);
+  --purple:#9b6dff;--purple-bg:rgba(155,109,255,.08);
+  --text:#ede8ff;--text2:#8880a8;--text3:#4a4568;
+  --teal:#34d399;--teal-bg:rgba(52,211,153,.07);
+  --red:#f87171;--red-bg:rgba(248,113,113,.07);
+  --warn:#fb923c;--warn-bg:rgba(251,146,60,.07);
+  --radius:12px;--radius-sm:8px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);font-size:13px;min-height:100vh}
+
+/* AUTH */
+#auth{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999}
+.auth-wrap{width:340px;text-align:center}
+.auth-icon{width:52px;height:52px;margin:0 auto 1.5rem;border:1.5px solid var(--border2);border-radius:50%;display:flex;align-items:center;justify-content:center}
+.auth-title{font-size:18px;font-weight:600;margin-bottom:.35rem}
+.auth-sub{font-size:12px;color:var(--text2);margin-bottom:2rem}
+.auth-box{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:2rem}
+.auth-inp{width:100%;padding:11px 14px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-size:14px;font-family:inherit;letter-spacing:.08em;margin-bottom:1rem;transition:border .2s}
+.auth-inp:focus{outline:none;border-color:var(--orange)}
+.auth-btn{width:100%;padding:11px;background:var(--orange);border:none;border-radius:var(--radius-sm);color:#fff;font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.auth-btn:hover{opacity:.87}
+.auth-err{font-size:12px;color:var(--red);margin-top:.75rem;min-height:16px}
+@keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+.shake{animation:shake .35s ease}
+
+/* LAYOUT */
+.app{max-width:1220px;margin:0 auto}
+.hdr{background:var(--card);border-bottom:1px solid var(--border);padding:.9rem 1.5rem;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.hdr-t{font-size:15px;font-weight:600;display:flex;align-items:center;gap:9px}
+.hdr-s{font-size:11px;color:var(--text3);margin-top:2px}
+.sp{font-size:11px;padding:3px 12px;border-radius:20px;border:1px solid transparent;min-width:70px;text-align:center;font-weight:500;transition:all .3s}
+.sp.saving{color:var(--warn);border-color:rgba(251,146,60,.4);background:var(--warn-bg)}
+.sp.saved{color:var(--teal);border-color:rgba(52,211,153,.4);background:var(--teal-bg)}
+.sp.err{color:var(--red);border-color:rgba(248,113,113,.4);background:var(--red-bg)}
+.tbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;padding:0 1.5rem;overflow-x:auto}
+.tb{padding:.7rem 1.2rem;font-size:12.5px;color:var(--text2);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:color .15s;font-family:inherit;font-weight:400}
+.tb:hover{color:var(--text)}
+.tb.active{color:var(--orange);font-weight:600;border-bottom-color:var(--orange)}
+.pane{display:none;padding:1.5rem}
+.pane.on{display:block}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;transition:border .2s}
+.card:hover{border-color:var(--border2)}
+.ct{font-size:13.5px;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.ct svg{color:var(--orange);flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem}
+.fl{font-size:10.5px;color:var(--text2);margin-bottom:5px;display:block;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.fi{width:100%;padding:8px 11px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:13px;transition:border .2s}
+.fi:focus{outline:none;border-color:var(--orange)}
+.fi::placeholder{color:var(--text3)}
+.mb{margin-bottom:.85rem}
+.rl{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px}
+.rl:last-child{border-bottom:none}
+.rl .la{color:var(--text2)}
+.rl .va{font-weight:500}
+.rl .va.ng{color:var(--red);font-weight:400}
+.rl .va.ps{color:var(--teal)}
+.rl .va.hi{font-size:15px;font-weight:600}
+.rtot{border-top:1px solid var(--border2)!important;margin-top:6px!important;padding-top:8px!important;border-bottom:none!important}
+.tbl-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{font-size:10.5px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;padding:9px 10px;text-align:left;background:var(--card2);border-bottom:1px solid var(--border)}
+td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.012)}
+.tc{width:100%;padding:6px 8px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:12.5px;transition:border .2s}
+.tc:focus{outline:none;border-color:var(--orange)}
+.tc::placeholder{color:var(--text3)}
+.mc{background:var(--card2);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;text-align:center}
+.mc .ml{font-size:10.5px;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.mc .mv{font-size:20px;font-weight:600;margin-top:5px}
+.mc .mv.ps{color:var(--teal)}
+.mc .mv.ng{color:var(--red)}
+.mc .mv.wn{color:var(--orange)}
+.mc .mv.pu{color:var(--purple)}
+.badb{font-size:11px;padding:4px 9px;color:var(--red);border:1px solid rgba(248,113,113,.3);background:transparent;border-radius:var(--radius-sm);cursor:pointer;font-family:inherit;transition:all .2s;display:flex;align-items:center}
+.badb:hover{background:var(--red-bg)}
+.addb{width:100%;margin-top:.8rem;font-size:12.5px;padding:9px;color:var(--text3);border:1px dashed var(--border2);border-radius:var(--radius);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;font-family:inherit;transition:all .2s}
+.addb:hover{border-color:var(--orange);color:var(--orange);background:var(--orange-bg)}
+.posv{color:var(--teal)!important;font-weight:600}
+.negv{color:var(--red)!important;font-weight:600}
+.empty-state{text-align:center;padding:3rem;color:var(--text3);border:1px dashed var(--border2);border-radius:var(--radius)}
+.note{font-size:11px;color:var(--text3);margin-top:.75rem}
+
+/* MONTH PICKER */
+.mp-wrap{position:relative;width:100%}
+.mp-btn{width:100%;padding:8px 11px;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:13px;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:border .2s;text-align:left}
+.mp-btn:hover,.mp-btn.open{border-color:var(--orange)}
+.mp-ph{color:var(--text3)}
+.mp-drop{position:fixed;background:var(--card);border:1px solid var(--border2);border-radius:var(--radius);padding:.9rem;z-index:500;box-shadow:0 16px 40px rgba(0,0,0,.6);min-width:210px;display:none}
+.mp-hdr{display:flex;align-items:center;gap:6px;margin-bottom:.8rem}
+.mp-yr{font-size:14px;font-weight:600;color:var(--text);flex:1;text-align:center}
+.mp-nav{background:var(--card2);border:1px solid var(--border);color:var(--text2);cursor:pointer;font-size:15px;padding:3px 10px;border-radius:6px;font-family:inherit;line-height:1;transition:all .15s}
+.mp-nav:hover{border-color:var(--orange);color:var(--orange)}
+.mp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.mp-m{padding:9px 4px;text-align:center;border:1px solid transparent;background:transparent;color:var(--text2);border-radius:var(--radius-sm);cursor:pointer;font-size:12px;font-family:inherit;transition:all .15s;width:100%}
+.mp-m:hover{background:var(--card2);color:var(--text);border-color:var(--border)}
+.mp-m.sel{background:var(--orange);color:#fff;font-weight:600;border-color:var(--orange)}
+
+/* BC TABLE */
+.bc-wrap{overflow-x:auto;border-radius:var(--radius-sm)}
+.bc-tbl{border-collapse:collapse;font-size:12px;white-space:nowrap}
+.bc-tbl th,.bc-tbl td{padding:7px 12px;border-bottom:1px solid var(--border)}
+.bc-tbl th{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);background:var(--card2);text-align:right;border-bottom:1px solid var(--border2)}
+.bc-tbl th.lh{text-align:left;min-width:185px;position:sticky;left:0;z-index:3;background:var(--card2)}
+.sticky{position:sticky;left:0;z-index:2;border-right:1px solid var(--border2)}
+.sec-row td{background:var(--card3);color:var(--orange);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;padding:6px 12px;border-bottom:1px solid var(--border2)}
+.sec-row .sticky{background:var(--card3)}
+.sub-row td{background:var(--card2);font-weight:600}
+.sub-row .sticky{background:var(--card2)}
+.caixa-row td{background:rgba(52,211,153,.05);font-weight:700;border-top:2px solid var(--border2);border-bottom:2px solid var(--border2)}
+.caixa-row .sticky{background:#0e1c18}
+.accum-row td{background:rgba(155,109,255,.05);font-weight:600}
+.accum-row .sticky{background:#110e1f}
+.bc-tbl tr:not(.sec-row):not(.sub-row):not(.caixa-row):not(.accum-row):hover td{background:rgba(255,255,255,.015)}
+.sum-sep{border-left:2px solid var(--border2)!important}
+.wed-col{background:rgba(249,115,22,.06)!important;color:var(--orange)}
+.bc-tbl td{text-align:right;color:var(--text2)}
+.bc-tbl td.sticky{text-align:left;color:var(--text);background:var(--card)}
+.bc-grp{cursor:pointer;user-select:none;}
+.bc-grp:hover td{filter:brightness(1.2);}
+.bc-det{display:none;}
+.bc-det td.sticky{padding-left:2.5rem;color:var(--text2);}
+.bc-arrow{display:inline-block;font-size:9px;margin-right:5px;transition:transform .2s;color:var(--text3);}
+.bc-arrow.open{transform:rotate(90deg);}
+.dev-pos{color:var(--teal)!important;font-weight:600}.dev-neg{color:var(--red)!important;font-weight:600}
+.bc-mode-bar{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.bc-mode-btn{padding:5px 16px;font-size:12px;font-weight:500;border-radius:20px;border:1px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:inherit;transition:all .2s}
+.bc-mode-btn.on{background:var(--orange);color:#fff;border-color:var(--orange)}
+.real-tbl th{background:var(--card2);color:var(--text3);font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.05em;padding:8px 10px;border-bottom:1px solid var(--border)}
+.real-tbl td{padding:6px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.real-tbl tr:last-child td{border-bottom:none}
+.real-sub td{background:var(--card2);font-weight:700;border-top:1px solid var(--border2)}
+
+#loading{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:998;gap:14px}
+.spin{width:34px;height:34px;border:2.5px solid var(--border2);border-top-color:var(--orange);border-radius:50%;animation:rot .7s linear infinite}
+@keyframes rot{to{transform:rotate(360deg)}}
+#loading p{font-size:13px;color:var(--text2)}
+@media(max-width:700px){.g2,.g3{grid-template-columns:1fr}.pane{padding:1rem}.hdr{padding:.8rem 1rem}}
+</style>
+</head>
+<body>
+
+<div id="auth">
+  <div class="auth-wrap">
+    <div class="auth-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+    <div class="auth-title">#kafamento</div>
+    <div class="auth-sub">Planejamento financeiro do casal</div>
+    <div class="auth-box" id="auth-box">
+      <input class="auth-inp" type="password" id="auth-inp" placeholder="Senha de acesso" onkeydown="if(event.key==='Enter')checkAuth()">
+      <button class="auth-btn" onclick="checkAuth()">Entrar</button>
+      <div id="auth-err" class="auth-err"></div>
+    </div>
+  </div>
+</div>
+
+<div id="loading" style="display:none"><div class="spin"></div><p>Carregando dados...</p></div>
+
+<div class="app" id="app-shell" style="display:none">
+  <div class="hdr">
+    <div>
+      <div class="hdr-t"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>#kafamento</div>
+      <div class="hdr-s">dados sincronizados na nuvem</div>
+    </div>
+    <span id="sp" class="sp"></span>
+  </div>
+  <div class="tbar">
+    <button class="tb active" data-t="receitas" onclick="goTab('receitas')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Receitas</button>
+    <button class="tb" data-t="custos" onclick="goTab('custos')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Custos Mensais</button>
+    <button class="tb" data-t="casamento" onclick="goTab('casamento')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Casamento</button>
+    <button class="tb" data-t="bc" onclick="goTab('bc')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Business Case</button>
+    <button class="tb" data-t="realizado" onclick="goTab('realizado')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Realizado</button>
+  </div>
+  <div id="pane-receitas"  class="pane on"  data-t="receitas"></div>
+  <div id="pane-custos"    class="pane"     data-t="custos"></div>
+  <div id="pane-casamento" class="pane"     data-t="casamento"></div>
+  <div id="pane-bc"        class="pane"     data-t="bc"></div>
+  <div id="pane-realizado" class="pane"     data-t="realizado"></div>
+</div>
+
+<script>
+/* ── CONFIG ── */
+const PASSWORD='#ka&fa_2026';
+const SB_URL='https://qyxvnjlosiblcmnubqyp.supabase.co';
+const SB_KEY='sb_publishable_LRsXfh8V1O7PLW2RbdrYZw_t6u1r1wf';
+const SB_H={'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY};
+
+/* ── AUTH ── */
+function checkAuth(){
+  const v=$('auth-inp').value.trim();
+  if(v===PASSWORD){sessionStorage.setItem('wbc_auth','1');$('auth').style.display='none';initApp();}
+  else{$('auth-err').textContent='Senha incorreta.';$('auth-box').classList.remove('shake');void $('auth-box').offsetWidth;$('auth-box').classList.add('shake');$('auth-inp').value='';$('auth-inp').focus();}
+}
+window.addEventListener('load',()=>{
+  if(sessionStorage.getItem('wbc_auth')==='1'){$('auth').style.display='none';initApp();}
+  else setTimeout(()=>$('auth-inp').focus(),100);
+});
+
+/* ── UTILS ── */
+const $=id=>document.getElementById(id);
+const MN=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const MNS=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const uid=()=>Math.random().toString(36).substr(2,9);
+const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+const fmt=v=>'R$\u00a0'+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtS=v=>(v>=0?'+':'')+fmt(v);
+const fmtMV=s=>{if(!s)return'';const[y,m]=s.split('-').map(Number);return MN[m-1]+' / '+y;};
+const mToD=s=>{if(!s)return null;const[y,m]=s.split('-').map(Number);return new Date(y,m-1,1);};
+const addM=(d,n)=>{const r=new Date(d);r.setMonth(r.getMonth()+n);return r;};
+const dToM=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+const mDiff=(a,b)=>{const da=mToD(a),db=mToD(b);if(!da||!db)return-1;return(db.getFullYear()-da.getFullYear())*12+(db.getMonth()-da.getMonth());};
+const sumArr=a=>a.reduce((s,v)=>s+v,0);
+
+/* ── STATE ── */
+let curTab='receitas',saveT=null;
+let S={
+  pessoas:{noivo:{nome:'',salario:0,carro:0,espp:0},noiva:{nome:'',salario:0,carro:0,espp:0}},
+  custos:[],casamento:[],presentes:[],realizado:{},bc:{data:'',inicio:''}
+};
+
+/* ── IMPOSTOS ── */
+function calcINSS(g){
+  if(!g)return 0;
+  const f=[{l:1412,r:.075},{l:2666.68,r:.09},{l:4000.03,r:.12},{l:7786.02,r:.14}];
+  let ins=0,p=0;for(const x of f){if(g<=p)break;ins+=(Math.min(g,x.l)-p)*x.r;p=x.l;if(g<=x.l)break;}
+  return Math.min(ins,908.86);
+}
+function calcIRPF(b){
+  if(b<=2259.20)return 0;
+  const f=[{l:2826.65,r:.075,d:169.44},{l:3751.05,r:.15,d:381.44},{l:4664.68,r:.225,d:662.77},{l:Infinity,r:.275,d:896}];
+  for(const x of f)if(b<=x.l)return Math.max(0,b*x.r-x.d);return 0;
+}
+function netP(p){
+  const g=p.salario||0,ins=calcINSS(g),irpf=calcIRPF(g-ins),espp=g*(p.espp||0)/100,car=p.carro||0;
+  return{g,ins,irpf,espp,car,n:g-ins-irpf-espp-car};
+}
+
+/* ── SUPABASE ── */
+async function save(){
+  setSP('saving');
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/wedding_data',{method:'POST',headers:{...SB_H,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:'main',data:S,updated_at:new Date().toISOString()})});
+    r.ok?setSP('saved'):(console.error(r.status),setSP('err'));
+  }catch(e){console.error(e);setSP('err');}
+}
+async function load(){
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/wedding_data?id=eq.main&select=data',{headers:SB_H});
+    const rows=await r.json();
+    if(rows&&rows.length>0&&rows[0].data){
+      const d=rows[0].data;S={...S,...d};
+      if(!S.pessoas)S.pessoas={noivo:{nome:'',salario:0,carro:0,espp:0},noiva:{nome:'',salario:0,carro:0,espp:0}};
+      if(!S.custos)S.custos=[];if(!S.casamento)S.casamento=[];if(!S.presentes)S.presentes=[];if(!S.realizado)S.realizado={};if(!S.bc)S.bc={data:'',inicio:''};
+    }
+  }catch(e){console.error(e);}
+  if(!S.casamento.length)initDef();
+  $('loading').style.display='none';$('app-shell').style.display='block';
+  renderAll();
+}
+function qs(){clearTimeout(saveT);saveT=setTimeout(save,700);}
+function setSP(s){
+  const el=$('sp');if(!el)return;
+  if(s==='saving'){el.textContent='Salvando';el.className='sp saving';}
+  else if(s==='saved'){el.textContent='Salvo';el.className='sp saved';setTimeout(()=>{el.textContent='';el.className='sp';},2500);}
+  else if(s==='err'){el.textContent='Erro';el.className='sp err';}
+  else{el.textContent='';el.className='sp';}
+}
+function initDef(){
+  const it=['Buffet','Cerimonialista','Vestido Noiva','Terno Noivo','Foto e Vídeo','Aluguel Carro','Aliança','Maquiagem e Cabelo Noiva'];
+  S.casamento=it.map(d=>({id:uid(),desc:d,resp:'ambos',pn:50,pa:50,parc:1,tipo:'fixo',vf:0,vv:[0],inicio:''}));
+}
+function initApp(){$('loading').style.display='flex';load();}
+
+/* ══════════════════════════════════════════
+   MONTH PICKER  — funciona em todos os browsers
+   ══════════════════════════════════════════ */
+const mpSt={};  // id -> {year, val}
+
+function mpCreate(id,val){
+  const y=val?parseInt(val.split('-')[0]):new Date().getFullYear();
+  mpSt[id]={year:y,val:val||''};
+  const txt=val?fmtMV(val):'';
+  return`<div class="mp-wrap">
+    <button class="mp-btn${val?' open':''}" id="${id}-btn" type="button" onclick="mpToggle('${id}',event)">
+      <span id="${id}-lbl"${val?'':' class="mp-ph"'}>${txt||'Selecionar mês'}</span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="mp-drop" id="${id}-drop">
+      <div class="mp-hdr">
+        <button class="mp-nav" type="button" onclick="mpNav('${id}',-1,event)">&#8249;</button>
+        <span class="mp-yr" id="${id}-yr">${y}</span>
+        <button class="mp-nav" type="button" onclick="mpNav('${id}',1,event)">&#8250;</button>
+      </div>
+      <div class="mp-grid" id="${id}-grid"></div>
+    </div>
+  </div>`;
+}
+
+function mpToggle(id,ev){
+  ev&&ev.stopPropagation();
+  const drop=$(`${id}-drop`);if(!drop)return;
+  const isOpen=drop.style.display==='block';
+  // close all
+  document.querySelectorAll('.mp-drop').forEach(d=>d.style.display='none');
+  document.querySelectorAll('.mp-btn').forEach(b=>b.classList.remove('open'));
+  if(!isOpen){
+    const btn=$(`${id}-btn`);
+    const rect=btn.getBoundingClientRect();
+    drop.style.display='block';
+    drop.style.left=rect.left+'px';
+    drop.style.top=(rect.bottom+5)+'px';
+    drop.style.width=Math.max(rect.width,210)+'px';
+    btn.classList.add('open');
+    mpDrawGrid(id);
+  }
+}
+
+function mpNav(id,dir,ev){
+  ev&&ev.stopPropagation();
+  mpSt[id].year+=dir;
+  $(`${id}-yr`).textContent=mpSt[id].year;
+  mpDrawGrid(id);
+}
+
+function mpDrawGrid(id){
+  const grid=$(`${id}-grid`);if(!grid)return;
+  const st=mpSt[id];
+  const selM=st.val?st.val.split('-')[1]:'';
+  const selY=st.val?st.val.split('-')[0]:'';
+  grid.innerHTML=MNS.map((n,i)=>{
+    const m=String(i+1).padStart(2,'0');
+    const active=m===selM&&String(st.year)===selY;
+    return`<button class="mp-m${active?' sel':''}" type="button" onclick="mpPick('${id}','${m}',event)">${n}</button>`;
+  }).join('');
+}
+
+function mpPick(id,month,ev){
+  ev&&ev.stopPropagation();
+  const st=mpSt[id];if(!st)return;
+  st.val=`${st.year}-${month}`;
+  // Update label
+  const lbl=$(`${id}-lbl`);
+  if(lbl){lbl.textContent=fmtMV(st.val);lbl.className='';}
+  // Close
+  $(`${id}-drop`).style.display='none';
+  $(`${id}-btn`).classList.remove('open');
+  // Dispatch action by ID prefix
+  if(id==='bc-data'){S.bc.data=st.val;qs();rBCTable();}
+  else if(id==='bc-inicio'){S.bc.inicio=st.val;qs();rBCTable();}
+  else if(id.startsWith('gd-')){
+    const gid=id.slice(3);
+    const g=S.casamento.find(x=>x.id===gid);
+    if(g){g.inicio=st.val;qs();}
+  }
+}
+
+// Close picker on outside click
+document.addEventListener('click',()=>{
+  document.querySelectorAll('.mp-drop').forEach(d=>d.style.display='none');
+  document.querySelectorAll('.mp-btn').forEach(b=>b.classList.remove('open'));
+});
+
+/* ── TABS ── */
+window.goTab=function(t){
+  curTab=t;
+  document.querySelectorAll('.tb').forEach(b=>b.classList.toggle('active',b.dataset.t===t));
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('on',p.dataset.t===t));
+  if(t==='bc')rBC();
+  if(t==='realizado')rRealizado();
+};
+function renderAll(){rReceitas();rCustos();rCasamento();}
+
+/* ── ABA RECEITAS ── */
+function rReceitas(){
+  const pane=$('pane-receitas');if(!pane)return;
+  const pcol=pid=>{
+    const lbl=pid==='noivo'?'Noivo':'Noiva',p=S.pessoas[pid];
+    const cor=pid==='noivo'?'var(--orange)':'var(--purple)';
+    return`<div class="card">
+      <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="ttl-${pid}">${esc(p.nome)||lbl}</span></div>
+      <div class="mb"><label class="fl">Nome</label><input class="fi" type="text" value="${esc(p.nome)}" placeholder="${lbl}" oninput="upP('${pid}','nome',this.value)"></div>
+      <div class="mb"><label class="fl">Salário Bruto (R$)</label><input class="fi" type="number" value="${p.salario||''}" placeholder="0" min="0" oninput="upP('${pid}','salario',+this.value||0);rRec()"></div>
+      <div class="mb"><label class="fl">Dedução Carro (R$/mês)</label><input class="fi" type="number" value="${p.carro||''}" placeholder="0" min="0" oninput="upP('${pid}','carro',+this.value||0);rRec()"></div>
+      <div class="mb"><label class="fl">ESPP (% do salário bruto)</label><input class="fi" type="number" value="${p.espp||''}" placeholder="0" min="0" max="100" oninput="upP('${pid}','espp',+this.value||0);rRec()"></div>
+      <div id="calc-${pid}"></div>
+    </div>`;
+  };
+  pane.innerHTML=`<div class="g2">${pcol('noivo')}${pcol('noiva')}</div>
+    <div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>Resumo do Casal</div><div id="casal-res"></div></div>
+    <div class="card" id="card-presentes">
+      <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>Presentes em Dinheiro</div>
+      <div class="tbl-wrap"><table><thead><tr><th>Descrição</th><th style="text-align:center">Parcelas</th><th>Tipo</th><th>Valor(es) por Parcela (R$)</th><th style="text-align:right;min-width:110px">Total</th><th style="min-width:160px">Mês de Entrada</th><th></th></tr></thead><tbody id="pres-body"></tbody></table></div>
+      <button class="addb" onclick="addPres()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar presente</button>
+    </div>`;
+  updCalc('noivo');updCalc('noiva');updCasal();rPresentes();
+}
+function updCalc(pid){
+  const el=$('calc-'+pid);if(!el)return;
+  const{g,ins,irpf,espp,car,n}=netP(S.pessoas[pid]);
+  const cor=pid==='noivo'?'var(--orange)':'var(--purple)';
+  el.innerHTML=`
+    <div class="rl"><span class="la">Salário Bruto</span><span class="va">${fmt(g)}</span></div>
+    <div class="rl"><span class="la">(-) INSS</span><span class="va ng">(${fmt(ins)})</span></div>
+    <div class="rl"><span class="la">(-) IRPF</span><span class="va ng">(${fmt(irpf)})</span></div>
+    <div class="rl"><span class="la">(-) ESPP ${S.pessoas[pid].espp||0}%</span><span class="va ng">(${fmt(espp)})</span></div>
+    <div class="rl"><span class="la">(-) Carro</span><span class="va ng">(${fmt(car)})</span></div>
+    <div class="rl rtot"><span class="la" style="font-weight:600">Salário Líquido</span><span class="va hi" style="color:${cor}">${fmt(n)}</span></div>`;
+}
+function updCasal(){
+  const el=$('casal-res');if(!el)return;
+  const nN=netP(S.pessoas.noivo),nA=netP(S.pessoas.noiva);
+  const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';
+  const totPres=sumArr((S.presentes||[]).map(p=>p.tipo==='fixo'?(p.vf||0)*(p.parc||1):(p.vv||[]).reduce((s,v)=>s+(v||0),0)));
+  el.innerHTML=`<div class="g2" style="margin-bottom:.9rem">
+    <div class="mc"><div class="ml">${nmN}</div><div class="mv wn">${fmt(nN.n)}</div></div>
+    <div class="mc"><div class="ml">${nmA}</div><div class="mv pu">${fmt(nA.n)}</div></div>
+  </div>
+  <div class="rl rtot" style="margin-top:0"><span class="la" style="font-weight:600">Receita Líquida Total do Casal</span><span class="va hi ps">${fmt(nN.n+nA.n)}</span></div>
+  ${totPres>0?`<div class="rl"><span class="la">Presentes em Dinheiro (total)</span><span class="va ps">${fmt(totPres)}</span></div>`:''}
+  <p class="note">Tabelas progressivas INSS e IRPF 2024/2025 — ESPP e carro deduzidos do líquido</p>`;
+}
+window.rRec=function(){updCalc('noivo');updCalc('noiva');updCasal();};
+window.upP=function(pid,f,v){S.pessoas[pid][f]=v;const t=$('ttl-'+pid);if(f==='nome'&&t)t.textContent=v||(pid==='noivo'?'Noivo':'Noiva');qs();};
+
+/* ── PRESENTES ── */
+function rPresentes(){
+  const tbody=$('pres-body');if(!tbody)return;
+  tbody.innerHTML=(S.presentes||[]).map(p=>{
+    let vc=p.tipo==='fixo'
+      ?`<input class="tc" type="number" value="${p.vf||0}" style="width:100px;text-align:right" oninput="upPres('${p.id}','vf',+this.value||0);updPresTotal('${p.id}')">`
+      :Array.from({length:p.parc||1},(_,i)=>`<input class="tc" type="number" value="${(p.vv||[])[i]||0}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upPresV('${p.id}',${i},+this.value||0);updPresTotal('${p.id}')">`).join('');
+    if(p.tipo==='variavel')vc=`<div style="display:flex;flex-wrap:wrap;gap:2px">${vc}</div>`;
+    const t=p.tipo==='fixo'?(p.vf||0)*(p.parc||1):(p.vv||[]).reduce((s,v)=>s+(v||0),0);
+    return`<tr>
+      <td><input class="tc" type="text" value="${esc(p.desc||'')}" placeholder="ex: Família Silva" style="min-width:130px" onchange="upPres('${p.id}','desc',this.value)"></td>
+      <td style="text-align:center"><input class="tc" type="number" value="${p.parc||1}" min="1" style="width:52px;text-align:center" onchange="upPresPa('${p.id}',+this.value||1)"></td>
+      <td><select class="tc" onchange="upPresTipo('${p.id}',this.value)" style="min-width:78px"><option value="fixo"${p.tipo==='fixo'?' selected':''}>Fixo</option><option value="variavel"${p.tipo==='variavel'?' selected':''}>Variável</option></select></td>
+      <td style="min-width:105px">${vc}</td>
+      <td id="ptot-${p.id}" style="text-align:right;font-weight:600">${t?fmt(t):'<span style="color:var(--text3)">—</span>'}</td>
+      <td style="min-width:170px">${mpCreate('pd-'+p.id,p.inicio||'')}</td>
+      <td><button class="badb" onclick="rmPres('${p.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>
+    </tr>`;
+  }).join('');
+}
+window.addPres=function(){(S.presentes=S.presentes||[]).push({id:uid(),desc:'',parc:1,tipo:'fixo',vf:0,vv:[0],inicio:''});rPresentes();qs();};
+window.rmPres=function(id){S.presentes=S.presentes.filter(p=>p.id!==id);rPresentes();updCasal();qs();};
+window.upPres=function(id,f,v){const p=(S.presentes||[]).find(x=>x.id===id);if(p){p[f]=v;qs();}};
+window.upPresV=function(id,i,v){const p=(S.presentes||[]).find(x=>x.id===id);if(p){if(!p.vv)p.vv=[];p.vv[i]=v;qs();}};
+window.upPresPa=function(id,n){const p=(S.presentes||[]).find(x=>x.id===id);if(!p)return;p.parc=n;while((p.vv||[]).length<n)(p.vv=p.vv||[]).push(0);p.vv=p.vv.slice(0,n);rPresentes();qs();};
+window.upPresTipo=function(id,v){const p=(S.presentes||[]).find(x=>x.id===id);if(p){p.tipo=v;rPresentes();qs();}};
+window.updPresTotal=function(id){
+  const cell=$('ptot-'+id);if(!cell)return;
+  const p=(S.presentes||[]).find(x=>x.id===id);if(!p)return;
+  const t=p.tipo==='fixo'?(p.vf||0)*(p.parc||1):(p.vv||[]).reduce((s,v)=>s+(v||0),0);
+  cell.innerHTML=t?fmt(t):'<span style="color:var(--text3)">—</span>';
+  updCasal();
+};
+// mpPick for presentes
+const _origMpPick=window.mpPick;
+window.mpPick=function(id,month,ev){
+  if(id.startsWith('pd-')){
+    ev&&ev.stopPropagation();
+    const st=mpSt[id];if(!st)return;
+    st.val=`${st.year}-${month}`;
+    const lbl=$(`${id}-lbl`);if(lbl){lbl.textContent=fmtMV(st.val);lbl.className='';}
+    $(`${id}-drop`)&&($(`${id}-drop`).style.display='none');
+    $(`${id}-btn`)&&$(`${id}-btn`).classList.remove('open');
+    const pid=id.slice(3);const p=(S.presentes||[]).find(x=>x.id===pid);if(p){p.inicio=st.val;qs();}
+  } else {_origMpPick(id,month,ev);}
+};
+
+/* ── ABA CUSTOS ── */
+function rCustos(){
+  const pane=$('pane-custos');if(!pane)return;
+  const rows=S.custos.map(c=>`<tr>
+    <td><input class="tc" type="text" value="${esc(c.desc)}" placeholder="ex: Condomínio" style="min-width:140px" onchange="upC('${c.id}','desc',this.value)"></td>
+    <td><select class="tc" onchange="upC('${c.id}','cat',this.value)"><option value="fixo"${c.cat==='fixo'?' selected':''}>Fixo</option><option value="variavel"${c.cat==='variavel'?' selected':''}>Variável</option></select></td>
+    <td><select class="tc" onchange="upC('${c.id}','resp',this.value)" style="min-width:115px"><option value="ambos"${c.resp==='ambos'?' selected':''}>Ambos (50/50)</option><option value="noivo"${c.resp==='noivo'?' selected':''}>Noivo</option><option value="noiva"${c.resp==='noiva'?' selected':''}>Noiva</option></select></td>
+    <td style="text-align:right"><input class="tc" type="number" value="${c.val||0}" style="width:100px;text-align:right" onchange="upC('${c.id}','val',+this.value||0);cCRes()"></td>
+    <td><button class="badb" onclick="rmC('${c.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>
+  </tr>`).join('');
+  pane.innerHTML=`<div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Custos Mensais</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Descrição</th><th>Categoria</th><th>Responsável</th><th style="text-align:right">Valor (R$)</th><th></th></tr></thead><tbody id="ctbody">${rows}</tbody></table></div>
+    <button class="addb" onclick="addC()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar custo</button>
+  </div>
+  <div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Resumo de Custos</div><div id="cres" class="g2"></div></div>`;
+  cCRes();
+}
+window.addC=function(){S.custos.push({id:uid(),desc:'',cat:'fixo',resp:'ambos',val:0});rCustos();qs();};
+window.rmC=function(id){S.custos=S.custos.filter(c=>c.id!==id);rCustos();qs();};
+window.upC=function(id,f,v){const c=S.custos.find(x=>x.id===id);if(c){c[f]=v;qs();}};
+window.cCRes=function(){
+  const el=$('cres');if(!el)return;
+  let fn=0,vn=0,fa=0,va=0;
+  S.custos.forEach(c=>{const v=c.val||0,isF=c.cat==='fixo';
+    if(c.resp==='noivo')isF?(fn+=v):(vn+=v);else if(c.resp==='noiva')isF?(fa+=v):(va+=v);else{isF?(fn+=v/2,fa+=v/2):(vn+=v/2,va+=v/2);}
+  });
+  const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';
+  el.innerHTML=`<div>
+    <div class="rl"><span class="la">Fixos — ${nmN}</span><span class="va">${fmt(fn)}</span></div>
+    <div class="rl"><span class="la">Variáveis — ${nmN}</span><span class="va">${fmt(vn)}</span></div>
+    <div class="rl rtot"><span class="la" style="font-weight:600">Total — ${nmN}</span><span class="va hi" style="color:var(--orange)">${fmt(fn+vn)}</span></div>
+  </div><div>
+    <div class="rl"><span class="la">Fixos — ${nmA}</span><span class="va">${fmt(fa)}</span></div>
+    <div class="rl"><span class="la">Variáveis — ${nmA}</span><span class="va">${fmt(va)}</span></div>
+    <div class="rl rtot"><span class="la" style="font-weight:600">Total — ${nmA}</span><span class="va hi" style="color:var(--purple)">${fmt(fa+va)}</span></div>
+  </div>`;
+};
+
+/* ── ABA CASAMENTO ── */
+function rCasamento(){
+  const pane=$('pane-casamento');if(!pane)return;
+  pane.innerHTML=`<div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Gastos do Casamento</div>
+    <div class="tbl-wrap"><table><thead><tr><th>Descrição</th><th>Responsável</th><th>% Noivo / % Noiva</th><th style="text-align:center">Parcelas</th><th>Tipo</th><th>Valor(es) por Parcela (R$)</th><th style="text-align:right;min-width:130px">Total</th><th style="min-width:160px">Mês Início</th><th></th></tr></thead><tbody id="gbody"></tbody></table></div>
+    <button class="addb" onclick="addG()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Adicionar gasto</button>
+  </div>
+  <div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>Resumo do Casamento</div><div id="gres"></div></div>`;
+  rGBody();
+}
+function rGBody(){
+  const tbody=$('gbody');if(!tbody)return;
+  tbody.innerHTML=S.casamento.map(g=>{
+    const ambos=g.resp==='ambos';
+    const pn=g.pn!=null?+g.pn:50, pa=g.pa!=null?+g.pa:50;
+    const pc=ambos
+      ?`<div style="display:flex;align-items:center;gap:5px;min-width:110px"><input class="tc" type="number" value="${pn}" min="0" max="100" style="width:48px;text-align:center" id="pn-${g.id}" onchange="upGP('${g.id}','pn',+this.value)"><span style="color:var(--text3)">/</span><input class="tc" type="number" value="${pa}" min="0" max="100" style="width:48px;text-align:center" id="pa-${g.id}" onchange="upGP('${g.id}','pa',+this.value)"></div>`
+      :`<span style="color:var(--text3);font-size:11px">${g.resp==='presente'?'Externo':'100%'}</span>`;
+    let vc=g.tipo==='fixo'
+      ?`<input class="tc" type="number" value="${g.vf||0}" style="width:100px;text-align:right" oninput="upG('${g.id}','vf',+this.value||0);updGTotal('${g.id}')">`
+      :Array.from({length:g.parc||1},(_,i)=>`<input class="tc" type="number" value="${(g.vv||[])[i]||0}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upGV('${g.id}',${i},+this.value||0);updGTotal('${g.id}')">`).join('');
+    if(g.tipo==='variavel')vc=`<div style="display:flex;flex-wrap:wrap;gap:2px">${vc}</div>`;
+    // Total da linha e split por pessoa
+    const{t,n,a,pr}=gTot(g);
+    let splitHtml='';
+    if(g.resp==='ambos'&&t>0) splitHtml=`<div style="font-size:10px;color:var(--text3);margin-top:3px;line-height:1.6">${fmt(n)}<br>${fmt(a)}</div>`;
+    const totalCell=t>0
+      ?`<div style="text-align:right;font-weight:600;white-space:nowrap">${fmt(t)}${splitHtml}</div>`
+      :`<span style="color:var(--text3)">—</span>`;
+    return`<tr>
+      <td><input class="tc" type="text" value="${esc(g.desc)}" placeholder="Descrição" style="min-width:130px" onchange="upG('${g.id}','desc',this.value)"></td>
+      <td><select class="tc" onchange="upGR('${g.id}',this.value)" style="min-width:90px"><option value="ambos"${g.resp==='ambos'?' selected':''}>Ambos</option><option value="noivo"${g.resp==='noivo'?' selected':''}>Noivo</option><option value="noiva"${g.resp==='noiva'?' selected':''}>Noiva</option><option value="presente"${g.resp==='presente'?' selected':''}>Presente</option></select></td>
+      <td>${pc}</td>
+      <td style="text-align:center"><input class="tc" type="number" value="${g.parc||1}" min="1" style="width:52px;text-align:center" onchange="upGPa('${g.id}',+this.value||1)"></td>
+      <td><select class="tc" onchange="upGT('${g.id}',this.value)" style="min-width:78px"><option value="fixo"${g.tipo==='fixo'?' selected':''}>Fixo</option><option value="variavel"${g.tipo==='variavel'?' selected':''}>Variável</option></select></td>
+      <td style="min-width:105px">${vc}</td>
+      <td id="gtot-${g.id}" style="text-align:right;vertical-align:top;padding-top:8px">${totalCell}</td>
+      <td style="min-width:170px">${mpCreate('gd-'+g.id,g.inicio||'')}</td>
+      <td><button class="badb" onclick="rmG('${g.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>
+    </tr>`;
+  }).join('');cGRes();
+}
+window.addG=function(){S.casamento.push({id:uid(),desc:'',resp:'ambos',pn:50,pa:50,parc:1,tipo:'fixo',vf:0,vv:[0],inicio:''});rGBody();qs();};
+window.rmG=function(id){S.casamento=S.casamento.filter(g=>g.id!==id);rGBody();qs();};
+window.updGTotal=function(id){
+  const cell=$('gtot-'+id);if(!cell)return;
+  const g=S.casamento.find(x=>x.id===id);if(!g)return;
+  const{t,n,a}=gTot(g);
+  let splitHtml='';
+  if(g.resp==='ambos'&&t>0)splitHtml=`<div style="font-size:10px;color:var(--text3);margin-top:3px;line-height:1.6">${fmt(n)}<br>${fmt(a)}</div>`;
+  cell.innerHTML=t>0?`<div style="text-align:right;font-weight:600;white-space:nowrap">${fmt(t)}${splitHtml}</div>`:`<span style="color:var(--text3)">—</span>`;
+  cGRes();
+};
+window.upG=function(id,f,v){const g=S.casamento.find(x=>x.id===id);if(g){g[f]=v;qs();}};
+window.upGR=function(id,v){const g=S.casamento.find(x=>x.id===id);if(g){g.resp=v;rGBody();qs();}};
+window.upGP=function(id,f,v){const g=S.casamento.find(x=>x.id===id);if(!g)return;g[f]=v;if(f==='pn'){g.pa=100-v;const e=$('pa-'+id);if(e)e.value=g.pa;}else{g.pn=100-v;const e=$('pn-'+id);if(e)e.value=g.pn;}updGTotal(id);qs();};
+window.upGPa=function(id,n){const g=S.casamento.find(x=>x.id===id);if(!g)return;g.parc=n;while((g.vv||[]).length<n)(g.vv=g.vv||[]).push(0);g.vv=g.vv.slice(0,n);rGBody();qs();};
+window.upGT=function(id,v){const g=S.casamento.find(x=>x.id===id);if(g){g.tipo=v;rGBody();qs();}};
+window.upGV=function(id,i,v){const g=S.casamento.find(x=>x.id===id);if(g){if(!g.vv)g.vv=[];g.vv[i]=v;qs();}};
+function gTot(g){
+  const t=g.tipo==='fixo'?(g.vf||0)*(g.parc||1):(g.vv||[]).reduce((s,v)=>s+(v||0),0);
+  if(g.resp==='presente')return{t,n:0,a:0,pr:t};
+  const pn=g.pn!=null?+g.pn:50;
+  const pa=g.pa!=null?+g.pa:50;
+  const n=g.resp==='noivo'?t:g.resp==='ambos'?t*pn/100:0;
+  const a=g.resp==='noiva'?t:g.resp==='ambos'?t*pa/100:0;
+  return{t,n,a,pr:0};
+}
+window.cGRes=function(){
+  const el=$('gres');if(!el)return;
+  let tN=0,tA=0,tP=0;
+  const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';
+  const linhas=S.casamento.map(g=>{
+    const{t,n,a,pr}=gTot(g);
+    tN+=n;tA+=a;tP+=pr;
+    if(t===0)return'';
+    const pn=g.pn!=null?+g.pn:50,pa=g.pa!=null?+g.pa:50;
+    const split=g.resp==='ambos'?` <span style="color:var(--text3);font-size:10px">(${pn}% / ${pa}%)</span>`
+                :g.resp==='noivo'?` <span style="color:var(--text3);font-size:10px">(${nmN})</span>`
+                :g.resp==='noiva'?` <span style="color:var(--text3);font-size:10px">(${nmA})</span>`
+                :` <span style="color:var(--text3);font-size:10px">(Presente)</span>`;
+    const vals=g.resp==='ambos'
+      ?`<span style="color:var(--orange)">${fmt(n)}</span> / <span style="color:var(--purple)">${fmt(a)}</span>`
+      :g.resp==='noivo'?`<span style="color:var(--orange)">${fmt(n)}</span>`
+      :g.resp==='noiva'?`<span style="color:var(--purple)">${fmt(a)}</span>`
+      :`<span style="color:var(--text2)">${fmt(pr)}</span>`;
+    return`<div class="rl" style="font-size:12px"><span class="la" style="flex:1">${esc(g.desc)||'—'}${split}</span><span>${vals}</span></div>`;
+  }).join('');
+  el.innerHTML=`
+    <div style="margin-bottom:.9rem">${linhas||'<div style="color:var(--text3);font-size:12px;padding:.5rem 0">Nenhum gasto cadastrado</div>'}</div>
+    <div class="g2" style="border-top:1px solid var(--border2);padding-top:.9rem;margin-top:.5rem">
+      <div>
+        <div class="rl"><span class="la">Total ${nmN}</span><span class="va" style="color:var(--orange)">${fmt(tN)}</span></div>
+        <div class="rl"><span class="la">Total ${nmA}</span><span class="va" style="color:var(--purple)">${fmt(tA)}</span></div>
+        <div class="rl"><span class="la">Total Presentes</span><span class="va">${fmt(tP)}</span></div>
+      </div>
+      <div>
+        <div class="rl rtot" style="margin-top:0"><span class="la" style="font-weight:600">Total do Casal</span><span class="va hi">${fmt(tN+tA)}</span></div>
+        <div class="rl" style="margin-top:6px"><span class="la">Total Geral (incl. presentes)</span><span class="va">${fmt(tN+tA+tP)}</span></div>
+      </div>
+    </div>`;
+};
+
+/* ── ABA REALIZADO ── */
+let bcMode='plan'; // 'plan' | 'real' | 'dev'
+window.setBCMode=function(m){bcMode=m;document.querySelectorAll('.bc-mode-btn').forEach(b=>b.classList.toggle('on',b.dataset.m===m));rBCTable();};
+
+let realizadoMes='';
+
+function rRealizado(){
+  const pane=$('pane-realizado');if(!pane)return;
+  // Default to current month
+  if(!realizadoMes){const n=new Date();realizadoMes=dToM(n);}
+  const months=getProjectionMonths();
+  const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';
+
+  const mSel=months.length
+    ?`<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem">${months.map(m=>`<button onclick="realizadoMes='${m}';rRealizado()" style="padding:5px 14px;font-size:12px;border-radius:20px;border:1px solid var(--${m===realizadoMes?'orange':'border2'});background:${m===realizadoMes?'var(--orange)':'transparent'};color:${m===realizadoMes?'#fff':'var(--text2)'};cursor:pointer;font-family:inherit">${MNS[+m.split('-')[1]-1]}/${m.split('-')[0]}</button>`).join('')}</div>`
+    :`<div style="color:var(--text3);font-size:13px;margin-bottom:1rem">Configure as datas na aba Business Case primeiro.</div>`;
+
+  pane.innerHTML=`<div class="card">
+    <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Lançamento de Valores Realizados</div>
+    <div style="margin-bottom:.5rem"><label class="fl">Selecione o Mês</label>${mSel}</div>
+  </div>
+  <div id="real-body"></div>`;
+
+  if(months.length&&realizadoMes)rRealizadoMes(realizadoMes,nmN,nmA);
+}
+
+function getProjectionMonths(){
+  const{data,inicio}=S.bc;
+  if(!data||!inicio)return[];
+  const sD=mToD(inicio),wD=mToD(data);
+  if(!sD||!wD||sD>wD)return[];
+  const eD=addM(wD,2);
+  const months=[];let cur=new Date(sD);
+  while(cur<=eD){months.push(dToM(cur));cur=addM(cur,1);}
+  return months;
+}
+
+function rk(mes,id){return mes+'::'+id;}
+
+function planValCus(c){return c.val||0;}
+function planValWed(g,m){
+  if(!g.inicio)return 0;
+  const d=mDiff(g.inicio,m);
+  if(d<0||d>=(g.parc||1))return 0;
+  return g.tipo==='fixo'?(g.vf||0):((g.vv||[])[d]||0);
+}
+
+function rRealizadoMes(mes,nmN,nmA){
+  const el=$('real-body');if(!el)return;
+  if(!S.realizado)S.realizado={};
+
+  const buildRows=(items,getplan)=>items.map(item=>{
+    const k=rk(mes,item.id);
+    const r=S.realizado[k]||{v:'',q:''};
+    const plan=getplan(item);
+    const real=r.v!==''?+r.v:null;
+    const dev=real!==null?real-plan:null;
+    const devHtml=dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'<span style="color:var(--text3)">—</span>';
+    return`<tr>
+      <td style="color:var(--text)">${esc(item.desc||'(sem nome)')}</td>
+      <td style="text-align:right;color:var(--text2)">${plan?fmt(plan):'—'}</td>
+      <td style="text-align:right"><input class="tc" type="number" value="${r.v!==''?r.v:''}" placeholder="0" style="width:110px;text-align:right" oninput="upReal('${mes}','${item.id}','v',this.value)"></td>
+      <td><select class="tc" style="min-width:100px" onchange="upReal('${mes}','${item.id}','q',this.value)">
+        <option value=""${!r.q?' selected':''}>—</option>
+        <option value="noivo"${r.q==='noivo'?' selected':''}>${nmN}</option>
+        <option value="noiva"${r.q==='noiva'?' selected':''}>${nmA}</option>
+        <option value="ambos"${r.q==='ambos'?' selected':''}>Ambos</option>
+      </select></td>
+      <td id="dev-${mes}-${item.id}">${devHtml}</td>
+    </tr>`;
+  }).join('');
+
+  // subtotals
+  const subTot=(items,getplan,label)=>{
+    let totP=0,totR=0,hasR=false;
+    items.forEach(item=>{
+      const k=rk(mes,item.id);
+      const r=S.realizado[k]||{};
+      totP+=getplan(item);
+      if(r.v!==''){{totR+=+r.v||0;hasR=true;}}
+    });
+    const dev=hasR?totR-totP:null;
+    return`<tr class="real-sub">
+      <td>${label}</td>
+      <td style="text-align:right">${fmt(totP)}</td>
+      <td style="text-align:right">${hasR?fmt(totR):'—'}</td>
+      <td></td>
+      <td>${dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'—'}</td>
+    </tr>`;
+  };
+
+  const getplanCus=c=>planValCus(c);
+  const getplanWed=g=>planValWed(g,mes);
+
+  el.innerHTML=`
+    <div class="card">
+      <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Custos Pessoais — ${MNS[+mes.split('-')[1]-1]}/${mes.split('-')[0]}</div>
+      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">
+        <thead><tr><th>Descrição</th><th style="text-align:right">Planejado</th><th style="text-align:right">Realizado</th><th>Quem pagou</th><th style="text-align:right">Desvio</th></tr></thead>
+        <tbody>
+          ${S.custos.length?buildRows(S.custos,getplanCus):'<tr><td colspan="5" style="color:var(--text3)">Nenhum custo cadastrado</td></tr>'}
+          ${S.custos.length?subTot(S.custos,getplanCus,'Total Custos'):''}
+        </tbody>
+      </table></div>
+    </div>
+    <div class="card">
+      <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Gastos do Casamento — ${MNS[+mes.split('-')[1]-1]}/${mes.split('-')[0]}</div>
+      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">
+        <thead><tr><th>Descrição</th><th style="text-align:right">Planejado</th><th style="text-align:right">Realizado</th><th>Quem pagou</th><th style="text-align:right">Desvio</th></tr></thead>
+        <tbody>
+          ${S.casamento.filter(g=>g.resp!=='presente').length
+            ?buildRows(S.casamento.filter(g=>g.resp!=='presente'),getplanWed)
+            :'<tr><td colspan="5" style="color:var(--text3)">Nenhum gasto cadastrado</td></tr>'}
+          ${S.casamento.filter(g=>g.resp!=='presente').length?subTot(S.casamento.filter(g=>g.resp!=='presente'),getplanWed,'Total Casamento'):''}
+        </tbody>
+      </table></div>
+    </div>`;
+}
+
+window.upReal=function(mes,id,field,val){
+  if(!S.realizado)S.realizado={};
+  const k=rk(mes,id);
+  if(!S.realizado[k])S.realizado[k]={v:'',q:''};
+  S.realizado[k][field]=field==='v'?(val===''?'':+val||0):val;
+  // update desvio cell inline
+  const devEl=$('dev-'+mes+'-'+id);
+  if(devEl&&field==='v'){
+    const r=S.realizado[k];
+    const allItems=[...S.custos,...S.casamento.filter(g=>g.resp!=='presente')];
+    const item=allItems.find(x=>x.id===id);
+    if(item){
+      const plan=S.custos.find(x=>x.id===id)?planValCus(item):planValWed(item,mes);
+      const real=r.v!==''?+r.v:null;
+      const dev=real!==null?real-plan:null;
+      devEl.innerHTML=dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'<span style="color:var(--text3)">—</span>';
+    }
+  }
+  qs();
+  if(curTab==='bc')rBCTable();
+};
+// Separado em dois: params (renderizado 1x) e tabela (atualizada ao escolher datas)
+function rBC(){
+  const pane=$('pane-bc');if(!pane)return;
+  pane.innerHTML=`<div id="bc-params"></div><div id="bc-table"></div>`;
+  rBCParams();
+  rBCTable();
+}
+
+function rBCParams(){
+  const el=$('bc-params');if(!el)return;
+  const svgCfg=`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>`;
+  el.innerHTML=`<div class="card"><div class="ct">${svgCfg} Parâmetros da Projeção</div>
+    <div class="g2">
+      <div class="mb"><label class="fl">Data do Casamento</label>${mpCreate('bc-data',S.bc.data||'')}</div>
+      <div class="mb"><label class="fl">Mês de Início da Projeção</label>${mpCreate('bc-inicio',S.bc.inicio||'')}</div>
+    </div></div>`;
+}
+
+/* toggle collapsible BC rows */
+window.bcToggle=function(gid){
+  const rows=document.querySelectorAll(`.bc-det[data-gid="${gid}"]`);
+  const arrow=document.getElementById('arr-'+gid);
+  const open=arrow&&arrow.classList.contains('open');
+  rows.forEach(r=>r.style.display=open?'none':'table-row');
+  if(arrow)arrow.classList.toggle('open',!open);
+};
+
+function rBCTable(){
+  const el=$('bc-table');if(!el)return;
+  const{data,inicio}=S.bc;
+  if(!data||!inicio){
+    el.innerHTML=`<div class="empty-state"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--border2)" stroke-width="1.5" style="margin:0 auto .75rem;display:block"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <div style="font-size:14px;font-weight:600;margin-bottom:.4rem">Selecione as datas acima</div>
+      <div style="font-size:12px">Escolha a data do casamento e o mês de início para gerar a projeção</div></div>`;return;
+  }
+  const sD=mToD(inicio),wD=mToD(data);
+  if(!sD||!wD||sD>wD){
+    el.innerHTML=`<div style="text-align:center;padding:1.5rem;color:var(--red);font-size:13px">O mês de início deve ser anterior ao mês do casamento.</div>`;return;
+  }
+  const eD=addM(wD,2);
+  const months=[];let cur=new Date(sD);
+  while(cur<=eD){months.push(dToM(cur));cur=addM(cur,1);}
+  const wIdx=months.indexOf(data);
+  const nm=months.length;
+  const nN=netP(S.pessoas.noivo),nA=netP(S.pessoas.noiva);
+  const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';
+
+  /* helpers */
+  const wExp=(g,m)=>{if(!g.inicio)return 0;const d=mDiff(g.inicio,m);if(d<0||d>=(g.parc||1))return 0;return g.tipo==='fixo'?(g.vf||0):((g.vv||[])[d]||0);};
+  const ws=i=>i===wIdx?'background:rgba(249,115,22,.07);':'';
+  const S3=arr=>{const tot=sumArr(arr),ate=wIdx>=0?sumArr(arr.slice(0,wIdx+1)):tot,apos=wIdx>=0&&wIdx<nm-1?sumArr(arr.slice(wIdx+1)):0;return[tot,ate,apos];};
+  const sumCols=(a,b)=>a.map((_,i)=>a[i]+b[i]);
+  const fmtSum=v=>v?fmt(v):`<span style="color:var(--text3)">—</span>`;
+
+  /* cell renderers */
+  const cv=(v,i)=>`<td style="text-align:right;${ws(i)}">${v?fmt(v):'<span style="color:var(--text3)">—</span>'}</td>`;
+  const cvc=(v,i)=>`<td style="text-align:right;font-weight:700;color:${v>=0?'var(--teal)':'var(--red)'};${ws(i)}">${fmtS(v)}</td>`;
+  const cva=(v,i)=>`<td style="text-align:right;color:${v>=0?'var(--purple)':'var(--red)'};${ws(i)}">${fmt(v)}</td>`;
+
+  /* summary 3 cols helper */
+  const s3cells=(vals,fw='600',cor='')=>{const[tot,ate,apos]=S3(vals);const st=cor?`;color:${cor}`:'';return`<td class="sum-sep" style="text-align:right;font-weight:${fw}${st}">${fmtSum(tot)}</td><td style="text-align:right;font-weight:${fw}${st}">${fmtSum(ate)}</td><td style="text-align:right;font-weight:${fw}${st}">${fmtSum(apos)}</td>`;};
+
+  /* section header */
+  const secRow=lbl=>`<tr class="sec-row"><td class="sticky">${lbl}</td>${months.map((_,i)=>`<td style="${ws(i)}"></td>`).join('')}<td class="sum-sep"></td><td></td><td></td></tr>`;
+
+  /* plain data row (receitas) */
+  const dataRow=(lbl,vals)=>`<tr><td class="sticky" style="padding-left:1.75rem">${lbl}</td>${vals.map((v,i)=>cv(v,i)).join('')}${s3cells(vals)}</tr>`;
+
+  /* collapsible group: header + details */
+  const grpHeader=(lbl,vals,gid,cor)=>{
+    const[tot,ate,apos]=S3(vals);
+    return`<tr class="bc-grp sub-row" onclick="bcToggle('${gid}')">
+      <td class="sticky" style="font-weight:600;color:${cor}">
+        <span class="bc-arrow" id="arr-${gid}">&#9654;</span>${lbl}
+      </td>
+      ${vals.map((v,i)=>`<td style="text-align:right;font-weight:600;${ws(i)};color:${cor}">${v?fmt(v):'<span style="color:var(--text3)">—</span>'}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-weight:700;color:${cor}">${fmtSum(tot)}</td>
+      <td style="text-align:right;font-weight:700;color:${cor}">${fmtSum(ate)}</td>
+      <td style="text-align:right;font-weight:700;color:${cor}">${fmtSum(apos)}</td>
+    </tr>`;
+  };
+  const grpDetails=(items,gid)=>items.map(r=>`<tr class="bc-det" data-gid="${gid}" style="display:none">
+    <td class="sticky">${r.label}</td>
+    ${r.vals.map((v,i)=>cv(v,i)).join('')}${s3cells(r.vals,'500')}
+  </tr>`).join('');
+
+  /* subtotal row */
+  const subRow=(lbl,vals,cor)=>{
+    const[tot,ate,apos]=S3(vals);
+    const st=cor?`;color:${cor}`:'';
+    return`<tr class="sub-row">
+      <td class="sticky" style="font-weight:700${st}">${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;font-weight:700;${ws(i)}${st}">${fmt(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-weight:700${st}">${fmt(tot)}</td>
+      <td style="text-align:right;font-weight:700${st}">${fmt(ate)}</td>
+      <td style="text-align:right;font-weight:700${st}">${fmt(apos)}</td>
+    </tr>`;
+  };
+
+  /* ── DATA CALC ── */
+  const recNoivo=months.map(()=>nN.n);
+  const recNoiva=months.map(()=>nA.n);
+  const presItems=(S.presentes||[]).map(p=>({
+    label:p.desc||'Presente',
+    vals:months.map(m=>{if(!p.inicio)return 0;const d=mDiff(p.inicio,m);if(d<0||d>=(p.parc||1))return 0;return p.tipo==='fixo'?(p.vf||0):((p.vv||[])[d]||0);})
+  })).filter(r=>sumArr(r.vals)>0);
+  const totPres=months.map((_,i)=>presItems.reduce((s,r)=>s+r.vals[i],0));
+  const totRec=months.map((_,i)=>recNoivo[i]+recNoiva[i]+totPres[i]);
+
+  const cusNoivoItems=S.custos.filter(c=>c.resp!=='noiva').map(c=>({label:c.desc||'(sem nome)',vals:months.map(()=>c.resp==='noivo'?c.val||0:(c.val||0)/2)})).filter(r=>sumArr(r.vals)>0);
+  const cusNoivaItems=S.custos.filter(c=>c.resp!=='noivo').map(c=>({label:c.desc||'(sem nome)',vals:months.map(()=>c.resp==='noiva'?c.val||0:(c.val||0)/2)})).filter(r=>sumArr(r.vals)>0);
+  const totCusNoivo=months.map((_,i)=>cusNoivoItems.reduce((s,r)=>s+r.vals[i],0));
+  const totCusNoiva=months.map((_,i)=>cusNoivaItems.reduce((s,r)=>s+r.vals[i],0));
+  const totCusto=sumCols(totCusNoivo,totCusNoiva);
+
+  const wdNoivoItems=S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva').map(g=>{const pn=g.pn!=null?+g.pn:50;return{label:g.desc||'(sem nome)',vals:months.map(m=>{const v=wExp(g,m);return g.resp==='noivo'?v:v*pn/100;})};}).filter(r=>sumArr(r.vals)>0);
+  const wdNoivaItems=S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo').map(g=>{const pa=g.pa!=null?+g.pa:50;return{label:g.desc||'(sem nome)',vals:months.map(m=>{const v=wExp(g,m);return g.resp==='noiva'?v:v*pa/100;})};}).filter(r=>sumArr(r.vals)>0);
+  const totWdNoivo=months.map((_,i)=>wdNoivoItems.reduce((s,r)=>s+r.vals[i],0));
+  const totWdNoiva=months.map((_,i)=>wdNoivaItems.reduce((s,r)=>s+r.vals[i],0));
+  const totWedd=sumCols(totWdNoivo,totWdNoiva);
+
+  /* gastos totais por pessoa */
+  const totGastosN=sumCols(totCusNoivo,totWdNoivo);
+  const totGastosA=sumCols(totCusNoiva,totWdNoiva);
+
+  /* caixa por pessoa e casal */
+  const caixaN=months.map((_,i)=>recNoivo[i]-totGastosN[i]);
+  const caixaA=months.map((_,i)=>recNoiva[i]-totGastosA[i]);
+  const caixaV=months.map((_,i)=>caixaN[i]+caixaA[i]+totPres[i]);
+
+  /* acumulado por pessoa e casal */
+  let aN=0,aA=0,aC=0;
+  const accumN=caixaN.map(v=>{aN+=v;return aN;});
+  const accumA=caixaA.map(v=>{aA+=v;return aA;});
+  const accumV=caixaV.map(v=>{aC+=v;return aC;});
+
+  /* ── ROW BUILDERS ── */
+  const mkCaixaRow=(lbl,vals,cor,cls='')=>{
+    const[t,at,ap]=S3(vals);
+    return`<tr${cls?` class="${cls}"`:''}>
+      <td class="sticky" style="font-weight:700;color:${cor}">${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;font-weight:700;${ws(i)}color:${v>=0?cor:'var(--red)'}">${fmtS(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-weight:700;color:${t>=0?cor:'var(--red)'}">${fmtS(t)}</td>
+      <td style="text-align:right;font-weight:700;color:${at>=0?cor:'var(--red)'}">${fmtS(at)}</td>
+      <td style="text-align:right;font-weight:700;color:${ap>=0?cor:'var(--red)'}">${fmtS(ap)}</td>
+    </tr>`;
+  };
+  const mkAccumRow=(lbl,vals,cor)=>{
+    const[t,at,ap]=S3(vals);
+    return`<tr>
+      <td class="sticky" style="color:${cor}">${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;${ws(i)}color:${v>=0?cor:'var(--red)'}">${fmt(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-size:10px;color:var(--text3)">pos. final</td>
+      <td style="text-align:right;font-weight:700;color:${wIdx>=0&&vals[wIdx]>=0?'var(--orange)':'var(--red)'}">${wIdx>=0?fmt(vals[wIdx]):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:${vals[nm-1]>=0?cor:'var(--red)'}">${fmt(vals[nm-1])}</td>
+    </tr>`;
+  };
+
+  const mHdr=months.map((m,i)=>`<th style="text-align:right;min-width:105px;${i===wIdx?'background:rgba(249,115,22,.1);color:var(--orange)':''}">${MNS[parseInt(m.split('-')[1])-1]}/${m.split('-')[0]}${i===wIdx?' ◆':''}</th>`).join('');
+  const emptyCells=`${months.map(()=>'<td></td>').join('')}<td class="sum-sep"></td><td></td><td></td>`;
+
+  /* realizado helpers */
+  const getReal=(id,m)=>{const r=(S.realizado||{})[m+'::'+id];return(r&&r.v!=='')?(+r.v||0):null;};
+  const fv=v=>bcMode==='dev'?`<span class="${v>0?'dev-neg':'dev-pos'}">${fmtS(v)}</span>`:v?fmt(v):'<span style="color:var(--text3)">—</span>';
+
+  /* mode-aware cell */
+  const cvM=(id,planVal,m,i)=>{
+    const r=getReal(id,m);
+    const v=bcMode==='plan'?planVal:bcMode==='real'?(r!==null?r:null):( r!==null?r-planVal:null);
+    return`<td style="text-align:right;${ws(i)}">${v!==null?fv(v):'<span style="color:var(--text3)">—</span>'}</td>`;
+  };
+
+  /* mode-aware subtotal */
+  const subTotM=(lbl,items,getPlan,getM,cor)=>{
+    const planVals=months.map(m=>items.reduce((s,x)=>s+getPlan(x,m),0));
+    const realVals=months.map(m=>items.reduce((s,x)=>{const r=getReal(x.id,m);return s+(r!==null?r:getPlan(x,m));},0));
+    const hasReal=months.some(m=>items.some(x=>getReal(x.id,m)!==null));
+    const vals=bcMode==='plan'?planVals:bcMode==='real'?realVals:months.map((_,i)=>realVals[i]-planVals[i]);
+    const[tot,ate,apos]=S3(vals);
+    const st=bcMode!=='dev'&&cor?`;color:${cor}`:'';
+    return`<tr class="sub-row"><td class="sticky" style="font-weight:700${st}">${lbl}</td>${vals.map((v,i)=>`<td style="text-align:right;font-weight:700;${ws(i)}${bcMode!=='dev'?st:''}">${fv(v)}</td>`).join('')}<td class="sum-sep" style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(tot)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(ate)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(apos)}</td></tr>`;
+  };
+
+  /* mode-aware grp rows */
+  const grpHeaderM=(lbl,items,getPlan,gid,cor)=>{
+    const planVals=months.map(m=>items.reduce((s,x)=>s+getPlan(x,m),0));
+    const realVals=months.map(m=>items.reduce((s,x)=>{const r=getReal(x.id,m);return s+(r!==null?r:getPlan(x,m));},0));
+    const vals=bcMode==='plan'?planVals:bcMode==='real'?realVals:months.map((_,i)=>realVals[i]-planVals[i]);
+    const[tot,ate,apos]=S3(vals);
+    const st=bcMode!=='dev'?`;color:${cor}`:'';
+    return`<tr class="bc-grp sub-row" onclick="bcToggle('${gid}')">
+      <td class="sticky" style="font-weight:600${st}"><span class="bc-arrow" id="arr-${gid}">&#9654;</span>${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;font-weight:600;${ws(i)}${bcMode!=='dev'?st:''}">${fv(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(tot)}</td>
+      <td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(ate)}</td>
+      <td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(apos)}</td>
+    </tr>`;
+  };
+  const grpDetailsM=(items,getPlan,gid)=>items.map(item=>`<tr class="bc-det" data-gid="${gid}" style="display:none">
+    <td class="sticky">${esc(item.desc||'(sem nome)')}</td>
+    ${months.map((m,i)=>cvM(item.id,getPlan(item,m),m,i)).join('')}${s3cells(months.map((m)=>{const r=getReal(item.id,m);const p=getPlan(item,m);return bcMode==='plan'?p:bcMode==='real'?(r!==null?r:p):(r!==null?r-p:0);}), '500')}
+  </tr>`).join('');
+
+  const getPlanCus=(c)=>planValCus(c);
+  const getPlanCusM=(c,m)=>planValCus(c);
+  const getPlanWedM=(g,m)=>planValWed(g,m);
+
+  /* caixa/accum mode-aware */
+  const mkCaixaRowM=(lbl,vals,cor,cls='')=>{
+    const[t,at,ap]=S3(vals);
+    return`<tr${cls?` class="${cls}"`:''}>
+      <td class="sticky" style="font-weight:700;color:${cor}">${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;font-weight:700;${ws(i)}color:${v>=0?cor:'var(--red)'}">${fmtS(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-weight:700;color:${t>=0?cor:'var(--red)'}">${fmtS(t)}</td>
+      <td style="text-align:right;font-weight:700;color:${at>=0?cor:'var(--red)'}">${fmtS(at)}</td>
+      <td style="text-align:right;font-weight:700;color:${ap>=0?cor:'var(--red)'}">${fmtS(ap)}</td>
+    </tr>`;
+  };
+  const mkAccumRowM=(lbl,vals,cor)=>{
+    const[t,at,ap]=S3(vals);
+    return`<tr>
+      <td class="sticky" style="color:${cor}">${lbl}</td>
+      ${vals.map((v,i)=>`<td style="text-align:right;${ws(i)}color:${v>=0?cor:'var(--red)'}">${fmt(v)}</td>`).join('')}
+      <td class="sum-sep" style="text-align:right;font-size:10px;color:var(--text3)">pos. final</td>
+      <td style="text-align:right;font-weight:700;color:${wIdx>=0&&vals[wIdx]>=0?'var(--orange)':'var(--red)'}">${wIdx>=0?fmt(vals[wIdx]):'—'}</td>
+      <td style="text-align:right;font-weight:700;color:${vals[nm-1]>=0?cor:'var(--red)'}">${fmt(vals[nm-1])}</td>
+    </tr>`;
+  };
+
+  el.innerHTML=`<div class="card">
+    <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Projeção Mês a Mês</div>
+    <div class="bc-mode-bar">
+      <button class="bc-mode-btn${bcMode==='plan'?' on':''}" data-m="plan" onclick="setBCMode('plan')">Planejado</button>
+      <button class="bc-mode-btn${bcMode==='real'?' on':''}" data-m="real" onclick="setBCMode('real')">Realizado</button>
+      <button class="bc-mode-btn${bcMode==='dev'?' on':''}" data-m="dev" onclick="setBCMode('dev')">Desvio</button>
+    </div>
+    <div class="bc-wrap"><table class="bc-tbl">
+      <thead><tr><th class="lh">Categoria</th>${mHdr}
+        <th style="text-align:right;min-width:115px;color:var(--purple);border-left:2px solid var(--border2)">Total Período</th>
+        <th style="text-align:right;min-width:115px;color:var(--orange)">Até Casamento</th>
+        <th style="text-align:right;min-width:115px;color:var(--teal)">Após Casamento</th>
+      </tr></thead>
+      <tbody>
+        ${secRow('Receitas')}
+        ${dataRow(nmN,recNoivo)}
+        ${dataRow(nmA,recNoiva)}
+        ${presItems.length?presItems.map(r=>dataRow('Presente: '+r.label,r.vals)).join(''):''}
+        ${subRow('Total Receita',totRec,'var(--teal)')}
+
+        ${secRow('Custos Pessoais')}
+        ${cusNoivoItems.length?grpHeaderM(nmN,cusNoivoItems,getPlanCusM,'cus-n','var(--orange)')+grpDetailsM(cusNoivoItems,getPlanCusM,'cus-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem custos</td>${emptyCells}</tr>`}
+        ${cusNoivaItems.length?grpHeaderM(nmA,cusNoivaItems,getPlanCusM,'cus-a','var(--purple)')+grpDetailsM(cusNoivaItems,getPlanCusM,'cus-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem custos</td>${emptyCells}</tr>`}
+        ${subTotM('Total Custos Pessoais',S.custos,(c)=>planValCus(c),null,'var(--red)')}
+
+        ${secRow('Gastos do Casamento')}
+        ${wdNoivoItems.length?grpHeaderM(nmN,S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva'),getPlanWedM,'wed-n','var(--orange)')+grpDetailsM(S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noiva'),getPlanWedM,'wed-n'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmN} — sem gastos</td>${emptyCells}</tr>`}
+        ${wdNoivaItems.length?grpHeaderM(nmA,S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo'),getPlanWedM,'wed-a','var(--purple)')+grpDetailsM(S.casamento.filter(g=>g.resp!=='presente'&&g.resp!=='noivo'),getPlanWedM,'wed-a'):`<tr><td class="sticky" style="padding-left:1.75rem;color:var(--text3)">${nmA} — sem gastos</td>${emptyCells}</tr>`}
+        ${subTotM('Total Gastos Casamento',S.casamento.filter(g=>g.resp!=='presente'),getPlanWedM,null,'var(--warn)')}
+
+        ${secRow('Total Gastos (Custos + Casamento)')}
+        ${subRow(nmN,totGastosN,'var(--orange)')}
+        ${subRow(nmA,totGastosA,'var(--purple)')}
+        ${subRow('Total Casal',sumCols(totGastosN,totGastosA),'var(--red)')}
+
+        ${secRow('Caixa Livre')}
+        ${mkCaixaRowM(nmN,caixaN,'var(--orange)')}
+        ${mkCaixaRowM(nmA,caixaA,'var(--purple)')}
+        ${mkCaixaRowM('Total Casal',caixaV,'var(--teal)','caixa-row')}
+
+        ${secRow('Saldo Acumulado')}
+        ${mkAccumRowM(nmN,accumN,'var(--orange)')}
+        ${mkAccumRowM(nmA,accumA,'var(--purple)')}
+        ${mkAccumRowM('Total Casal',accumV,'var(--teal)')}
+      </tbody>
+    </table></div>
+    <p class="note">▶ Clique no nome para expandir · ◆ Mês do casamento · Desvio: verde = abaixo do orçamento, vermelho = acima</p>
+  </div>`;
+}
+</script>
+</body>
+</html>
