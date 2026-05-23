@@ -665,21 +665,42 @@ function rRealizadoMes(mes,nmN,nmA){
       <td id="dev-${mes}-${item.id}">${dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'<span style="color:var(--text3)">—</span>'}</td>
     </tr>`;
   }).join('');
-  const subTot=(items,getplan,label)=>{
+  const subTot=(items,getplan,label,sid)=>{
     let totP=0,totR=0,hasR=false;
-    items.forEach(item=>{const k=rk(mes,item.id),r=S.realizado[k]||{};totP+=getplan(item);if(r.v!==''){totR+=+r.v||0;hasR=true;}});
+    items.forEach(item=>{const k=rk(mes,item.id),r=S.realizado[k]||{v:'',q:'',pn:50,pa:50};totP+=getplan(item);if(r.v!==''){totR+=+r.v||0;hasR=true;}});
     const dev=hasR?totR-totP:null;
-    return`<tr class="real-sub"><td>${label}</td><td style="text-align:right">${fmt(totP)}</td><td style="text-align:right">${hasR?fmt(totR):'—'}</td><td></td><td>${dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'—'}</td></tr>`;
+    return`<tr class="real-sub"><td>${label}</td><td style="text-align:right">${fmt(totP)}</td><td id="srR-${sid}" style="text-align:right">${hasR?fmt(totR):'—'}</td><td></td><td id="srD-${sid}">${dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'—'}</td></tr>`;
   };
   const wedItems=S.casamento.filter(g=>g.resp!=='presente');
   const thead=`<thead><tr><th>Descrição</th><th style="text-align:right">Planejado</th><th style="text-align:right">Realizado (total)</th><th>Quem pagou / % divisão</th><th style="text-align:right">Desvio</th></tr></thead>`;
   el.innerHTML=`
     <div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>Custos Pessoais — ${MNS[+mes.split('-')[1]-1]}/${mes.split('-')[0]}</div>
-      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">${thead}<tbody>${S.custos.length?buildRows(S.custos,c=>planValCus(c,mes))+subTot(S.custos,c=>planValCus(c,mes),'Total Custos'):'<tr><td colspan="5" style="color:var(--text3)">Nenhum custo cadastrado</td></tr>'}</tbody></table></div></div>
+      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">${thead}<tbody>${S.custos.length?buildRows(S.custos,c=>planValCus(c,mes))+subTot(S.custos,c=>planValCus(c,mes),'Total Custos','cus'):'<tr><td colspan="5" style="color:var(--text3)">Nenhum custo cadastrado</td></tr>'}</tbody></table></div></div>
     <div class="card"><div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>Gastos do Casamento — ${MNS[+mes.split('-')[1]-1]}/${mes.split('-')[0]}</div>
-      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">${thead}<tbody>${wedItems.length?buildRows(wedItems,g=>planValWed(g,mes),true)+subTot(wedItems,g=>planValWed(g,mes),'Total Casamento'):'<tr><td colspan="5" style="color:var(--text3)">Nenhum gasto cadastrado</td></tr>'}</tbody></table></div></div>
+      <div class="tbl-wrap"><table class="real-tbl" style="width:100%">${thead}<tbody>${wedItems.length?buildRows(wedItems,g=>planValWed(g,mes),true)+subTot(wedItems,g=>planValWed(g,mes),'Total Casamento','wed'):'<tr><td colspan="5" style="color:var(--text3)">Nenhum gasto cadastrado</td></tr>'}</tbody></table></div></div>
     <p class="note">Quando pago por Ambos, informe o % de cada um para o desvio ser calculado corretamente no BC.</p>`;
 }
+function calcSubTot(items,getplan,mes){
+  let totP=0,totR=0,hasR=false;
+  items.forEach(item=>{
+    const k=mes+'::'+item.id,r=(S.realizado||{})[k]||{v:'',q:'',pn:50,pa:50};
+    totP+=getplan(item,mes);
+    if(r.v!==''){totR+=+r.v||0;hasR=true;}
+  });
+  return{totP,totR,hasR,dev:hasR?totR-totP:null};
+}
+function updSubTotEl(sid,totP,totR,hasR,dev){
+  const rEl=$('srR-'+sid),dEl=$('srD-'+sid);
+  if(rEl)rEl.textContent=hasR?fmt(totR):'—';
+  if(dEl)dEl.innerHTML=dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'—';
+}
+window.refreshSubTots=function(mes){
+  const wedItems=S.casamento.filter(g=>g.resp!=='presente');
+  const c=calcSubTot(S.custos,(item,m)=>planValCus(item,m),mes);
+  updSubTotEl('cus',c.totP,c.totR,c.hasR,c.dev);
+  const w=calcSubTot(wedItems,(item,m)=>planValWed(item,m),mes);
+  updSubTotEl('wed',w.totP,w.totR,w.hasR,w.dev);
+};
 window.upReal=function(mes,id,field,val){
   if(!S.realizado)S.realizado={};
   const k=mes+'::'+id;
@@ -693,6 +714,7 @@ window.upReal=function(mes,id,field,val){
       const item=allItems.find(x=>x.id===id);
       if(item){const plan=S.custos.find(x=>x.id===id)?planValCus(item,mes):planValWed(item,mes),real=r.v!==''?+r.v:null,dev=real!==null?real-plan:null;devEl.innerHTML=dev!==null?`<span class="${dev>0?'dev-neg':'dev-pos'}">${fmtS(dev)}</span>`:'<span style="color:var(--text3)">—</span>';}
     }
+    if(curTab==='realizado')refreshSubTots(mes);
   }
   if(field==='q'&&curTab==='realizado'){const nmN=S.pessoas.noivo.nome||'Noivo',nmA=S.pessoas.noiva.nome||'Noiva';rRealizadoMes(mes,nmN,nmA);}
   qs();if(curTab==='bc')rBCTable();
