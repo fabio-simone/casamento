@@ -791,15 +791,15 @@ function rBCTable(){
   };
   const grpHdrM=(lbl,items,gp,gid,cor,pid)=>{
     const pv=months.map(m=>items.reduce((s,x)=>s+gp(x,m),0));
-    const rv=months.map(m=>items.reduce((s,x)=>{const r=pid?getRealP(x.id,m,pid):getReal(x.id,m);return s+(r!==null?r:gp(x,m));},0));
+    const rv=months.map(m=>items.reduce((s,x)=>{const r=pid?getRealP(x.id,m,pid):getReal(x.id,m);return s+(r!==null?r:0);},0));
     const vals=bcMode==='plan'?pv:bcMode==='real'?rv:months.map((_,i)=>rv[i]-pv[i]);
     const[t,a,ap]=S3(vals),st=bcMode!=='dev'?`;color:${cor}`:'';
     return`<tr class="bc-grp sub-row" onclick="bcToggle('${gid}')"><td class="sticky" style="font-weight:600${st}"><span class="bc-arrow" id="arr-${gid}">&#9654;</span>${lbl}</td>${vals.map((v,i)=>`<td style="text-align:right;font-weight:600;${ws(i)}${bcMode!=='dev'?st:''}">${fv(v)}</td>`).join('')}<td class="sum-sep" style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(t)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(a)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(ap)}</td></tr>`;
   };
-  const grpDetM=(items,gp,gid,pid)=>items.map(item=>`<tr class="bc-det" data-gid="${gid}" style="display:none"><td class="sticky">${esc(item.desc||'(sem nome)')}</td>${months.map((m,i)=>cvM(item.id,gp(item,m),m,i,pid)).join('')}${s3(months.map(m=>{const r=pid?getRealP(item.id,m,pid):getReal(item.id,m),p=gp(item,m);return bcMode==='plan'?p:bcMode==='real'?(r!==null?r:p):(r!==null?r-p:0);}),'500')}</tr>`).join('');
+  const grpDetM=(items,gp,gid,pid)=>items.map(item=>`<tr class="bc-det" data-gid="${gid}" style="display:none"><td class="sticky">${esc(item.desc||'(sem nome)')}</td>${months.map((m,i)=>cvM(item.id,gp(item,m),m,i,pid)).join('')}${s3(months.map(m=>{const r=pid?getRealP(item.id,m,pid):getReal(item.id,m),p=gp(item,m);return bcMode==='plan'?p:bcMode==='real'?(r!==null?r:0):(r!==null?r-p:0);}),'500')}</tr>`).join('');
   const subTotM=(lbl,items,gp,cor)=>{
     const pv=months.map(m=>items.reduce((s,x)=>s+gp(x,m),0));
-    const rv=months.map(m=>items.reduce((s,x)=>{const r=getReal(x.id,m);return s+(r!==null?r:gp(x,m));},0));
+    const rv=months.map(m=>items.reduce((s,x)=>{const r=getReal(x.id,m);return s+(r!==null?r:0);},0));
     const vals=bcMode==='plan'?pv:bcMode==='real'?rv:months.map((_,i)=>rv[i]-pv[i]);
     const[t,a,ap]=S3(vals),st=bcMode!=='dev'&&cor?`;color:${cor}`:'';
     return`<tr class="sub-row"><td class="sticky" style="font-weight:700${st}">${lbl}</td>${vals.map((v,i)=>`<td style="text-align:right;font-weight:700;${ws(i)}${bcMode!=='dev'?st:''}">${fv(v)}</td>`).join('')}<td class="sum-sep" style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(t)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(a)}</td><td style="text-align:right;font-weight:700${bcMode!=='dev'?st:''}">${fv(ap)}</td></tr>`;
@@ -833,6 +833,20 @@ function rBCTable(){
   const accumN=caixaN.map(v=>{aN+=v;return aN;});
   const accumA=caixaA.map(v=>{aA+=v;return aA;});
   const accumV=caixaV.map(v=>{aC+=v;return aC;});
+  /* ── Arrays realizados (para Realizado e Desvio) ── */
+  const totCusNR=months.map((m)=>cusRawN.reduce((s,c)=>{const r=getReal(c.id,m);if(r===null)return s;const pt=planValCus(c,m);return s+(pt>0?r*(gpCusN(c,m)/pt):0);},0));
+  const totCusAR=months.map((m)=>cusRawA.reduce((s,c)=>{const r=getReal(c.id,m);if(r===null)return s;const pt=planValCus(c,m);return s+(pt>0?r*(gpCusA(c,m)/pt):0);},0));
+  const totWNR=months.map((m)=>wRawN.reduce((s,g)=>{const r=getRealP(g.id,m,'noivo');return s+(r!==null?r:0);},0));
+  const totWAR=months.map((m)=>wRawA.reduce((s,g)=>{const r=getRealP(g.id,m,'noiva');return s+(r!==null?r:0);},0));
+  const totGNR=sumCols(totCusNR,totWNR),totGAR=sumCols(totCusAR,totWAR);
+  const caixaNR=months.map((_,i)=>recN[i]-totGNR[i]);
+  const caixaAR=months.map((_,i)=>recA[i]-totGAR[i]);
+  const caixaVR=months.map((_,i)=>caixaNR[i]+caixaAR[i]+totPres[i]);
+  let aNR=0,aAR=0,aCR=0;
+  const accumNR=caixaNR.map(v=>{aNR+=v;return aNR;});
+  const accumAR=caixaAR.map(v=>{aAR+=v;return aAR;});
+  const accumVR=caixaVR.map(v=>{aCR+=v;return aCR;});
+  const modeArr=(p,r)=>bcMode==='plan'?p:bcMode==='real'?r:months.map((_,i)=>r[i]-p[i]);
   const empty=`${months.map(()=>'<td></td>').join('')}<td class="sum-sep"></td><td></td><td></td>`;
   const mHdr=months.map((m,i)=>`<th style="text-align:right;min-width:105px;${i===wIdx?'background:rgba(249,115,22,.1);color:var(--orange)':''}">${MNS[+m.split('-')[1]-1]}/${m.split('-')[0]}${i===wIdx?' ◆':''}</th>`).join('');
 
@@ -862,13 +876,13 @@ function rBCTable(){
         ${subTotM('Total Gastos Casamento',S.casamento.filter(g=>g.resp!=='presente'),(g,m)=>planValWed(g,m),'var(--warn)')}
 
         ${secRow('Total Gastos (Custos + Casamento)')}
-        ${subRow(nmN,totGN,'var(--orange)')}${subRow(nmA,totGA,'var(--purple)')}${subRow('Total Casal',sumCols(totGN,totGA),'var(--red)')}
+        ${subRow(nmN,modeArr(totGN,totGNR),'var(--orange)')}${subRow(nmA,modeArr(totGA,totGAR),'var(--purple)')}${subRow('Total Casal',modeArr(sumCols(totGN,totGA),sumCols(totGNR,totGAR)),'var(--red)')}
 
         ${secRow('Caixa Livre')}
-        ${mkCR(nmN,caixaN,'var(--orange)')}${mkCR(nmA,caixaA,'var(--purple)')}${mkCR('Total Casal',caixaV,'var(--teal)','caixa-row')}
+        ${mkCR(nmN,modeArr(caixaN,caixaNR),'var(--orange)')}${mkCR(nmA,modeArr(caixaA,caixaAR),'var(--purple)')}${mkCR('Total Casal',modeArr(caixaV,caixaVR),'var(--teal)','caixa-row')}
 
         ${secRow('Saldo Acumulado')}
-        ${mkAR(nmN,accumN,'var(--orange)')}${mkAR(nmA,accumA,'var(--purple)')}${mkAR('Total Casal',accumV,'var(--teal)')}
+        ${mkAR(nmN,modeArr(accumN,accumNR),'var(--orange)')}${mkAR(nmA,modeArr(accumA,accumAR),'var(--purple)')}${mkAR('Total Casal',modeArr(accumV,accumVR),'var(--teal)')}
       </tbody>
     </table></div>
     <p class="note">▶ Clique no nome para expandir · ◆ Mês do casamento · Desvio: verde = abaixo do orçamento, vermelho = acima</p>
