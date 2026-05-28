@@ -38,6 +38,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 .sp{font-size:11px;padding:3px 12px;border-radius:20px;border:1px solid transparent;min-width:70px;text-align:center;font-weight:500;transition:all .3s}
 .sp.saving{color:var(--warn);border-color:rgba(251,146,60,.4);background:var(--warn-bg)}
 .sp.saved{color:var(--teal);border-color:rgba(52,211,153,.4);background:var(--teal-bg)}
+.sp.sync{color:var(--purple);border-color:rgba(155,109,255,.4);background:rgba(155,109,255,.08)}
 .sp.err{color:var(--red);border-color:rgba(248,113,113,.4);background:var(--red-bg)}
 .tbar{background:var(--card);border-bottom:1px solid var(--border);display:flex;padding:0 1.5rem;overflow-x:auto}
 .tb{padding:.7rem 1.2rem;font-size:12.5px;color:var(--text2);background:transparent;border:none;border-bottom:2px solid transparent;cursor:pointer;display:flex;align-items:center;gap:7px;white-space:nowrap;transition:color .15s;font-family:inherit;font-weight:400}
@@ -224,6 +225,7 @@ function netP(p){
 }
 
 let lastKnownServerTs=null;
+let isSaving=false;
 
 async function fetchFromServer(){
   const r=await fetch(SB_URL+'/rest/v1/wedding_data?id=eq.main&select=data,updated_at',{headers:SB_H});
@@ -236,60 +238,101 @@ async function fetchFromServer(){
   return null;
 }
 
+// Merge de arrays por id: mantém todos os itens locais + itens remotos
+// cujo id não existe localmente (adicionados pela outra sessão)
+function mergeArr(local,remote){
+  const loc=local||[],rem=remote||[];
+  const ids=new Set(loc.map(x=>x.id));
+  return[...loc,...rem.filter(x=>!ids.has(x.id))];
+}
+
 function mergeState(local,remote){
   if(!remote)return local;
-  // Para arrays de itens com id, o mais recente (pelo ts) vence no nível do array inteiro.
-  // Para realizado (objeto chave→valor) fazemos merge chave a chave.
   const merged={...remote,...local};
-  // Realizado: mescla chave-a-chave para não perder lançamentos de outra sessão
-  merged.realizado={...( remote.realizado||{}),...(local.realizado||{})};
+  // Arrays: merge por id para não perder adições da outra sessão
+  merged.custos=mergeArr(local.custos,remote.custos);
+  merged.casamento=mergeArr(local.casamento,remote.casamento);
+  merged.presentes=mergeArr(local.presentes,remote.presentes);
+  // Realizado: mescla chave a chave
+  merged.realizado={...(remote.realizado||{}),...(local.realizado||{})};
   return merged;
 }
 
+function ensureDefaults(){
+  if(!S.pessoas)S.pessoas={noivo:{nome:'',salario:0,carro:0,espp:0,cc:0,ccInclude:false},noiva:{nome:'',salario:0,carro:0,espp:0,cc:0,ccInclude:false}};
+  if(!S.custos)S.custos=[];if(!S.casamento)S.casamento=[];if(!S.presentes)S.presentes=[];if(!S.realizado)S.realizado={};if(!S.bc)S.bc={data:'',inicio:''};
+}
+
 async function save(){
+  if(isSaving)return;
+  isSaving=true;
   setSP('saving');
   try{
-    // 1. Busca versão atual do servidor
     const serverData=await fetchFromServer();
-    // 2. Merge: mantém dados locais mas recupera o que a outra sessão possa ter adicionado
     S=mergeState(S,serverData);
-    // 3. Garante campos obrigatórios
-    if(!S.pessoas)S.pessoas={noivo:{nome:'',salario:0,carro:0,espp:0},noiva:{nome:'',salario:0,carro:0,espp:0}};
-    if(!S.custos)S.custos=[];if(!S.casamento)S.casamento=[];if(!S.presentes)S.presentes=[];if(!S.realizado)S.realizado={};if(!S.bc)S.bc={data:'',inicio:''};
-    // 4. Persiste o estado mergeado
+    ensureDefaults();
     const now=new Date().toISOString();
     const r=await fetch(SB_URL+'/rest/v1/wedding_data',{method:'POST',headers:{...SB_H,'Prefer':'resolution=merge-duplicates'},body:JSON.stringify({id:'main',data:S,updated_at:now})});
     if(r.ok){lastKnownServerTs=now;setSP('saved');}
     else{console.error(r.status);setSP('err');}
   }catch(e){console.error(e);setSP('err');}
+  finally{isSaving=false;}
 }
 
 async function load(){
   try{
     const d=await fetchFromServer();
-    if(d){
-      S={...S,...d};
-      if(!S.pessoas)S.pessoas={noivo:{nome:'',salario:0,carro:0,espp:0},noiva:{nome:'',salario:0,carro:0,espp:0}};
-      if(!S.custos)S.custos=[];if(!S.casamento)S.casamento=[];if(!S.presentes)S.presentes=[];if(!S.realizado)S.realizado={};if(!S.bc)S.bc={data:'',inicio:''};
-    }
+    if(d){S=mergeState(S,d);ensureDefaults();}
   }catch(e){console.error(e);}
   if(!S.casamento.length)initDef();
   $('loading').style.display='none';$('app-shell').style.display='block';
   renderAll();
 }
+
 function qs(){clearTimeout(saveT);saveT=setTimeout(save,700);}
+
 function setSP(s){
   const el=$('sp');if(!el)return;
   if(s==='saving'){el.textContent='Salvando';el.className='sp saving';}
   else if(s==='saved'){el.textContent='Salvo';el.className='sp saved';setTimeout(()=>{el.textContent='';el.className='sp';},2500);}
+  else if(s==='sync'){el.textContent='↓ Atualizado';el.className='sp sync';setTimeout(()=>{el.textContent='';el.className='sp';},3500);}
   else if(s==='err'){el.textContent='Erro';el.className='sp err';}
   else{el.textContent='';el.className='sp';}
+}
+
+function renderActive(){
+  renderAll();
+  if(curTab==='bc')rBC();
+  if(curTab==='realizado')rRealizado();
+}
+
+// Polling: verifica a cada 12 s se o servidor tem dados mais novos
+async function pollUpdates(){
+  if(isSaving||saveT)return; // não interfere com save em andamento ou pendente
+  try{
+    const r=await fetch(SB_URL+'/rest/v1/wedding_data?id=eq.main&select=updated_at',{headers:SB_H});
+    if(!r.ok)return;
+    const rows=await r.json();
+    const ts=rows&&rows[0]&&rows[0].updated_at;
+    if(!ts||ts===lastKnownServerTs)return;
+    // Servidor tem dados mais recentes — busca e mescla
+    const d=await fetchFromServer();
+    if(!d)return;
+    S=mergeState(S,d);
+    ensureDefaults();
+    // Só re-renderiza se o usuário não estiver digitando num input
+    const ae=document.activeElement;
+    if(!ae||!['INPUT','TEXTAREA','SELECT'].includes(ae.tagName)){
+      renderActive();
+    }
+    setSP('sync');
+  }catch(e){console.error('poll:',e);}
 }
 function initDef(){
   const it=['Buffet','Cerimonialista','Vestido Noiva','Terno Noivo','Foto e Vídeo','Aluguel Carro','Aliança','Maquiagem e Cabelo Noiva'];
   S.casamento=it.map(d=>({id:uid(),desc:d,resp:'ambos',pn:50,pa:50,parc:1,tipo:'fixo',vf:0,vv:[0],inicio:''}));
 }
-function initApp(){$('loading').style.display='flex';load();}
+function initApp(){$('loading').style.display='flex';load().then(()=>setInterval(pollUpdates,12000));}
 
 /* ── MONTH PICKER ── */
 const mpSt={};
