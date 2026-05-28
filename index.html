@@ -282,7 +282,8 @@ async function save(){
 async function load(){
   try{
     const d=await fetchFromServer();
-    if(d){S=mergeState(S,d);ensureDefaults();}
+    // load inicial: servidor ganha completamente (S local é só defaults vazios)
+    if(d){S={...S,...d};ensureDefaults();}
   }catch(e){console.error(e);}
   if(!S.casamento.length)initDef();
   $('loading').style.display='none';$('app-shell').style.display='block';
@@ -315,10 +316,10 @@ async function pollUpdates(){
     const rows=await r.json();
     const ts=rows&&rows[0]&&rows[0].updated_at;
     if(!ts||ts===lastKnownServerTs)return;
-    // Servidor tem dados mais recentes — busca e mescla
+    // Servidor tem dados mais recentes e não há edições pendentes → servidor ganha
     const d=await fetchFromServer();
     if(!d)return;
-    S=mergeState(S,d);
+    S={...S,...d};
     ensureDefaults();
     // Só re-renderiza se o usuário não estiver digitando num input
     const ae=document.activeElement;
