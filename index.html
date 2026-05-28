@@ -203,7 +203,7 @@ const sumArr=a=>a.reduce((s,v)=>s+v,0);
 
 let curTab='receitas',saveT=null,bcMode='plan',realizadoMes='';
 let S={
-  pessoas:{noivo:{nome:'',salario:0,carro:0,espp:0},noiva:{nome:'',salario:0,carro:0,espp:0}},
+  pessoas:{noivo:{nome:'',salario:0,carro:0,espp:0,cc:0,ccInclude:false},noiva:{nome:'',salario:0,carro:0,espp:0,cc:0,ccInclude:false}},
   custos:[],casamento:[],presentes:[],realizado:{},bc:{data:'',inicio:''}
 };
 
@@ -377,6 +377,14 @@ function rReceitas(){
       <div class="mb"><label class="fl">Salário Bruto (R$)</label><input class="fi" type="number" value="${p.salario||''}" placeholder="0" min="0" oninput="upP('${pid}','salario',+this.value||0);rRec()"></div>
       <div class="mb"><label class="fl">Dedução Carro (R$/mês)</label><input class="fi" type="number" value="${p.carro||''}" placeholder="0" min="0" oninput="upP('${pid}','carro',+this.value||0);rRec()"></div>
       <div class="mb"><label class="fl">ESPP (% do salário bruto)</label><input class="fi" type="number" value="${p.espp||''}" placeholder="0" min="0" max="100" oninput="upP('${pid}','espp',+this.value||0);rRec()"></div>
+      <div class="mb" style="border-top:1px solid var(--border);padding-top:.85rem;margin-top:.25rem">
+        <label class="fl">Saldo em Conta Corrente (R$)</label>
+        <div style="display:flex;gap:8px;align-items:center">
+          <input class="fi" type="number" value="${p.cc||''}" placeholder="0" style="flex:1" oninput="upP('${pid}','cc',+this.value||0)">
+          <button onclick="toggleCC('${pid}')" style="white-space:nowrap;padding:6px 13px;border-radius:20px;border:1px solid ${p.ccInclude?'rgba(52,211,153,.5)':'var(--border2)'};background:${p.ccInclude?'var(--teal-bg)':'transparent'};color:${p.ccInclude?'var(--teal)':'var(--text3)'};font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s">${p.ccInclude?'✓ No saldo inicial':'+ No saldo inicial'}</button>
+        </div>
+        <p class="note" style="margin-top:.45rem">${p.ccInclude?'Este saldo está sendo usado como ponto de partida no Saldo Acumulado do BC.':'Ativar para usar como ponto de partida no Saldo Acumulado do BC.'}</p>
+      </div>
       <div id="calc-${pid}"></div>
     </div>`;
   };
@@ -414,7 +422,8 @@ function updCasal(){
   <p class="note">Tabelas progressivas INSS e IRPF 2024/2025 — ESPP e carro deduzidos do líquido</p>`;
 }
 window.rRec=function(){updCalc('noivo');updCalc('noiva');updCasal();};
-window.upP=function(pid,f,v){S.pessoas[pid][f]=v;const t=$('ttl-'+pid);if(f==='nome'&&t)t.textContent=v||(pid==='noivo'?'Noivo':'Noiva');qs();};
+window.upP=function(pid,f,v){S.pessoas[pid][f]=v;const t=$('ttl-'+pid);if(f==='nome'&&t)t.textContent=v||(pid==='noivo'?'Noivo':'Noiva');if(f==='cc'&&curTab==='bc')rBCTable();qs();};
+window.toggleCC=function(pid){const p=S.pessoas[pid];p.ccInclude=!p.ccInclude;rReceitas();if(curTab==='bc')rBCTable();qs();};
 
 /* ── PRESENTES ── */
 function rPresentes(){
@@ -829,7 +838,9 @@ function rBCTable(){
   const caixaN=months.map((_,i)=>recN[i]-totGN[i]);
   const caixaA=months.map((_,i)=>recA[i]-totGA[i]);
   const caixaV=months.map((_,i)=>caixaN[i]+caixaA[i]+totPres[i]);
-  let aN=0,aA=0,aC=0;
+  const iniN=S.pessoas.noivo.ccInclude?(S.pessoas.noivo.cc||0):0;
+  const iniA=S.pessoas.noiva.ccInclude?(S.pessoas.noiva.cc||0):0;
+  let aN=iniN,aA=iniA,aC=iniN+iniA;
   const accumN=caixaN.map(v=>{aN+=v;return aN;});
   const accumA=caixaA.map(v=>{aA+=v;return aA;});
   const accumV=caixaV.map(v=>{aC+=v;return aC;});
@@ -842,7 +853,7 @@ function rBCTable(){
   const caixaNR=months.map((_,i)=>recN[i]-totGNR[i]);
   const caixaAR=months.map((_,i)=>recA[i]-totGAR[i]);
   const caixaVR=months.map((_,i)=>caixaNR[i]+caixaAR[i]+totPres[i]);
-  let aNR=0,aAR=0,aCR=0;
+  let aNR=iniN,aAR=iniA,aCR=iniN+iniA;
   const accumNR=caixaNR.map(v=>{aNR+=v;return aNR;});
   const accumAR=caixaAR.map(v=>{aAR+=v;return aAR;});
   const accumVR=caixaVR.map(v=>{aCR+=v;return aCR;});
