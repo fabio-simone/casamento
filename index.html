@@ -195,6 +195,7 @@ const uid=()=>Math.random().toString(36).substr(2,9);
 const esc=s=>String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');
 const fmt=v=>'R$\u00a0'+(+v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
 const fmtS=v=>(v>=0?'+':'')+fmt(v);
+const parseNum=s=>{const t=String(s||'').trim().replace(/\s/g,'');if(!t)return 0;const d=t.lastIndexOf('.'),c=t.lastIndexOf(',');if(d>-1&&c>-1)return parseFloat(c>d?t.replace(/\./g,'').replace(',','.'):t.replace(/,/g,''))||0;if(c>-1)return parseFloat(t.replace(',','.'))||0;return parseFloat(t)||0;};
 const fmtMV=s=>{if(!s)return'';const[y,m]=s.split('-').map(Number);return MN[m-1]+' / '+y;};
 const mToD=s=>{if(!s)return null;const[y,m]=s.split('-').map(Number);return new Date(y,m-1,1);};
 const addM=(d,n)=>{const r=new Date(d);r.setMonth(r.getMonth()+n);return r;};
@@ -418,13 +419,13 @@ function rReceitas(){
     return`<div class="card">
       <div class="ct"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${cor}" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="ttl-${pid}">${esc(p.nome)||lbl}</span></div>
       <div class="mb"><label class="fl">Nome</label><input class="fi" type="text" value="${esc(p.nome)}" placeholder="${lbl}" oninput="upP('${pid}','nome',this.value)"></div>
-      <div class="mb"><label class="fl">Salário Bruto (R$)</label><input class="fi" type="number" value="${p.salario||''}" placeholder="0" min="0" oninput="upP('${pid}','salario',+this.value||0);rRec()"></div>
-      <div class="mb"><label class="fl">Dedução Carro (R$/mês)</label><input class="fi" type="number" value="${p.carro||''}" placeholder="0" min="0" oninput="upP('${pid}','carro',+this.value||0);rRec()"></div>
-      <div class="mb"><label class="fl">ESPP (% do salário bruto)</label><input class="fi" type="number" value="${p.espp||''}" placeholder="0" min="0" max="100" oninput="upP('${pid}','espp',+this.value||0);rRec()"></div>
+      <div class="mb"><label class="fl">Salário Bruto (R$)</label><input class="fi" type="text" inputmode="decimal" value="${p.salario||''}" placeholder="0" oninput="upP('${pid}','salario',parseNum(this.value));rRec()"></div>
+      <div class="mb"><label class="fl">Dedução Carro (R$/mês)</label><input class="fi" type="text" inputmode="decimal" value="${p.carro||''}" placeholder="0" oninput="upP('${pid}','carro',parseNum(this.value));rRec()"></div>
+      <div class="mb"><label class="fl">ESPP (% do salário bruto)</label><input class="fi" type="text" inputmode="decimal" value="${p.espp||''}" placeholder="0" oninput="upP('${pid}','espp',parseNum(this.value));rRec()"></div>
       <div class="mb" style="border-top:1px solid var(--border);padding-top:.85rem;margin-top:.25rem">
         <label class="fl">Saldo em Conta Corrente (R$)</label>
         <div style="display:flex;gap:8px;align-items:center">
-          <input class="fi" type="number" value="${p.cc||''}" placeholder="0" style="flex:1" oninput="upP('${pid}','cc',+this.value||0)">
+          <input class="fi" type="text" inputmode="decimal" value="${p.cc||''}" placeholder="0" style="flex:1" oninput="upP('${pid}','cc',parseNum(this.value))">
           <button onclick="toggleCC('${pid}')" style="white-space:nowrap;padding:6px 13px;border-radius:20px;border:1px solid ${p.ccInclude?'rgba(52,211,153,.5)':'var(--border2)'};background:${p.ccInclude?'var(--teal-bg)':'transparent'};color:${p.ccInclude?'var(--teal)':'var(--text3)'};font-size:11.5px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .2s">${p.ccInclude?'✓ No saldo inicial':'+ No saldo inicial'}</button>
         </div>
         <p class="note" style="margin-top:.45rem">${p.ccInclude?'Este saldo está sendo usado como ponto de partida no Saldo Acumulado do BC.':'Ativar para usar como ponto de partida no Saldo Acumulado do BC.'}</p>
@@ -474,8 +475,8 @@ function rPresentes(){
   const tbody=$('pres-body');if(!tbody)return;
   tbody.innerHTML=(S.presentes||[]).map(p=>{
     let vc=p.tipo==='fixo'
-      ?`<input class="tc" type="number" value="${p.vf||0}" style="width:100px;text-align:right" oninput="upPres('${p.id}','vf',+this.value||0);updPresTotal('${p.id}')">`
-      :Array.from({length:p.parc||1},(_,i)=>`<input class="tc" type="number" value="${(p.vv||[])[i]||0}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upPresV('${p.id}',${i},+this.value||0);updPresTotal('${p.id}')">`).join('');
+      ?`<input class="tc" type="text" inputmode="decimal" value="${p.vf||''}" placeholder="0" style="width:100px;text-align:right" oninput="upPres('${p.id}','vf',parseNum(this.value));updPresTotal('${p.id}')">`
+      :Array.from({length:p.parc||1},(_,i)=>`<input class="tc" type="text" inputmode="decimal" value="${(p.vv||[])[i]||''}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upPresV('${p.id}',${i},parseNum(this.value));updPresTotal('${p.id}')">`).join('');
     if(p.tipo==='variavel')vc=`<div style="display:flex;flex-wrap:wrap;gap:2px">${vc}</div>`;
     const t=p.tipo==='fixo'?(p.vf||0)*(p.parc||1):(p.vv||[]).reduce((s,v)=>s+(v||0),0);
     return`<tr>
@@ -515,7 +516,7 @@ function rCustos(){
       <td><input class="tc" type="text" value="${esc(c.desc)}" placeholder="ex: Condomínio" style="min-width:140px" onchange="upC('${c.id}','desc',this.value)"></td>
       <td><select class="tc" onchange="upC('${c.id}','cat',this.value)"><option value="fixo"${c.cat==='fixo'?' selected':''}>Fixo</option><option value="variavel"${c.cat==='variavel'?' selected':''}>Variável</option></select></td>
       <td><select class="tc" onchange="upC('${c.id}','resp',this.value)" style="min-width:115px"><option value="ambos"${c.resp==='ambos'?' selected':''}>Ambos (50/50)</option><option value="noivo"${c.resp==='noivo'?' selected':''}>Noivo</option><option value="noiva"${c.resp==='noiva'?' selected':''}>Noiva</option></select></td>
-      <td style="text-align:right"><input class="tc" type="number" value="${c.val||0}" style="width:100px;text-align:right" onchange="upC('${c.id}','val',+this.value||0);cCRes()"></td>
+      <td style="text-align:right"><input class="tc" type="text" inputmode="decimal" value="${c.val||''}" placeholder="0" style="width:100px;text-align:right" oninput="upC('${c.id}','val',parseNum(this.value));cCRes()"></td>
       <td><select class="tc" onchange="upCRec('${c.id}',this.value)" style="min-width:115px"><option value="recorrente"${isRec?' selected':''}>Recorrente</option><option value="unico"${!isRec?' selected':''}>Único</option></select></td>
       ${mesCell}
       <td><button class="badb" onclick="rmC('${c.id}')"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>
@@ -595,8 +596,8 @@ function rGBody(){
       ?`<div style="display:flex;align-items:center;gap:5px;min-width:110px"><input class="tc" type="number" value="${pn}" min="0" max="100" style="width:48px;text-align:center" id="pn-${g.id}" onchange="upGP('${g.id}','pn',+this.value)"><span style="color:var(--text3)">/</span><input class="tc" type="number" value="${pa}" min="0" max="100" style="width:48px;text-align:center" id="pa-${g.id}" onchange="upGP('${g.id}','pa',+this.value)"></div>`
       :`<span style="color:var(--text3);font-size:11px">${g.resp==='presente'?'Externo':'100%'}</span>`;
     let vc=g.tipo==='fixo'
-      ?`<input class="tc" type="number" value="${g.vf||0}" style="width:100px;text-align:right" oninput="upG('${g.id}','vf',+this.value||0);updGTotal('${g.id}')">`
-      :Array.from({length:g.parc||1},(_,i)=>`<input class="tc" type="number" value="${(g.vv||[])[i]||0}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upGV('${g.id}',${i},+this.value||0);updGTotal('${g.id}')">`).join('');
+      ?`<input class="tc" type="text" inputmode="decimal" value="${g.vf||''}" placeholder="0" style="width:100px;text-align:right" oninput="upG('${g.id}','vf',parseNum(this.value));updGTotal('${g.id}')">`
+      :Array.from({length:g.parc||1},(_,i)=>`<input class="tc" type="text" inputmode="decimal" value="${(g.vv||[])[i]||''}" placeholder="parc.${i+1}" style="width:72px;text-align:right;margin:1px" oninput="upGV('${g.id}',${i},parseNum(this.value));updGTotal('${g.id}')">`).join('');
     if(g.tipo==='variavel')vc=`<div style="display:flex;flex-wrap:wrap;gap:2px">${vc}</div>`;
     const{t,n,a}=gTot(g);
     const split=g.resp==='ambos'&&t>0?`<div style="font-size:10px;color:var(--text3);margin-top:3px;line-height:1.6">${fmt(n)}<br>${fmt(a)}</div>`:'';
@@ -705,7 +706,7 @@ function rRealizadoMes(mes,nmN,nmA){
     return`<tr>
       <td style="color:var(--text)">${esc(item.desc||'(sem nome)')}</td>
       <td style="text-align:right;color:var(--text2)">${plan?fmt(plan):'—'}</td>
-      <td style="text-align:right"><input class="tc" type="number" value="${r.v!==''?r.v:''}" placeholder="0" style="width:110px;text-align:right" oninput="upReal('${mes}','${item.id}','v',this.value)"></td>
+      <td style="text-align:right"><input class="tc" type="text" inputmode="decimal" value="${r.v!==''?r.v:''}" placeholder="0" style="width:110px;text-align:right" oninput="upReal('${mes}','${item.id}','v',this.value)"></td>
       <td>
         <select class="tc" style="min-width:100px" onchange="upReal('${mes}','${item.id}','q',this.value)">
           <option value=""${!r.q?' selected':''}>—</option>
@@ -758,7 +759,7 @@ window.upReal=function(mes,id,field,val){
   if(!S.realizado)S.realizado={};
   const k=mes+'::'+id;
   if(!S.realizado[k])S.realizado[k]={v:'',q:'',pn:50,pa:50};
-  if(field==='v')S.realizado[k].v=val===''?'':+val||0;
+  if(field==='v')S.realizado[k].v=val===''?'':parseNum(val);
   else S.realizado[k][field]=val;
   if(field==='v'){
     const devEl=$('dev-'+mes+'-'+id);
