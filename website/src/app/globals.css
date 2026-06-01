@@ -1,0 +1,56 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-offwhite text-urbano font-sans antialiased;
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-5 sm:px-8;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-oceano px-6 py-3
+           text-sm font-semibold uppercase tracking-wide text-offwhite shadow-md
+           transition hover:bg-oceano/90 hover:shadow-lg active:scale-95 disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-oceano
+           bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wide
+           text-oceano transition hover:bg-oceano hover:text-offwhite active:scale-95;
+  }
+
+  .section-title {
+    @apply font-display text-3xl font-bold text-urbano sm:text-4xl md:text-5xl;
+  }
+
+  .eyebrow {
+    @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-oceano;
+  }
+
+  .card {
+    @apply rounded-2xl border border-areia/70 bg-white p-6 shadow-sm;
+  }
+}
+
+/* Padrão sutil de ondas como textura de fundo */
+.bg-calcadao {
+  background-image: repeating-linear-gradient(
+    45deg,
+    rgba(0, 105, 148, 0.04) 0px,
+    rgba(0, 105, 148, 0.04) 12px,
+    transparent 12px,
+    transparent 24px
+  );
+}
