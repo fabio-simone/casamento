@@ -1,54 +1,17 @@
 import type { Metadata } from "next";
+import { Camera } from "lucide-react";
 import { Recados } from "@/components/Recados";
 import { WaveDivider } from "@/components/WaveDivider";
 import { SaoPauloSilhouette } from "@/components/SaoPauloSilhouette";
+import { getContent } from "@/lib/content";
+import { WEDDING } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Nossa História" };
+export const dynamic = "force-dynamic";
 
-const timeline = [
-  {
-    ano: "O encontro",
-    titulo: "Ela do Rio, ele de SP",
-    texto:
-      "Karina dizia 'maravilhoso', Fabio respondia 'mano, que isso'. Foi amor à primeira tradução simultânea.",
-    emoji: "💘",
-    lado: "rio",
-  },
-  {
-    ano: "O primeiro date",
-    titulo: "Praia ou rodízio?",
-    texto:
-      "Empate técnico: foram à praia de manhã (ideia dela) e a um rodízio de pizza à noite (ideia dele). Ninguém saiu perdendo.",
-    emoji: "🍕",
-    lado: "sp",
-  },
-  {
-    ano: "A primeira viagem",
-    titulo: "Ponte aérea oficial",
-    texto:
-      "A GOL e a LATAM deviam dar milhas extras pra esse casal. Rio–SP virou rotina, e a sogra ganhou quarto fixo nas duas cidades.",
-    emoji: "✈️",
-    lado: "rio",
-  },
-  {
-    ano: "O pedido",
-    titulo: "Sim, com sotaque",
-    texto:
-      "Ele ensaiou em 'paulistanês', ela respondeu em 'carioquês'. No fim, o 'sim' é universal — e veio com choro dos dois.",
-    emoji: "💍",
-    lado: "sp",
-  },
-  {
-    ano: "Agora",
-    titulo: "22/11 — o grande dia",
-    texto:
-      "Onde o oceano de Copacabana encontra o concreto da Paulista. Vem ver de perto essa fusão dar certo.",
-    emoji: "🌊",
-    lado: "rio",
-  },
-];
+export default async function NossaHistoriaPage() {
+  const content = await getContent();
 
-export default function NossaHistoriaPage() {
   return (
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite py-16 text-center md:py-20">
@@ -57,9 +20,18 @@ export default function NossaHistoriaPage() {
           <h1 className="section-title mx-auto max-w-2xl">
             Como o Rio e SP decidiram morar juntos
           </h1>
-          <p className="mx-auto mt-4 max-w-xl text-urbano/70">
-            Spoiler: deu certo. Uma linha do tempo (bem-humorada) da gente.
-          </p>
+          <p className="mx-auto mt-4 max-w-xl text-urbano/70">{content.historia_intro}</p>
+
+          {content.historia_foto && (
+            <div className="mx-auto mt-8 max-w-md overflow-hidden rounded-2xl border-4 border-white shadow-xl">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={content.historia_foto}
+                alt={WEDDING.noivos}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          )}
         </div>
       </section>
 
@@ -70,7 +42,7 @@ export default function NossaHistoriaPage() {
         <div className="relative mx-auto max-w-3xl">
           <div className="absolute left-4 top-0 h-full w-0.5 bg-areia md:left-1/2 md:-translate-x-1/2" aria-hidden />
           <ul className="space-y-10">
-            {timeline.map((item, i) => (
+            {content.timeline.map((item, i) => (
               <li
                 key={i}
                 className={`relative pl-12 md:w-1/2 md:pl-0 ${
@@ -78,24 +50,30 @@ export default function NossaHistoriaPage() {
                 }`}
               >
                 <span
-                  className={`absolute top-1 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white shadow ${
+                  className={`absolute top-2 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white shadow ${
                     item.lado === "rio" ? "bg-oceano" : "bg-urbano"
-                  } left-0 text-sm md:left-auto ${
-                    i % 2 === 0 ? "md:-right-4" : "md:-left-4"
-                  }`}
-                >
-                  {item.emoji}
-                </span>
+                  } left-[9px] md:left-auto ${i % 2 === 0 ? "md:-right-2" : "md:-left-2"}`}
+                />
                 <div className="card">
                   <span className="eyebrow">{item.ano}</span>
                   <h3 className="font-display text-xl font-bold text-urbano">
                     {item.titulo}
                   </h3>
                   <p className="mt-2 text-urbano/70">{item.texto}</p>
-                  {/* placeholder de foto */}
-                  <div className="mt-4 flex aspect-video items-center justify-center rounded-xl bg-areia/40 text-xs text-urbano/40">
-                    📸 Foto (em breve)
-                  </div>
+                  {item.foto ? (
+                    <div className="mt-4 overflow-hidden rounded-xl">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.foto}
+                        alt={item.titulo}
+                        className="aspect-video w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="mt-4 flex aspect-video items-center justify-center gap-2 rounded-xl bg-areia/40 text-xs text-urbano/40">
+                      <Camera className="h-4 w-4" strokeWidth={1.5} /> Foto em breve
+                    </div>
+                  )}
                 </div>
               </li>
             ))}

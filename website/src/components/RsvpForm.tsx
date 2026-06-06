@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle2 } from "lucide-react";
 
 interface FormState {
   nome: string;
@@ -51,7 +52,7 @@ export function RsvpForm() {
   if (status === "ok") {
     return (
       <div className="card mx-auto max-w-lg text-center">
-        <span className="text-5xl">🎉</span>
+        <CheckCircle2 className="mx-auto h-12 w-12 text-oceano" strokeWidth={1.5} />
         <h2 className="mt-4 font-display text-2xl font-bold text-oceano">
           Presença confirmada!
         </h2>

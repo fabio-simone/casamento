@@ -1,3 +1,4 @@
+import { ClipboardCheck, Users, Wallet, Gift, type LucideIcon } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGiftsWithQuotas } from "@/lib/gifts";
 import { formatBRL } from "@/lib/utils";
@@ -25,11 +26,11 @@ export default async function AdminDashboard() {
     if (pagas >= g.num_cotas) presentesCompletos += 1;
   }
 
-  const cards = [
-    { label: "Confirmações (RSVP)", value: totalConfirmacoes, icon: "✅" },
-    { label: "Total de pessoas", value: totalPessoas, icon: "👥" },
-    { label: "Arrecadado em presentes", value: formatBRL(arrecadado), icon: "💰" },
-    { label: "Presentes 100% pagos", value: `${presentesCompletos} / ${gifts.length}`, icon: "🎁" },
+  const cards: { label: string; value: string | number; icon: LucideIcon }[] = [
+    { label: "Confirmações (RSVP)", value: totalConfirmacoes, icon: ClipboardCheck },
+    { label: "Total de pessoas", value: totalPessoas, icon: Users },
+    { label: "Arrecadado em presentes", value: formatBRL(arrecadado), icon: Wallet },
+    { label: "Presentes 100% pagos", value: `${presentesCompletos} / ${gifts.length}`, icon: Gift },
   ];
 
   return (
@@ -38,13 +39,16 @@ export default async function AdminDashboard() {
       <p className="mt-1 text-urbano/60">Visão geral do casamento Fabio &amp; Karina.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((c) => (
+        {cards.map((c) => {
+          const Icon = c.icon;
+          return (
           <div key={c.label} className="card">
-            <span className="text-3xl">{c.icon}</span>
+            <Icon className="h-7 w-7 text-oceano" strokeWidth={1.5} />
             <p className="mt-3 text-2xl font-bold text-oceano">{c.value}</p>
             <p className="text-sm text-urbano/60">{c.label}</p>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="mt-10">

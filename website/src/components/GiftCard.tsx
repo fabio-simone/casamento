@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Gift } from "lucide-react";
 import type { GiftWithQuotas } from "@/lib/types";
 import { formatBRL } from "@/lib/utils";
 import { GiftModal } from "./GiftModal";
@@ -20,9 +21,14 @@ export function GiftCard({ gift }: { gift: GiftWithQuotas }) {
         <div className="mb-4 flex aspect-video items-center justify-center overflow-hidden rounded-xl bg-areia/40">
           {gift.foto_url ? (
             // eslint-disable-next-line @next/next/no-img-element
-            <img src={gift.foto_url} alt={gift.nome} className="h-full w-full object-cover" />
+            <img
+              src={gift.foto_url}
+              alt={gift.nome}
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
           ) : (
-            <span className="text-5xl">🎁</span>
+            <Gift className="h-12 w-12 text-oceano/40" strokeWidth={1.25} />
           )}
         </div>
 

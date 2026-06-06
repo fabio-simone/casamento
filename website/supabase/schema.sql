@@ -53,6 +53,13 @@ create table if not exists public.recados (
   created_at timestamptz not null default now()
 );
 
+-- ─── Conteúdo editável do site (textos/fotos via /admin/conteudo) ──
+create table if not exists public.site_settings (
+  key        text primary key,
+  value      text,
+  updated_at timestamptz not null default now()
+);
+
 -- ============================================================
 -- Row Level Security
 -- O app acessa os dados pelo lado servidor usando a SERVICE ROLE
@@ -60,10 +67,11 @@ create table if not exists public.recados (
 -- políticas para o papel anônimo — ninguém lê/escreve direto do
 -- navegador com a anon key. Auth do admin usa o Supabase Auth.
 -- ============================================================
-alter table public.rsvps       enable row level security;
-alter table public.gifts       enable row level security;
-alter table public.gift_quotas enable row level security;
-alter table public.recados     enable row level security;
+alter table public.rsvps         enable row level security;
+alter table public.gifts         enable row level security;
+alter table public.gift_quotas   enable row level security;
+alter table public.recados       enable row level security;
+alter table public.site_settings enable row level security;
 
 -- (Sem políticas para anon = acesso negado por padrão. Service role bypassa.)
 

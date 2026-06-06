@@ -1,0 +1,52 @@
+import { NextResponse } from "next/server";
+import { getAdminUser } from "@/lib/auth-api";
+import { createAdminClient } from "@/lib/supabase/admin";
+
+/**
+ * Salva o conteúdo editável do site na tabela site_settings (upsert por chave).
+ * Body: { hero_foto, hero_sub, historia_intro, historia_foto, timeline[] }
+ */
+export async function POST(req: Request) {
+  const user = await getAdminUser();
+  if (!user) return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
+
+  try {
+    const body = await req.json();
+
+    const rows: { key: string; value: string; updated_at: string }[] = [];
+    const now = new Date().toISOString();
+    const push = (key: string, value: unknown) =>
+      rows.push({ key, value: value == null ? "" : String(value), updated_at: now });
+
+    push("hero_foto", body.hero_foto);
+    push("hero_sub", body.hero_sub);
+    push("historia_intro", body.historia_intro);
+    push("historia_foto", body.historia_foto);
+
+    if (Array.isArray(body.timeline)) {
+      rows.push({
+        key: "historia_timeline",
+        value: JSON.stringify(body.timeline),
+        updated_at: now,
+      });
+    }
+
+    const supabase = createAdminClient();
+    const { error } = await supabase
+      .from("site_settings")
+      .upsert(rows, { onConflict: "key" });
+
+    if (error) {
+      console.error("[settings] upsert error", error);
+      return NextResponse.json(
+        { error: "Erro ao salvar. A tabela site_settings existe?" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("[settings] unexpected", e);
+    return NextResponse.json({ error: "Erro inesperado." }, { status: 500 });
+  }
+}

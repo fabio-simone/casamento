@@ -2,51 +2,67 @@ import { cn } from "@/lib/utils";
 
 /**
  * Silhueta estilizada do estado de São Paulo — referência às calçadas
- * paulistanas onde o mapa do estado aparece desenhado.
- * Caminho aproximado/decorativo (não cartográfico).
+ * paulistanas. Versão flat: apenas contorno (stroke), sem preenchimento.
  */
 export function SaoPauloSilhouette({
   className,
-  fill = "#3A3A3A",
+  stroke = "#3A3A3A",
 }: {
   className?: string;
-  fill?: string;
+  stroke?: string;
 }) {
   return (
     <svg
       viewBox="0 0 200 140"
       className={cn("h-auto w-full", className)}
+      fill="none"
       aria-hidden
     >
       <path
         d="M18,52 L40,40 L62,46 L84,34 L110,40 L140,30 L168,44 L186,62 L180,84
            L160,96 L150,116 L128,120 L104,110 L86,118 L64,108 L44,112 L28,96
            L34,76 L20,66 Z"
-        fill={fill}
+        stroke={stroke}
+        strokeWidth="3"
+        strokeLinejoin="round"
       />
     </svg>
   );
 }
 
-/** Versão "selo" combinando onda + silhueta — o ícone do casamento. */
-export function RioSpEmblem({ className }: { className?: string }) {
+/**
+ * Emblema do casamento: onda (Rio) + traço de SP, tudo em linha fina,
+ * sem preenchimento nem sombra. Minimalista.
+ */
+export function RioSpEmblem({
+  className,
+  stroke = "#006994",
+}: {
+  className?: string;
+  stroke?: string;
+}) {
   return (
-    <svg viewBox="0 0 120 120" className={cn("h-auto w-full", className)} aria-hidden>
-      <circle cx="60" cy="60" r="58" fill="none" stroke="#006994" strokeWidth="3" />
-      {/* onda (Rio) na metade superior */}
+    <svg
+      viewBox="0 0 120 120"
+      className={cn("h-auto w-full", className)}
+      fill="none"
+      aria-hidden
+    >
+      <circle cx="60" cy="60" r="54" stroke={stroke} strokeWidth="2.5" />
+      {/* onda (Rio) */}
       <path
-        d="M16,52 C28,40 40,64 52,52 C64,40 76,64 88,52 C96,44 104,52 104,52"
-        fill="none"
-        stroke="#006994"
-        strokeWidth="4"
+        d="M28,54 C38,44 48,64 58,54 C68,44 78,64 88,54"
+        stroke={stroke}
+        strokeWidth="2.5"
         strokeLinecap="round"
       />
-      {/* silhueta SP simplificada na metade inferior */}
+      {/* linha do horizonte / SP */}
       <path
-        d="M30,74 L44,68 L58,72 L74,66 L90,74 L84,86 L72,92 L58,88 L44,92 L34,84 Z"
-        fill="#E8D5B0"
-        stroke="#3A3A3A"
-        strokeWidth="1.5"
+        d="M32,74 L48,68 L62,72 L78,66 L90,74"
+        stroke={stroke}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       />
     </svg>
   );

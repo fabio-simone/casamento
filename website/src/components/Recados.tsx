@@ -51,7 +51,7 @@ export function Recados() {
     <div className="grid gap-8 md:grid-cols-2">
       <form onSubmit={submit} className="card h-fit">
         <h3 className="font-display text-2xl font-bold text-urbano">
-          Deixe um recado 💌
+          Deixe um recado
         </h3>
         <p className="mt-1 text-sm text-urbano/60">
           Sem torcida proibida — exceto se for contra os dois ao mesmo tempo.

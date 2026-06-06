@@ -1,18 +1,22 @@
 import Link from "next/link";
 import { WEDDING } from "@/lib/constants";
-import { CopacabanaWaves } from "./WaveDivider";
+import { WaveDivider } from "./WaveDivider";
 
 export function Footer() {
   return (
-    <footer className="mt-20 bg-urbano text-offwhite">
-      <CopacabanaWaves className="opacity-30" />
+    <footer className="mt-24 bg-urbano text-offwhite">
+      {/* transição suave da página (off-white) para o rodapé (escuro) */}
+      <div className="bg-offwhite">
+        <WaveDivider color="#3A3A3A" />
+      </div>
+
       <div className="container-page grid gap-8 py-12 sm:grid-cols-3">
         <div>
           <h3 className="font-display text-2xl font-bold">{WEDDING.noivos}</h3>
           <p className="mt-2 text-sm text-offwhite/70">
             {WEDDING.dataExtenso} · {WEDDING.cidade}
           </p>
-          <p className="mt-1 text-sm text-offwhite/50">O Rio encontra SP 🌊🏙️</p>
+          <p className="mt-1 text-sm text-offwhite/50">O Rio encontra SP</p>
         </div>
         <div>
           <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-areia">

@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Onda do calçadão de Copacabana (padrão português preto-e-branco em curvas).
- * Usado como separador de seções. `flip` inverte verticalmente.
+ * Separador de seções em forma de onda suave — referência ao calçadão
+ * de Copacabana, mas minimalista (uma curva limpa). `flip` inverte.
  */
 export function WaveDivider({
   className,
@@ -20,18 +20,13 @@ export function WaveDivider({
       aria-hidden
     >
       <svg
-        viewBox="0 0 1200 60"
+        viewBox="0 0 1440 80"
         preserveAspectRatio="none"
-        className="h-[40px] w-full md:h-[60px]"
+        className="h-[36px] w-full md:h-[56px]"
       >
         <path
-          d="M0,30 C150,0 300,60 450,30 C600,0 750,60 900,30 C1050,0 1150,50 1200,30 L1200,60 L0,60 Z"
+          d="M0,40 C240,80 480,80 720,40 C960,0 1200,0 1440,40 L1440,80 L0,80 Z"
           fill={color}
-        />
-        <path
-          d="M0,40 C150,15 300,65 450,40 C600,15 750,65 900,40 C1050,15 1150,55 1200,40 L1200,60 L0,60 Z"
-          fill={color}
-          opacity="0.45"
         />
       </svg>
     </div>
@@ -39,8 +34,8 @@ export function WaveDivider({
 }
 
 /**
- * Faixa de ondas animadas de Copacabana — calçadão estilizado em movimento.
- * Decorativo, fica bem como fundo de hero ou rodapé de seção.
+ * Faixa de ondas finas (estilo calçadão), estática e encaixada — usada
+ * como detalhe sutil. Sem animação, linhas finas, visual limpo.
  */
 export function CopacabanaWaves({ className }: { className?: string }) {
   return (
@@ -48,29 +43,26 @@ export function CopacabanaWaves({ className }: { className?: string }) {
       className={cn("pointer-events-none w-full overflow-hidden", className)}
       aria-hidden
     >
-      <div className="flex w-[200%] animate-wave-slide">
-        {[0, 1].map((i) => (
-          <svg
-            key={i}
-            viewBox="0 0 600 80"
-            preserveAspectRatio="none"
-            className="h-12 w-1/2 md:h-16"
-          >
-            <path
-              d="M0,40 C75,10 150,70 225,40 C300,10 375,70 450,40 C525,10 600,70 600,40"
-              fill="none"
-              stroke="#006994"
-              strokeWidth="10"
-            />
-            <path
-              d="M0,60 C75,30 150,90 225,60 C300,30 375,90 450,60 C525,30 600,90 600,60"
-              fill="none"
-              stroke="#E8D5B0"
-              strokeWidth="10"
-            />
-          </svg>
-        ))}
-      </div>
+      <svg
+        viewBox="0 0 1440 40"
+        preserveAspectRatio="none"
+        className="h-6 w-full md:h-8"
+      >
+        <path
+          d="M0,20 C120,4 240,36 360,20 C480,4 600,36 720,20 C840,4 960,36 1080,20 C1200,4 1320,36 1440,20"
+          fill="none"
+          stroke="#006994"
+          strokeWidth="2"
+          opacity="0.5"
+        />
+        <path
+          d="M0,30 C120,14 240,46 360,30 C480,14 600,46 720,30 C840,14 960,46 1080,30 C1200,14 1320,46 1440,30"
+          fill="none"
+          stroke="#E8D5B0"
+          strokeWidth="2"
+          opacity="0.7"
+        />
+      </svg>
     </div>
   );
 }

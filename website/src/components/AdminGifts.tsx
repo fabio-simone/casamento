@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { GiftWithQuotas } from "@/lib/types";
 import { formatBRL, formatDateSP } from "@/lib/utils";
+import { ImageUpload } from "./ImageUpload";
 
 interface FormData {
   nome: string;
@@ -265,11 +266,10 @@ export function AdminGifts({ gifts }: { gifts: GiftWithQuotas[] }) {
                 className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
               />
             </div>
-            <input
-              placeholder="URL da foto (opcional)"
+            <ImageUpload
+              label="Foto do presente (opcional)"
               value={form.foto_url}
-              onChange={(e) => setForm({ ...form, foto_url: e.target.value })}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+              onChange={(url) => setForm({ ...form, foto_url: url })}
             />
             <div className="flex gap-3 pt-2">
               <button

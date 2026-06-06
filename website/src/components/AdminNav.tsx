@@ -2,14 +2,23 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import {
+  LayoutDashboard,
+  ClipboardCheck,
+  Gift,
+  CreditCard,
+  FileText,
+  type LucideIcon,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-const items = [
-  { href: "/admin", label: "Dashboard", icon: "📊" },
-  { href: "/admin/rsvps", label: "Confirmações", icon: "✅" },
-  { href: "/admin/presentes", label: "Presentes", icon: "🎁" },
-  { href: "/admin/pagamentos", label: "Pagamentos", icon: "💳" },
+const items: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/rsvps", label: "Confirmações", icon: ClipboardCheck },
+  { href: "/admin/presentes", label: "Presentes", icon: Gift },
+  { href: "/admin/pagamentos", label: "Pagamentos", icon: CreditCard },
+  { href: "/admin/conteudo", label: "Conteúdo", icon: FileText },
 ];
 
 export function AdminNav({ email }: { email?: string }) {
@@ -33,6 +42,7 @@ export function AdminNav({ email }: { email?: string }) {
       <nav className="flex flex-1 flex-row gap-1 overflow-x-auto md:flex-col">
         {items.map((it) => {
           const active = pathname === it.href;
+          const Icon = it.icon;
           return (
             <Link
               key={it.href}
@@ -42,7 +52,7 @@ export function AdminNav({ email }: { email?: string }) {
                 active ? "bg-oceano text-white" : "text-urbano/70 hover:bg-oceano/10"
               )}
             >
-              <span>{it.icon}</span>
+              <Icon className="h-4 w-4" strokeWidth={1.5} />
               <span>{it.label}</span>
             </Link>
           );

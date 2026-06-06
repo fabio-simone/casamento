@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { Church, Wine, Shirt, BedDouble, MapPin, Car, type LucideIcon } from "lucide-react";
 import { WaveDivider } from "@/components/WaveDivider";
 import { WEDDING } from "@/lib/constants";
 
 export const metadata: Metadata = { title: "Informações" };
 
-const blocos = [
+const blocos: { icon: LucideIcon; titulo: string; itens: string[] }[] = [
   {
-    icon: "⛪",
+    icon: Church,
     titulo: "Cerimônia",
     itens: [
       `Local: ${WEDDING.cerimonia.nome}`,
@@ -15,7 +16,7 @@ const blocos = [
     ],
   },
   {
-    icon: "🥂",
+    icon: Wine,
     titulo: "Recepção",
     itens: [
       `Local: ${WEDDING.recepcao.nome}`,
@@ -24,7 +25,7 @@ const blocos = [
     ],
   },
   {
-    icon: "👗",
+    icon: Shirt,
     titulo: "Dress code",
     itens: [
       WEDDING.dressCode,
@@ -33,7 +34,7 @@ const blocos = [
     ],
   },
   {
-    icon: "🏨",
+    icon: BedDouble,
     titulo: "Hospedagem",
     itens: [
       "Cariocas: reservem hotel na região da Vila Olímpia / Itaim.",
@@ -42,7 +43,7 @@ const blocos = [
     ],
   },
   {
-    icon: "🚗",
+    icon: MapPin,
     titulo: "Como chegar",
     itens: [
       "Metrô: estação Vila Olímpia (linha 9-Esmeralda) + 10 min a pé.",
@@ -51,7 +52,7 @@ const blocos = [
     ],
   },
   {
-    icon: "🅿️",
+    icon: Car,
     titulo: "Estacionamento",
     itens: [
       "Valet disponível no evento.",
@@ -81,9 +82,11 @@ export default function InformacoesPage() {
 
       <section className="container-page py-16 md:py-20">
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {blocos.map((b) => (
+          {blocos.map((b) => {
+            const Icon = b.icon;
+            return (
             <div key={b.titulo} className="card">
-              <span className="text-4xl">{b.icon}</span>
+              <Icon className="h-8 w-8 text-oceano" strokeWidth={1.5} />
               <h3 className="mt-3 font-display text-xl font-bold text-urbano">
                 {b.titulo}
               </h3>
@@ -96,7 +99,8 @@ export default function InformacoesPage() {
                 ))}
               </ul>
             </div>
-          ))}
+            );
+          })}
         </div>
       </section>
 

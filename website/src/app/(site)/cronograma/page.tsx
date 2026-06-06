@@ -1,63 +1,80 @@
 import type { Metadata } from "next";
+import {
+  Building2,
+  GlassWater,
+  Gem,
+  Sparkles,
+  Camera,
+  UtensilsCrossed,
+  Music,
+  Heart,
+  type LucideIcon,
+} from "lucide-react";
 import { WaveDivider } from "@/components/WaveDivider";
 
 export const metadata: Metadata = { title: "Cronograma" };
 
-const eventos = [
+const eventos: {
+  hora: string;
+  titulo: string;
+  texto: string;
+  icon: LucideIcon;
+  lado: "rio" | "sp";
+}[] = [
   {
     hora: "Ontem",
     titulo: "Fabio chega ao local",
     texto: "Paulistano que é paulistano já está lá conferindo se tudo começa no horário.",
-    emoji: "🏙️",
+    icon: Building2,
     lado: "sp",
   },
   {
     hora: "15h30",
     titulo: "Recepção dos convidados",
     texto: "Welcome drink: água de coco para os cariocas, água com gás para os paulistas.",
-    emoji: "🥥",
+    icon: GlassWater,
     lado: "rio",
   },
   {
     hora: "16h00",
     titulo: "Cerimônia",
     texto: "Início pontual (relógio de SP). Tragam lencinho — vai ter choro garantido.",
-    emoji: "💍",
+    icon: Gem,
     lado: "sp",
   },
   {
     hora: "16h20",
     titulo: "Karina entra",
     texto: "Karina chega no 'horário carioca' — ou seja, atrasada e linda. Vale a pena esperar.",
-    emoji: "👰",
+    icon: Sparkles,
     lado: "rio",
   },
   {
     hora: "17h00",
     titulo: "Fotos & cumprimentos",
     texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.",
-    emoji: "📸",
+    icon: Camera,
     lado: "sp",
   },
   {
     hora: "18h00",
     titulo: "Festa & jantar",
     texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.",
-    emoji: "🍽️",
+    icon: UtensilsCrossed,
     lado: "rio",
   },
   {
     hora: "20h00",
     titulo: "Pista liberada",
     texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.",
-    emoji: "🕺",
+    icon: Music,
     lado: "sp",
   },
   {
     hora: "23h00",
     titulo: "Bem-casados & despedida",
     texto: "Leve seu bem-casado. O Fabio volta pra SP, a Karina sonha com a praia. Felizes para sempre.",
-    emoji: "💛",
+    icon: Heart,
     lado: "rio",
   },
 ];
@@ -79,15 +96,17 @@ export default function CronogramaPage() {
 
       <section className="container-page py-16 md:py-20">
         <ol className="mx-auto max-w-2xl space-y-6">
-          {eventos.map((e, i) => (
+          {eventos.map((e, i) => {
+            const Icon = e.icon;
+            return (
             <li key={i} className="flex gap-4">
               <div className="flex flex-col items-center">
                 <span
-                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-xl shadow ${
+                  className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full ${
                     e.lado === "rio" ? "bg-oceano text-white" : "bg-urbano text-white"
                   }`}
                 >
-                  {e.emoji}
+                  <Icon className="h-5 w-5" strokeWidth={1.5} />
                 </span>
                 {i < eventos.length - 1 && (
                   <span className="my-1 h-full w-0.5 flex-1 bg-areia" aria-hidden />
@@ -99,7 +118,8 @@ export default function CronogramaPage() {
                 <p className="mt-1 text-urbano/70">{e.texto}</p>
               </div>
             </li>
-          ))}
+            );
+          })}
         </ol>
       </section>
     </>
