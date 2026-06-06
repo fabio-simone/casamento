@@ -14,7 +14,7 @@ export function SaoPauloSilhouette({
   return (
     <svg
       viewBox="0 0 200 140"
-      className={cn("h-auto w-full", className)}
+      className={cn(className)}
       fill="none"
       aria-hidden
     >
@@ -44,7 +44,7 @@ export function RioSpEmblem({
   return (
     <svg
       viewBox="0 0 120 120"
-      className={cn("h-auto w-full", className)}
+      className={cn(className)}
       fill="none"
       aria-hidden
     >

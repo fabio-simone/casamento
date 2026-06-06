@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { Waves, Building2, Camera } from "lucide-react";
+import { Waves, Building2 } from "lucide-react";
 import { Countdown } from "@/components/Countdown";
-import { WaveDivider, CopacabanaWaves } from "@/components/WaveDivider";
-import { SaoPauloSilhouette } from "@/components/SaoPauloSilhouette";
+import { WaveDivider } from "@/components/WaveDivider";
+import { RioSpEmblem } from "@/components/SaoPauloSilhouette";
 import { WEDDING } from "@/lib/constants";
 import { getContent } from "@/lib/content";
 
@@ -12,65 +12,78 @@ export default async function HomePage() {
   const content = await getContent();
   return (
     <>
-      {/* HERO */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-oceano/10 via-offwhite to-offwhite">
-        <div className="bg-calcadao absolute inset-0 opacity-60" aria-hidden />
-        <div className="container-page relative grid items-center gap-10 py-16 md:grid-cols-2 md:py-24">
-          <div className="animate-fade-up">
-            <span className="eyebrow">O Rio encontra SP · {WEDDING.dataCurta}</span>
-            <h1 className="font-display text-5xl font-bold leading-tight text-urbano sm:text-6xl md:text-7xl">
-              Fabio <span className="text-oceano">&amp;</span> Karina
-            </h1>
-            <p className="mt-4 max-w-md text-lg text-urbano/70">{content.hero_sub}</p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/confirmar-presenca" className="btn-primary">
-                Confirmar presença
-              </Link>
-              <Link href="/presentes" className="btn-secondary">
-                Ver lista de presentes
-              </Link>
-            </div>
-          </div>
+      {/* HERO — tela cheia com foto do casal */}
+      <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
+        {/* fundo: foto do casal ou gradiente oceano */}
+        {content.hero_foto ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={content.hero_foto}
+              alt={WEDDING.noivos}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-urbano/50 via-urbano/30 to-urbano/60" />
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-oceano via-oceano/90 to-urbano" />
+        )}
 
-          {/* Foto do casal */}
-          <div className="animate-fade-up">
-            <div className="relative mx-auto aspect-[4/5] w-full max-w-sm overflow-hidden rounded-[2rem] border-4 border-white bg-areia/40 shadow-2xl">
-              {content.hero_foto ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  src={content.hero_foto}
-                  alt={WEDDING.noivos}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-urbano/50">
-                  <SaoPauloSilhouette className="w-28 opacity-30" stroke="#006994" />
-                  <p className="flex items-center gap-2 px-6 text-sm">
-                    <Camera className="h-4 w-4" strokeWidth={1.5} /> Foto do casal
-                  </p>
-                  <span className="text-xs">(adicionada pelo admin)</span>
-                </div>
-              )}
-            </div>
+        <div className="container-page relative animate-fade-up py-20 text-center text-offwhite">
+          <RioSpEmblem className="mx-auto mb-6 h-16 w-16" stroke="#FAF9F6" />
+          <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-offwhite/80">
+            O Rio encontra SP
+          </span>
+          <h1 className="font-display text-6xl font-bold leading-none drop-shadow-sm sm:text-7xl md:text-8xl">
+            Fabio
+            <span className="mx-2 font-normal italic text-areia">&amp;</span>
+            Karina
+          </h1>
+          <p className="mt-6 text-base font-semibold uppercase tracking-[0.35em] text-offwhite/90 sm:text-lg">
+            {WEDDING.dataNumerica}
+          </p>
+          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-offwhite/70">
+            {WEDDING.cidade}
+          </p>
+          <div className="mt-10 flex flex-wrap justify-center gap-3">
+            <Link href="/confirmar-presenca" className="btn-primary">
+              Confirmar presença
+            </Link>
+            <Link
+              href="/presentes"
+              className="inline-flex items-center justify-center rounded-full border-2 border-offwhite/80 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-offwhite transition hover:bg-offwhite hover:text-urbano active:scale-95"
+            >
+              Lista de presentes
+            </Link>
           </div>
         </div>
-        <CopacabanaWaves className="opacity-40" />
       </section>
 
-      {/* CONTADOR */}
-      <section className="container-page py-16 text-center md:py-20">
-        <span className="eyebrow">Contagem regressiva</span>
-        <h2 className="section-title mb-2">Faltam só...</h2>
-        <p className="mb-8 text-urbano/60">
-          ...para a Karina chegar (no horário carioca) e o Fabio reclamar do trânsito.
+      {/* BOAS-VINDAS */}
+      <section className="container-page py-16 text-center md:py-24">
+        <RioSpEmblem className="mx-auto mb-6 h-12 w-12" />
+        <h2 className="section-title mx-auto max-w-2xl">Sejam bem-vindos!</h2>
+        <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-urbano/70">
+          {content.hero_sub}
         </p>
-        <Countdown />
       </section>
 
       <WaveDivider color="#006994" />
 
+      {/* CONTADOR */}
+      <section className="bg-oceano/5 py-16 text-center md:py-24">
+        <div className="container-page">
+          <span className="eyebrow">Contagem regressiva</span>
+          <h2 className="section-title mb-2">Faltam só...</h2>
+          <p className="mb-10 text-urbano/60">
+            ...para a Karina chegar (no horário carioca) e o Fabio reclamar do trânsito.
+          </p>
+          <Countdown />
+        </div>
+      </section>
+
       {/* DOIS MUNDOS */}
-      <section className="bg-oceano/5 py-16 md:py-20">
+      <section className="bg-oceano/5 pb-16 md:pb-24">
         <div className="container-page grid gap-6 md:grid-cols-2">
           <div className="card border-oceano/30">
             <Waves className="h-9 w-9 text-oceano" strokeWidth={1.5} />

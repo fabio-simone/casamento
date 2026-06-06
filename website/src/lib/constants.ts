@@ -7,6 +7,7 @@ export const WEDDING = {
   dataISO: "2026-11-22T16:00:00-03:00",
   dataExtenso: "22 de novembro de 2026",
   dataCurta: "22/11",
+  dataNumerica: "22 · 11 · 2026",
   cidade: "São Paulo",
   dominio: "kafamento.com.br",
   cerimonia: {

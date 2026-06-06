@@ -20,21 +20,21 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-areia/60 bg-offwhite/90 backdrop-blur">
+    <header id="topo" className="sticky top-0 z-50 border-b border-areia/60 bg-offwhite/90 backdrop-blur">
       <nav className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-display text-xl font-bold text-urbano">
           <RioSpEmblem className="h-9 w-9" />
           <span>Kafamento</span>
         </Link>
 
-        <ul className="hidden items-center gap-6 lg:flex">
+        <ul className="hidden items-center gap-5 lg:flex">
           {links.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
                 className={cn(
-                  "text-sm font-medium transition hover:text-oceano",
-                  pathname === l.href ? "text-oceano" : "text-urbano/80"
+                  "text-xs font-semibold uppercase tracking-[0.12em] transition hover:text-oceano",
+                  pathname === l.href ? "text-oceano" : "text-urbano/70"
                 )}
               >
                 {l.label}
