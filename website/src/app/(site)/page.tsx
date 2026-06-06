@@ -34,10 +34,12 @@ export default async function HomePage() {
           <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-offwhite/80">
             O Rio encontra SP
           </span>
-          <h1 className="font-display text-6xl font-bold leading-none drop-shadow-sm sm:text-7xl md:text-8xl">
-            Fabio
-            <span className="mx-2 font-normal italic text-areia">&amp;</span>
-            Karina
+          <h1 className="font-display font-bold leading-[0.95] drop-shadow-sm">
+            <span className="block text-5xl sm:text-7xl md:text-8xl">Karina</span>
+            <span className="my-1 block text-3xl font-normal italic text-areia sm:my-2 sm:text-5xl md:text-6xl">
+              &amp;
+            </span>
+            <span className="block text-5xl sm:text-7xl md:text-8xl">Fábio</span>
           </h1>
           <p className="mt-6 text-base font-semibold uppercase tracking-[0.35em] text-offwhite/90 sm:text-lg">
             {WEDDING.dataNumerica}
@@ -76,7 +78,7 @@ export default async function HomePage() {
           <span className="eyebrow">Contagem regressiva</span>
           <h2 className="section-title mb-2">Faltam só...</h2>
           <p className="mb-10 text-urbano/60">
-            ...para a Karina chegar (no horário carioca) e o Fabio reclamar do trânsito.
+            ...para a Karina chegar (no horário carioca) e o Fábio reclamar do trânsito.
           </p>
           <Countdown />
         </div>
@@ -98,7 +100,7 @@ export default async function HomePage() {
           <div className="card border-urbano/20">
             <Building2 className="h-9 w-9 text-urbano" strokeWidth={1.5} />
             <h3 className="mt-3 font-display text-2xl font-bold text-urbano">
-              Lado Fabio (SP)
+              Lado Fábio (SP)
             </h3>
             <p className="mt-2 text-urbano/70">
               Garoa, rodízio de pizza às sextas, "mano" no vocabulário e

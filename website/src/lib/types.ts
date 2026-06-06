@@ -42,3 +42,13 @@ export interface Recado {
   mensagem: string;
   created_at: string;
 }
+
+export interface SupportMessage {
+  id: string;
+  nome: string;
+  email: string;
+  tipo: string;
+  descricao: string;
+  codigo_erro: string | null;
+  created_at: string;
+}

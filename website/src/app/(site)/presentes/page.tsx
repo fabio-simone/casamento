@@ -23,7 +23,7 @@ export default async function PresentesPage({
           <p className="mx-auto mt-4 max-w-xl text-urbano/70">
             Mais importante que o presente é a sua presença. Mas se quiser
             presentear, temos opções que vão de "lua de mel" a "kit sobrevivência
-            do Fabio no Rio". 😄
+            do Fábio no Rio". 😄
           </p>
         </div>
       </section>

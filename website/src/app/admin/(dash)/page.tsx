@@ -36,7 +36,7 @@ export default async function AdminDashboard() {
   return (
     <div>
       <h1 className="font-display text-3xl font-bold text-urbano">Dashboard</h1>
-      <p className="mt-1 text-urbano/60">Visão geral do casamento Fabio &amp; Karina.</p>
+      <p className="mt-1 text-urbano/60">Visão geral do casamento Karina &amp; Fábio.</p>
 
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {cards.map((c) => {

@@ -1,7 +1,7 @@
 // Dados centrais do casamento — fonte única de verdade.
 export const WEDDING = {
-  noivos: "Fabio & Karina",
-  noivo: "Fabio",
+  noivos: "Karina & Fábio",
+  noivo: "Fábio",
   noiva: "Karina",
   // 22 de novembro de 2026, 16h, horário de São Paulo (America/Sao_Paulo, UTC-3)
   dataISO: "2026-11-22T16:00:00-03:00",
@@ -20,7 +20,7 @@ export const WEDDING = {
     nome: "Mesmo local",
     horario: "18h",
   },
-  dressCode: "Esporte fino — sem havaianas, Fabio.",
+  dressCode: "Esporte fino — sem havaianas, Fábio.",
 } as const;
 
 export const TIMEZONE = "America/Sao_Paulo";

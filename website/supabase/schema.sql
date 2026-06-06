@@ -60,6 +60,17 @@ create table if not exists public.site_settings (
   updated_at timestamptz not null default now()
 );
 
+-- ─── Mensagens de suporte (convidados relatando problemas) ──
+create table if not exists public.support_messages (
+  id          uuid primary key default gen_random_uuid(),
+  nome        text not null,
+  email       text not null,
+  tipo        text not null default 'Outro',
+  descricao   text not null,
+  codigo_erro text,
+  created_at  timestamptz not null default now()
+);
+
 -- ============================================================
 -- Row Level Security
 -- O app acessa os dados pelo lado servidor usando a SERVICE ROLE
@@ -67,11 +78,12 @@ create table if not exists public.site_settings (
 -- políticas para o papel anônimo — ninguém lê/escreve direto do
 -- navegador com a anon key. Auth do admin usa o Supabase Auth.
 -- ============================================================
-alter table public.rsvps         enable row level security;
-alter table public.gifts         enable row level security;
-alter table public.gift_quotas   enable row level security;
-alter table public.recados       enable row level security;
-alter table public.site_settings enable row level security;
+alter table public.rsvps            enable row level security;
+alter table public.gifts            enable row level security;
+alter table public.gift_quotas      enable row level security;
+alter table public.recados          enable row level security;
+alter table public.site_settings    enable row level security;
+alter table public.support_messages enable row level security;
 
 -- (Sem políticas para anon = acesso negado por padrão. Service role bypassa.)
 

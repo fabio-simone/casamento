@@ -23,7 +23,7 @@ const eventos: {
 }[] = [
   {
     hora: "Ontem",
-    titulo: "Fabio chega ao local",
+    titulo: "Fábio chega ao local",
     texto: "Paulistano que é paulistano já está lá conferindo se tudo começa no horário.",
     icon: Building2,
     lado: "sp",
@@ -73,7 +73,7 @@ const eventos: {
   {
     hora: "23h00",
     titulo: "Bem-casados & despedida",
-    texto: "Leve seu bem-casado. O Fabio volta pra SP, a Karina sonha com a praia. Felizes para sempre.",
+    texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.",
     icon: Heart,
     lado: "rio",
   },

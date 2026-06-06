@@ -22,7 +22,7 @@ export const DEFAULT_TIMELINE: TimelineItem[] = [
     ano: "O encontro",
     titulo: "Ela do Rio, ele de SP",
     texto:
-      "Karina dizia 'maravilhoso', Fabio respondia 'mano, que isso'. Foi amor à primeira tradução simultânea.",
+      "Karina dizia 'maravilhoso', Fábio respondia 'mano, que isso'. Foi amor à primeira tradução simultânea.",
     foto: "",
     lado: "rio",
   },

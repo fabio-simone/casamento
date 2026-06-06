@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Accordion, type QA } from "@/components/Accordion";
 import { WaveDivider } from "@/components/WaveDivider";
 
@@ -13,10 +14,10 @@ const faqs: QA[] = [
   {
     pergunta: "Posso ir de havaianas?",
     resposta:
-      "Karina diria que sim. Fabio implora que não. O dress code é esporte fino, então deixe a havaiana para a praia (ou para o presente do Fabio na lista).",
+      "Karina diria que sim. Fábio implora que não. O dress code é esporte fino, então deixe a havaiana para a praia (ou para o presente do Fábio na lista).",
   },
   {
-    pergunta: "O Fabio já aprendeu a falar 'maravilhoso'?",
+    pergunta: "O Fábio já aprendeu a falar 'maravilhoso'?",
     resposta:
       "Está em treinamento intensivo. Já consegue dizer 'maravilhoso' sem fazer careta. Em troca, a Karina já fala 'mano' e até reclama do trânsito como uma paulistana raiz.",
   },
@@ -43,7 +44,7 @@ const faqs: QA[] = [
   {
     pergunta: "Como faço para dar um presente?",
     resposta:
-      "Na página de Presentes! Escolha um presente (ou uma cota dele), clique em 'Presentear' e pague com cartão, Pix ou boleto via Mercado Pago. Bônus: tem presente para o Fabio sobreviver no Rio e para a Karina sobreviver em SP.",
+      "Na página de Presentes! Escolha um presente (ou uma cota dele), clique em 'Presentear' e pague com cartão, Pix ou boleto via Mercado Pago. Bônus: tem presente para o Fábio sobreviver no Rio e para a Karina sobreviver em SP.",
   },
   {
     pergunta: "Qual o time da casa: Flamengo ou Corinthians?",
@@ -69,6 +70,15 @@ export default function FaqPage() {
 
       <section className="container-page py-16 md:py-20">
         <Accordion items={faqs} />
+
+        <div className="mx-auto mt-12 max-w-2xl rounded-2xl border border-areia bg-oceano/5 p-6 text-center">
+          <p className="text-urbano/80">
+            Não achou sua dúvida ou teve algum problema no site?
+          </p>
+          <Link href="/contato" className="btn-secondary mt-4">
+            Falar com a gente
+          </Link>
+        </div>
       </section>
     </>
   );

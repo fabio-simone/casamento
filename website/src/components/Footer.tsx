@@ -34,6 +34,11 @@ export function Footer() {
             Contato
           </h4>
           <p className="text-sm text-offwhite/80">{WEDDING.dominio}</p>
+          <p className="mt-2 text-sm">
+            <Link href="/contato" className="text-areia hover:underline">
+              Precisa de ajuda? Fale com a gente
+            </Link>
+          </p>
           <p className="mt-4 text-xs text-offwhite/50">
             Feito com café paulistano e água de coco carioca.
           </p>

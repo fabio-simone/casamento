@@ -6,6 +6,44 @@ const FROM = process.env.RESEND_FROM_EMAIL ?? "Kafamento <casal@kafamento.com.br
 
 const resend = resendKey ? new Resend(resendKey) : null;
 
+/** Notifica o casal (ADMIN_EMAIL) quando alguém relata um problema. */
+export async function sendSupportNotification(params: {
+  nome: string;
+  email: string;
+  tipo: string;
+  descricao: string;
+  codigoErro?: string | null;
+}) {
+  const admin = process.env.ADMIN_EMAIL;
+  if (!resend || !admin) {
+    console.warn("[email] suporte: RESEND_API_KEY ou ADMIN_EMAIL ausente.");
+    return;
+  }
+
+  const html = `
+  <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;background:#FAF9F6;border-radius:16px;overflow:hidden;border:1px solid #E8D5B0">
+    <div style="background:#3A3A3A;color:#FAF9F6;padding:24px;text-align:center">
+      <h1 style="margin:0;font-family:Georgia,serif;font-size:22px">⚠️ Alguém precisa de ajuda</h1>
+    </div>
+    <div style="padding:24px;color:#3A3A3A;line-height:1.6">
+      <p><strong>De:</strong> ${params.nome} (${params.email})</p>
+      <p><strong>Tipo:</strong> ${params.tipo}</p>
+      ${params.codigoErro ? `<p><strong>Código de erro:</strong> ${params.codigoErro}</p>` : ""}
+      <p><strong>Descrição:</strong></p>
+      <p style="background:#fff;border:1px solid #E8D5B0;border-radius:8px;padding:12px;white-space:pre-wrap">${params.descricao}</p>
+      <p style="margin-top:16px;font-size:13px;color:#666">Responda diretamente para ${params.email}.</p>
+    </div>
+  </div>`;
+
+  await resend.emails.send({
+    from: FROM,
+    to: admin,
+    replyTo: params.email,
+    subject: `[Kafamento] Problema relatado — ${params.tipo}`,
+    html,
+  });
+}
+
 /** E-mail de confirmação de presença para o convidado. */
 export async function sendRsvpConfirmation(params: {
   nome: string;
@@ -30,7 +68,7 @@ export async function sendRsvpConfirmation(params: {
         total === 1 ? "pessoa" : "pessoas"
       }</strong> no nosso mapa (sim, com sotaque carioca e paulistano misturados).</p>
       <p>Agora é só contar os dias para o dia <strong>${WEDDING.dataCurta}</strong>. Prometemos feijoada <em>e</em> pastel de feira. 😄</p>
-      <p style="margin-top:24px">Com carinho,<br/><strong>Fabio & Karina</strong></p>
+      <p style="margin-top:24px">Com carinho,<br/><strong>Karina & Fábio</strong></p>
     </div>
     <div style="background:#E8D5B0;color:#3A3A3A;padding:16px;text-align:center;font-size:12px">
       ${WEDDING.dominio} — O Rio encontra SP
