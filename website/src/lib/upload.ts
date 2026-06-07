@@ -68,8 +68,15 @@ async function prepararImagem(
 }
 
 /** Envia uma imagem para o Storage e devolve a URL (com #pos=fx,fy). */
-export async function uploadImagem(original: File): Promise<string> {
-  const { file, pos } = await prepararImagem(original);
+export async function uploadImagem(
+  original: File,
+  opts?: { maxDim?: number; quality?: number }
+): Promise<string> {
+  const { file, pos } = await prepararImagem(
+    original,
+    opts?.maxDim ?? 1600,
+    opts?.quality ?? 0.85
+  );
   const fd = new FormData();
   fd.append("file", file);
 

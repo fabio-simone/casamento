@@ -13,10 +13,14 @@ export function ImageUpload({
   value,
   onChange,
   label = "Imagem",
+  maxDim,
+  quality,
 }: {
   value: string;
   onChange: (url: string) => void;
   label?: string;
+  maxDim?: number;
+  quality?: number;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -27,7 +31,7 @@ export function ImageUpload({
     setUploading(true);
     setError("");
     try {
-      const url = await uploadImagem(original);
+      const url = await uploadImagem(original, { maxDim, quality });
       setBrokenPreview(false);
       onChange(url);
     } catch (e) {

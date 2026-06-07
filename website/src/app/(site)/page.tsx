@@ -32,6 +32,9 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-br from-oceano via-oceano/90 to-urbano" />
         )}
 
+        {/* transição suave: a foto se dissolve no fundo off-white da próxima seção */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-offwhite" />
+
         <div className="container-page relative animate-fade-up py-20 text-center text-offwhite">
           <RioSpEmblem className="mx-auto mb-6 h-16 w-16" stroke="#FAF9F6" />
           <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-offwhite/80">

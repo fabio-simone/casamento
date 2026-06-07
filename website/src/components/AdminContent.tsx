@@ -101,9 +101,11 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
         <p className="mb-4 text-sm text-urbano/60">Foto do casal e frase de destaque.</p>
         <div className="space-y-4">
           <ImageUpload
-            label="Foto do casal (destaque da home)"
+            label="Foto do casal (destaque da home) — use a melhor resolução"
             value={content.hero_foto}
             onChange={(url) => set("hero_foto", url)}
+            maxDim={2560}
+            quality={0.9}
           />
           <div>
             <label className="mb-1 block text-sm font-medium text-urbano">
