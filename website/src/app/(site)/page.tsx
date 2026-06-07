@@ -29,36 +29,38 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-br from-oceano via-oceano/90 to-oceanoDark" />
         )}
 
+        {/* scrim azul à esquerda: escurece só onde ficam os nomes (rostos à direita ficam claros) */}
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-r from-oceanoDark/80 via-oceanoDark/35 to-transparent" />
         {/* gradiente fino na base: a foto se funde no azul da próxima seção */}
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-transparent to-oceanoDark" />
 
         <div className="container-page relative z-10 animate-fade-up py-24">
           <div
-            className="max-w-lg text-left"
-            style={{ textShadow: "0 1px 22px rgba(250,249,246,0.6)" }}
+            className="max-w-lg text-left text-offwhite"
+            style={{ textShadow: "0 2px 24px rgba(4,71,106,0.6)" }}
           >
-            <RioSpEmblem className="mb-5 h-12 w-12" stroke="#006994" />
+            <RioSpEmblem className="mb-5 h-12 w-12" stroke="#FAF9F6" />
             <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja">
               O Rio encontra SP
             </span>
-            <h1 className="font-display font-normal leading-[1.02] text-oceano">
+            <h1 className="font-display font-normal leading-[1.02]">
               <span className="block text-5xl sm:text-6xl md:text-7xl">Karina</span>
               <span className="my-1 block text-3xl font-normal italic text-laranja sm:text-4xl">
                 &amp;
               </span>
               <span className="block text-5xl sm:text-6xl md:text-7xl">Fábio</span>
             </h1>
-            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.35em] text-oceano sm:text-base">
+            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.35em] text-offwhite/90 sm:text-base">
               {WEDDING.dataNumerica}
             </p>
-            <p className="mt-2 text-xs uppercase tracking-[0.25em] text-urbano/80">
+            <p className="mt-2 text-xs uppercase tracking-[0.25em] text-offwhite/70">
               {WEDDING.cidade}
             </p>
             <div className="mt-9 flex flex-wrap gap-3">
               <Link href="/confirmar-presenca" className="btn-primary">
                 Confirmar presença
               </Link>
-              <Link href="/presentes" className="btn-secondary">
+              <Link href="/presentes" className="btn-light">
                 Lista de presentes
               </Link>
             </div>
@@ -120,26 +122,28 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <WaveDivider color="#006994" flip />
+      <WaveDivider color="#04476A" />
 
       {/* MENSAGENS (carrossel) */}
-      <section className="container-page py-16 text-center md:py-24">
-        <span className="eyebrow">Mural de carinho</span>
-        <h2 className="section-title mb-2">Recados dos convidados</h2>
-        <p className="mb-10 text-urbano/60">
-          O que quem ama a gente anda mandando junto com os presentes. 💙
-        </p>
-        <RecadosCarousel />
-        <div className="mt-8">
-          <Link href="/mensagens" className="btn-secondary">
-            Ver todas as mensagens
-          </Link>
+      <section className="section-dark py-16 text-center md:py-24">
+        <div className="container-page">
+          <span className="eyebrow">Mural de carinho</span>
+          <h2 className="section-title mb-2">Recados dos convidados</h2>
+          <p className="mb-10 text-offwhite/70">
+            O que quem ama a gente anda mandando junto com os presentes. 💙
+          </p>
+          <RecadosCarousel />
+          <div className="mt-8">
+            <Link href="/mensagens" className="btn-light">
+              Ver todas as mensagens
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* GALERIA (teaser) */}
       {content.galeria.length > 0 && (
-        <section className="bg-oceano/5 py-16 md:py-24">
+        <section className="section-dark pb-16 md:pb-24">
           <div className="container-page text-center">
             <span className="eyebrow">Galeria</span>
             <h2 className="section-title mb-8">Nossos momentos</h2>
@@ -158,7 +162,7 @@ export default async function HomePage() {
               ))}
             </div>
             {content.galeria.length > 6 && (
-              <Link href="/galeria" className="btn-secondary mt-8">
+              <Link href="/galeria" className="btn-light mt-8">
                 Ver galeria completa
               </Link>
             )}
@@ -167,17 +171,19 @@ export default async function HomePage() {
       )}
 
       {/* CTA FINAL */}
-      <section className="container-page py-16 text-center md:py-20">
-        <h2 className="section-title mx-auto max-w-2xl">
-          Vem celebrar com a gente essa mistura improvável que deu super certo.
-        </h2>
-        <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href="/confirmar-presenca" className="btn-primary">
-            Confirmar presença
-          </Link>
-          <Link href="/nossa-historia" className="btn-secondary">
-            Conhecer nossa história
-          </Link>
+      <section className="section-dark py-16 text-center md:py-24">
+        <div className="container-page">
+          <h2 className="section-title mx-auto max-w-2xl">
+            Vem celebrar com a gente essa mistura improvável que deu super certo.
+          </h2>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <Link href="/confirmar-presenca" className="btn-primary">
+              Confirmar presença
+            </Link>
+            <Link href="/nossa-historia" className="btn-light">
+              Conhecer nossa história
+            </Link>
+          </div>
         </div>
       </section>
     </>

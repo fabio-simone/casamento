@@ -37,16 +37,17 @@ export default async function MensagensPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-12 md:py-16">
+      <section className="section-dark py-12 md:py-16">
+        <div className="container-page">
         {recados.length === 0 ? (
-          <p className="py-16 text-center text-urbano/50">
-            Ainda não há mensagens. Seja o primeiro a deixar um recado na página da{" "}
-            <Link href="/nossa-historia" className="text-oceano hover:underline">
-              Nossa História
-            </Link>
-            !
+          <p className="py-16 text-center text-offwhite/60">
+            Ainda não há mensagens. As primeiras chegam junto com os{" "}
+            <Link href="/presentes" className="text-laranja hover:underline">
+              presentes
+            </Link>{" "}
+            💙
           </p>
         ) : (
           <div className="columns-1 gap-5 sm:columns-2 lg:columns-3">
@@ -67,6 +68,7 @@ export default async function MensagensPage() {
             ))}
           </div>
         )}
+        </div>
       </section>
     </>
   );

@@ -92,10 +92,10 @@ export default function CronogramaPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-16 md:py-20">
-        <ol className="mx-auto max-w-2xl space-y-6">
+      <section className="section-dark py-16 md:py-20">
+        <ol className="container-page mx-auto max-w-2xl space-y-6">
           {eventos.map((e, i) => {
             const Icon = e.icon;
             return (

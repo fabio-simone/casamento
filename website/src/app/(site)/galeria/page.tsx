@@ -21,11 +21,12 @@ export default async function GaleriaPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-12 md:py-16">
+      <section className="section-dark py-12 md:py-16">
+        <div className="container-page">
         {galeria.length === 0 ? (
-          <div className="flex flex-col items-center gap-3 py-20 text-center text-urbano/50">
+          <div className="flex flex-col items-center gap-3 py-20 text-center text-offwhite/60">
             <Camera className="h-10 w-10" strokeWidth={1.25} />
             <p>As fotos estão chegando. Volte em breve! 📸</p>
           </div>
@@ -44,6 +45,7 @@ export default async function GaleriaPage() {
             ))}
           </div>
         )}
+        </div>
       </section>
     </>
   );

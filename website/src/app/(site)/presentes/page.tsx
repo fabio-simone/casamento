@@ -28,9 +28,10 @@ export default async function PresentesPage({
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-12 md:py-16">
+      <section className="section-dark py-12 md:py-16">
+        <div className="container-page">
         {status === "sucesso" && (
           <div className="mx-auto mb-8 max-w-2xl rounded-2xl bg-oceano/10 px-5 py-4 text-center text-oceano">
             🎉 Pagamento recebido! Assim que confirmado, sua cota aparece como paga.
@@ -49,7 +50,7 @@ export default async function PresentesPage({
         )}
 
         {gifts.length === 0 ? (
-          <p className="py-20 text-center text-urbano/50">
+          <p className="py-20 text-center text-offwhite/60">
             A lista de presentes ainda está sendo preparada. Volte em breve! 🎁
           </p>
         ) : (
@@ -59,6 +60,7 @@ export default async function PresentesPage({
             ))}
           </div>
         )}
+        </div>
       </section>
     </>
   );

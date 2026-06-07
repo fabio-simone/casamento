@@ -78,10 +78,10 @@ export default function InformacoesPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-16 md:py-20">
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <section className="section-dark py-16 md:py-20">
+        <div className="container-page grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {blocos.map((b) => {
             const Icon = b.icon;
             return (
@@ -105,12 +105,12 @@ export default function InformacoesPage() {
       </section>
 
       {/* MAPA */}
-      <section className="bg-oceano/5 py-16 md:py-20">
+      <section className="section-dark py-16 md:py-20">
         <div className="container-page">
           <div className="mb-8 text-center">
             <span className="eyebrow">No mapa</span>
             <h2 className="section-title">Onde vai ser</h2>
-            <p className="mt-2 text-urbano/70">{WEDDING.cerimonia.endereco}</p>
+            <p className="mt-2 text-offwhite/80">{WEDDING.cerimonia.endereco}</p>
           </div>
           <div className="overflow-hidden rounded-2xl border-4 border-white shadow-lg">
             <iframe

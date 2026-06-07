@@ -66,18 +66,20 @@ export default function FaqPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-16 md:py-20">
-        <Accordion items={faqs} />
+      <section className="section-dark py-16 md:py-20">
+        <div className="container-page">
+          <Accordion items={faqs} />
 
-        <div className="mx-auto mt-12 max-w-2xl rounded-2xl border border-areia bg-oceano/5 p-6 text-center">
-          <p className="text-urbano/80">
-            Não achou sua dúvida ou teve algum problema no site?
-          </p>
-          <Link href="/contato" className="btn-secondary mt-4">
-            Falar com a gente
-          </Link>
+          <div className="mx-auto mt-12 max-w-2xl rounded-2xl border border-offwhite/20 bg-white/5 p-6 text-center">
+            <p className="text-offwhite/80">
+              Não achou sua dúvida ou teve algum problema no site?
+            </p>
+            <Link href="/contato" className="btn-light mt-4">
+              Falar com a gente
+            </Link>
+          </div>
         </div>
       </section>
     </>

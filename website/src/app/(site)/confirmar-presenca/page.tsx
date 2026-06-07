@@ -19,10 +19,12 @@ export default function RsvpPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-16 md:py-20">
-        <RsvpForm />
+      <section className="section-dark py-16 md:py-20">
+        <div className="container-page">
+          <RsvpForm />
+        </div>
       </section>
     </>
   );

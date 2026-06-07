@@ -19,10 +19,12 @@ export default function ContatoPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
-      <section className="container-page py-16 md:py-20">
-        <ContatoForm />
+      <section className="section-dark py-16 md:py-20">
+        <div className="container-page">
+          <ContatoForm />
+        </div>
       </section>
     </>
   );
