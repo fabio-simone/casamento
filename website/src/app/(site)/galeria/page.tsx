@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Camera } from "lucide-react";
 import { WaveDivider } from "@/components/WaveDivider";
 import { getContent } from "@/lib/content";
+import { objectPositionFromUrl } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Galeria" };
 export const dynamic = "force-dynamic";
@@ -31,14 +32,15 @@ export default async function GaleriaPage() {
             <p>As fotos estão chegando. Volte em breve! 📸</p>
           </div>
         ) : (
-          <div className="columns-2 gap-3 sm:columns-3 md:gap-4 lg:columns-4">
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4 lg:grid-cols-4">
             {galeria.map((url, i) => (
-              <div key={i} className="mb-3 overflow-hidden rounded-xl md:mb-4">
+              <div key={i} className="aspect-square overflow-hidden rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={url}
                   alt={`Foto ${i + 1}`}
-                  className="w-full object-cover transition hover:opacity-90"
+                  className="h-full w-full object-cover transition hover:opacity-90"
+                  style={{ objectPosition: objectPositionFromUrl(url) }}
                   loading="lazy"
                 />
               </div>

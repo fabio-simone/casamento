@@ -16,18 +16,18 @@ export function Accordion({ items }: { items: QA[] }) {
       {items.map((item, i) => {
         const isOpen = open === i;
         return (
-          <div key={i} className="overflow-hidden rounded-2xl border border-areia bg-white">
+          <div key={i} className="overflow-hidden rounded-2xl border border-white/15 bg-white/[0.06] backdrop-blur-sm">
             <button
               onClick={() => setOpen(isOpen ? null : i)}
               className="flex w-full items-center justify-between gap-4 px-5 py-4 text-left"
               aria-expanded={isOpen}
             >
-              <span className="font-display text-lg font-semibold text-urbano">
+              <span className="font-display text-lg font-medium text-offwhite">
                 {item.pergunta}
               </span>
               <span
                 className={cn(
-                  "shrink-0 text-2xl text-oceano transition-transform",
+                  "shrink-0 text-2xl text-laranja transition-transform",
                   isOpen && "rotate-45"
                 )}
               >
@@ -41,7 +41,7 @@ export function Accordion({ items }: { items: QA[] }) {
               )}
             >
               <div className="overflow-hidden">
-                <p className="px-5 pb-5 text-urbano/70">{item.resposta}</p>
+                <p className="px-5 pb-5 text-offwhite/75">{item.resposta}</p>
               </div>
             </div>
           </div>

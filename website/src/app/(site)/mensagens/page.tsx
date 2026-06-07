@@ -54,13 +54,13 @@ export default async function MensagensPage() {
             {recados.map((r) => (
               <div
                 key={r.id}
-                className="mb-5 break-inside-avoid rounded-2xl border border-areia bg-white p-6 shadow-sm"
+                className="mb-5 break-inside-avoid rounded-2xl border border-white/15 bg-white/[0.06] p-6 backdrop-blur-sm"
               >
-                <Quote className="mb-3 h-6 w-6 text-oceano/40" strokeWidth={1.5} />
-                <p className="text-urbano/90">{r.mensagem}</p>
-                <p className="mt-4 text-sm font-semibold text-oceano">
+                <Quote className="mb-3 h-6 w-6 text-laranja/70" strokeWidth={1.5} />
+                <p className="text-offwhite/90">{r.mensagem}</p>
+                <p className="mt-4 text-sm font-semibold text-laranja">
                   — {r.nome}{" "}
-                  <span className="font-normal text-urbano/40">
+                  <span className="font-normal text-offwhite/40">
                     · {formatDateSP(r.created_at, { dateStyle: "short" })}
                   </span>
                 </p>

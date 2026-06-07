@@ -61,6 +61,22 @@ body {
   .section-dark .eyebrow {
     @apply text-laranja;
   }
+
+  /* Cartões em modo dark: preenchimento escuro, borda e texto claros */
+  .section-dark .card,
+  .card-dark {
+    @apply border-white/15 bg-white/[0.06] text-offwhite shadow-none backdrop-blur-sm;
+  }
+}
+
+/* Dentro de cartões dark: texto cinza vira claro, azul vira laranja (acento) */
+.section-dark .card [class*="text-urbano"],
+.card-dark [class*="text-urbano"] {
+  color: rgb(250 249 246 / 0.82) !important;
+}
+.section-dark .card [class*="text-oceano"],
+.card-dark [class*="text-oceano"] {
+  color: #e07a3f !important;
 }
 
 /* Padrão sutil de ondas como textura de fundo */

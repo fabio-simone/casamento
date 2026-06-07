@@ -33,14 +33,13 @@ export function RecadosCarousel() {
   }, [recados.length, next]);
 
   if (loading) {
-    return <p className="text-urbano/40">Carregando recados...</p>;
+    return <p className="text-offwhite/50">Carregando recados...</p>;
   }
 
   if (recados.length === 0) {
     return (
-      <div className="mx-auto max-w-xl rounded-2xl border border-dashed border-areia p-8 text-urbano/50">
-        Ainda não há recados. Os primeiros chegam junto com os presentes — ou
-        deixe o seu na página da Nossa História!
+      <div className="mx-auto max-w-xl rounded-2xl border border-dashed border-white/25 p-8 text-offwhite/60">
+        Ainda não há recados. Os primeiros chegam junto com os presentes 💙
       </div>
     );
   }
@@ -49,15 +48,15 @@ export function RecadosCarousel() {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="relative min-h-[180px] rounded-3xl border border-areia bg-white p-8 shadow-sm sm:p-10">
-        <Quote className="mx-auto mb-4 h-8 w-8 text-oceano/40" strokeWidth={1.5} />
+      <div className="relative min-h-[180px] rounded-3xl border border-white/15 bg-white/[0.06] p-8 backdrop-blur-sm sm:p-10">
+        <Quote className="mx-auto mb-4 h-8 w-8 text-laranja/70" strokeWidth={1.5} />
         <p
           key={r.id}
-          className="animate-fade-up font-display text-xl italic leading-relaxed text-urbano/90 sm:text-2xl"
+          className="animate-fade-up font-display text-xl italic leading-relaxed text-offwhite/90 sm:text-2xl"
         >
           “{r.mensagem}”
         </p>
-        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.15em] text-oceano">
+        <p className="mt-5 text-sm font-semibold uppercase tracking-[0.15em] text-laranja">
           {r.nome}
         </p>
       </div>
@@ -67,7 +66,7 @@ export function RecadosCarousel() {
           <button
             onClick={prev}
             aria-label="Anterior"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-areia text-oceano transition hover:bg-oceano hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-offwhite transition hover:bg-offwhite hover:text-oceanoDark"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
@@ -78,7 +77,7 @@ export function RecadosCarousel() {
                 key={idx}
                 className={cn(
                   "h-2 w-2 rounded-full transition",
-                  idx === i % Math.min(recados.length, 8) ? "bg-oceano" : "bg-areia"
+                  idx === i % Math.min(recados.length, 8) ? "bg-laranja" : "bg-white/30"
                 )}
               />
             ))}
@@ -87,7 +86,7 @@ export function RecadosCarousel() {
           <button
             onClick={next}
             aria-label="Próximo"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-areia text-oceano transition hover:bg-oceano hover:text-white"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-white/30 text-offwhite transition hover:bg-offwhite hover:text-oceanoDark"
           >
             <ChevronRight className="h-5 w-5" />
           </button>
