@@ -27,7 +27,7 @@ export default async function NossaHistoriaPage() {
               <img
                 src={content.historia_foto}
                 alt={WEDDING.noivos}
-                className="h-full w-full object-cover"
+                className="h-full w-full object-cover object-[50%_30%]"
               />
             </div>
           )}
@@ -65,7 +65,7 @@ export default async function NossaHistoriaPage() {
                       <img
                         src={item.foto}
                         alt={item.titulo}
-                        className="aspect-video w-full object-cover"
+                        className="aspect-video w-full object-cover object-[50%_30%]"
                       />
                     </div>
                   ) : (

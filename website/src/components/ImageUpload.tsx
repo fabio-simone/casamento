@@ -2,50 +2,7 @@
 
 import { useRef, useState } from "react";
 import { Upload, X, ImageOff } from "lucide-react";
-
-/**
- * Redimensiona/comprime a imagem no navegador antes do upload.
- * Mantém os arquivos pequenos (evita o limite de corpo da Vercel) e
- * uniformiza o formato (JPEG), tornando o upload muito mais confiável.
- */
-async function prepararImagem(file: File, maxDim = 1600, quality = 0.85): Promise<File> {
-  // GIF animado: não mexer (perderia a animação).
-  if (file.type === "image/gif") return file;
-  try {
-    const dataUrl: string = await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(new Error("read"));
-      reader.readAsDataURL(file);
-    });
-    const img: HTMLImageElement = await new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => resolve(image);
-      image.onerror = () => reject(new Error("decode"));
-      image.src = dataUrl;
-    });
-    let { width, height } = img;
-    if (width > maxDim || height > maxDim) {
-      const scale = Math.min(maxDim / width, maxDim / height);
-      width = Math.round(width * scale);
-      height = Math.round(height * scale);
-    }
-    const canvas = document.createElement("canvas");
-    canvas.width = width;
-    canvas.height = height;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return file;
-    ctx.drawImage(img, 0, 0, width, height);
-    const blob: Blob | null = await new Promise((resolve) =>
-      canvas.toBlob((b) => resolve(b), "image/jpeg", quality)
-    );
-    if (!blob) return file;
-    return new File([blob], "foto.jpg", { type: "image/jpeg" });
-  } catch {
-    // Se algo falhar, envia o arquivo original.
-    return file;
-  }
-}
+import { uploadImagem } from "@/lib/upload";
 
 /**
  * Campo de imagem reutilizável: envia o arquivo para o Storage (via
@@ -69,31 +26,9 @@ export function ImageUpload({
     setUploading(true);
     setError("");
     try {
-      const file = await prepararImagem(original);
-      const fd = new FormData();
-      fd.append("file", file);
-
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-
-      if (!res.ok) {
-        let msg = "Falha no upload. Tente novamente.";
-        if (res.status === 413) msg = "Imagem muito grande, mesmo após compressão.";
-        else {
-          try {
-            const d = await res.json();
-            if (d?.error) msg = d.error;
-          } catch {
-            /* resposta sem JSON */
-          }
-        }
-        throw new Error(msg);
-      }
-
-      const data = await res.json().catch(() => null);
-      if (!data?.url) throw new Error("Upload sem retorno. Tente novamente.");
-
+      const url = await uploadImagem(original);
       setBrokenPreview(false);
-      onChange(data.url);
+      onChange(url);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro no upload.");
     } finally {
@@ -113,7 +48,7 @@ export function ImageUpload({
             <img
               src={value}
               alt="preview"
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover object-[50%_30%]"
               onError={() => setBrokenPreview(true)}
             />
           ) : (

@@ -1,13 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Plus, Trash2, GripVertical } from "lucide-react";
+import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
 import type { SiteContent, TimelineItem } from "@/lib/content";
 import { ImageUpload } from "./ImageUpload";
+import { uploadImagem } from "@/lib/upload";
 
 export function AdminContent({ initial }: { initial: SiteContent }) {
   const router = useRouter();
+  const galeriaInputRef = useRef<HTMLInputElement>(null);
+  const [galUpload, setGalUpload] = useState<{ ativo: boolean; feito: number; total: number }>({
+    ativo: false,
+    feito: 0,
+    total: 0,
+  });
   const [content, setContent] = useState<SiteContent>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -38,14 +45,27 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
   }
 
   // Galeria
-  function setFoto(i: number, url: string) {
-    set("galeria", content.galeria.map((f, idx) => (idx === i ? url : f)));
-  }
-  function addFoto() {
-    set("galeria", [...content.galeria, ""]);
-  }
   function removeFoto(i: number) {
     set("galeria", content.galeria.filter((_, idx) => idx !== i));
+  }
+  async function handleGaleriaFiles(e: React.ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? []);
+    e.target.value = "";
+    if (!files.length) return;
+    setGalUpload({ ativo: true, feito: 0, total: files.length });
+    const novas: string[] = [];
+    const falhas: string[] = [];
+    for (let k = 0; k < files.length; k++) {
+      try {
+        novas.push(await uploadImagem(files[k]));
+      } catch {
+        falhas.push(files[k].name);
+      }
+      setGalUpload({ ativo: true, feito: k + 1, total: files.length });
+    }
+    if (novas.length) set("galeria", [...content.galeria, ...novas]);
+    setGalUpload({ ativo: false, feito: 0, total: 0 });
+    if (falhas.length) alert(`Algumas fotos não subiram:\n${falhas.join("\n")}`);
   }
 
 
@@ -191,36 +211,55 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
       <section className="card">
         <h2 className="font-display text-xl font-bold text-urbano">Galeria de fotos</h2>
         <p className="mb-4 text-sm text-urbano/60">
-          Aparecem na página Galeria (e um resumo na home). Suba quantas quiser.
+          Selecione <strong>várias fotos de uma vez</strong> — elas são
+          comprimidas e enviadas automaticamente.
         </p>
-        <div className="space-y-4">
-          {content.galeria.map((foto, i) => (
-            <div key={i} className="flex items-start gap-3 rounded-2xl border border-areia bg-offwhite p-3">
-              <div className="flex-1">
-                <ImageUpload
-                  label={`Foto ${i + 1}`}
-                  value={foto}
-                  onChange={(url) => setFoto(i, url)}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={() => removeFoto(i)}
-                className="mt-7 text-red-600 hover:text-red-700"
-                aria-label="Remover foto"
+
+        {content.galeria.length > 0 && (
+          <div className="mb-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
+            {content.galeria.map((foto, i) => (
+              <div
+                key={i}
+                className="group relative aspect-square overflow-hidden rounded-xl border border-areia"
               >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addFoto}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-3 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano"
-          >
-            <Plus className="h-4 w-4" /> Adicionar foto
-          </button>
-        </div>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={foto}
+                  alt={`Foto ${i + 1}`}
+                  className="h-full w-full object-cover object-[50%_30%]"
+                />
+                <button
+                  type="button"
+                  onClick={() => removeFoto(i)}
+                  aria-label="Remover foto"
+                  className="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-urbano/70 text-white opacity-0 transition hover:bg-red-600 group-hover:opacity-100"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        <input
+          ref={galeriaInputRef}
+          type="file"
+          accept="image/*"
+          multiple
+          className="hidden"
+          onChange={handleGaleriaFiles}
+        />
+        <button
+          type="button"
+          onClick={() => galeriaInputRef.current?.click()}
+          disabled={galUpload.ativo}
+          className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-4 text-sm font-medium text-urbano/60 transition hover:border-oceano hover:text-oceano disabled:opacity-60"
+        >
+          <Upload className="h-4 w-4" />
+          {galUpload.ativo
+            ? `Enviando ${galUpload.feito} de ${galUpload.total}...`
+            : "Adicionar fotos (várias de uma vez)"}
+        </button>
       </section>
 
       {/* BARRA DE SALVAR (fixa) */}
