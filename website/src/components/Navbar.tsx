@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { RioSpEmblem } from "./SaoPauloSilhouette";
 
@@ -19,11 +19,33 @@ const links = [
 export function Navbar() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  // Navbar flutuante: transparente no topo, sólida ao rolar.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const solid = scrolled || open;
 
   return (
-    <header id="topo" className="sticky top-0 z-50 border-b border-areia/60 bg-offwhite/90 backdrop-blur">
+    <header
+      id="topo"
+      className={cn(
+        "fixed top-0 z-50 w-full transition-colors duration-300",
+        solid
+          ? "border-b border-areia/50 bg-offwhite/90 backdrop-blur"
+          : "border-b border-transparent bg-transparent"
+      )}
+    >
       <nav className="container-page flex h-16 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2 font-display text-xl font-bold text-urbano">
+        <Link
+          href="/"
+          className="flex items-center gap-2 font-display text-xl font-semibold text-urbano"
+        >
           <RioSpEmblem className="h-9 w-9" />
           <span>kafamento</span>
         </Link>
@@ -34,8 +56,8 @@ export function Navbar() {
               <Link
                 href={l.href}
                 className={cn(
-                  "text-[11px] font-semibold uppercase tracking-[0.1em] transition hover:text-oceano xl:text-xs",
-                  pathname === l.href ? "text-oceano" : "text-urbano/70"
+                  "text-[11px] font-semibold uppercase tracking-[0.1em] transition hover:text-laranja xl:text-xs",
+                  pathname === l.href ? "text-laranja" : "text-urbano/80"
                 )}
               >
                 {l.label}
@@ -50,7 +72,7 @@ export function Navbar() {
         </ul>
 
         <button
-          className="lg:hidden"
+          className="text-urbano lg:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label="Abrir menu"
         >
@@ -70,7 +92,7 @@ export function Navbar() {
                   onClick={() => setOpen(false)}
                   className={cn(
                     "block rounded-lg px-3 py-2 text-sm font-medium",
-                    pathname === l.href ? "bg-oceano/10 text-oceano" : "text-urbano/80"
+                    pathname === l.href ? "bg-laranja/10 text-laranja" : "text-urbano/80"
                   )}
                 >
                   {l.label}

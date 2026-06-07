@@ -31,16 +31,35 @@ body {
            text-oceano transition hover:bg-oceano hover:text-offwhite active:scale-95;
   }
 
+  /* Botão claro — para usar sobre os fundos azuis (dark) */
+  .btn-light {
+    @apply inline-flex items-center justify-center rounded-full border-2 border-offwhite/80
+           bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wide
+           text-offwhite transition hover:bg-offwhite hover:text-oceanoDark active:scale-95;
+  }
+
+  /* Títulos finos e elegantes */
   .section-title {
-    @apply font-display text-3xl font-bold text-urbano sm:text-4xl md:text-5xl;
+    @apply font-display text-3xl font-normal text-urbano sm:text-4xl md:text-5xl;
   }
 
   .eyebrow {
-    @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-oceano;
+    @apply mb-3 inline-block text-xs font-semibold uppercase tracking-[0.2em] text-laranja;
   }
 
   .card {
     @apply rounded-2xl border border-areia/70 bg-white p-6 shadow-sm;
+  }
+
+  /* Seção dark (fundo azul) — texto claro */
+  .section-dark {
+    @apply bg-oceanoDark text-offwhite;
+  }
+  .section-dark .section-title {
+    @apply text-offwhite;
+  }
+  .section-dark .eyebrow {
+    @apply text-laranja;
   }
 }
 

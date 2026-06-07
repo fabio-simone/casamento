@@ -15,71 +15,75 @@ export default async function HomePage() {
   return (
     <>
       {/* HERO — tela cheia com foto do casal */}
-      <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center overflow-hidden">
-        {/* fundo: foto do casal ou gradiente oceano */}
+      <section className="relative flex min-h-screen items-center overflow-hidden">
+        {/* fundo: foto do casal (clara, sem escurecer) ou gradiente */}
         {content.hero_foto ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={content.hero_foto}
-              alt={WEDDING.noivos}
-              className="absolute inset-0 h-full w-full object-cover"
-              style={{ objectPosition: objectPositionFromUrl(content.hero_foto) }}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-urbano/50 via-urbano/30 to-urbano/60" />
-          </>
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={content.hero_foto}
+            alt={WEDDING.noivos}
+            className="absolute inset-0 h-full w-full object-cover"
+            style={{ objectPosition: objectPositionFromUrl(content.hero_foto) }}
+          />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-oceano via-oceano/90 to-urbano" />
+          <div className="absolute inset-0 bg-gradient-to-br from-oceano via-oceano/90 to-oceanoDark" />
         )}
 
-        {/* transição suave: a foto se dissolve no fundo off-white da próxima seção */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-b from-transparent to-offwhite" />
+        {/* gradiente fino na base: a foto se funde no azul da próxima seção */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-transparent to-oceanoDark" />
 
-        <div className="container-page relative animate-fade-up py-20 text-center text-offwhite">
-          <RioSpEmblem className="mx-auto mb-6 h-16 w-16" stroke="#FAF9F6" />
-          <span className="mb-4 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-offwhite/80">
-            O Rio encontra SP
-          </span>
-          <h1 className="font-display font-bold leading-[0.95] drop-shadow-sm">
-            <span className="block text-5xl sm:text-7xl md:text-8xl">Karina</span>
-            <span className="my-1 block text-3xl font-normal italic text-areia sm:my-2 sm:text-5xl md:text-6xl">
-              &amp;
+        <div className="container-page relative z-10 animate-fade-up py-24">
+          <div
+            className="max-w-lg text-left"
+            style={{ textShadow: "0 1px 22px rgba(250,249,246,0.6)" }}
+          >
+            <RioSpEmblem className="mb-5 h-12 w-12" stroke="#006994" />
+            <span className="mb-3 inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja">
+              O Rio encontra SP
             </span>
-            <span className="block text-5xl sm:text-7xl md:text-8xl">Fábio</span>
-          </h1>
-          <p className="mt-6 text-base font-semibold uppercase tracking-[0.35em] text-offwhite/90 sm:text-lg">
-            {WEDDING.dataNumerica}
-          </p>
-          <p className="mt-2 text-sm uppercase tracking-[0.2em] text-offwhite/70">
-            {WEDDING.cidade}
-          </p>
-          <div className="mt-10 flex flex-wrap justify-center gap-3">
-            <Link href="/confirmar-presenca" className="btn-primary">
-              Confirmar presença
-            </Link>
-            <Link
-              href="/presentes"
-              className="inline-flex items-center justify-center rounded-full border-2 border-offwhite/80 px-6 py-3 text-sm font-semibold uppercase tracking-wide text-offwhite transition hover:bg-offwhite hover:text-urbano active:scale-95"
-            >
-              Lista de presentes
-            </Link>
+            <h1 className="font-display font-normal leading-[1.02] text-oceano">
+              <span className="block text-5xl sm:text-6xl md:text-7xl">Karina</span>
+              <span className="my-1 block text-3xl font-normal italic text-laranja sm:text-4xl">
+                &amp;
+              </span>
+              <span className="block text-5xl sm:text-6xl md:text-7xl">Fábio</span>
+            </h1>
+            <p className="mt-6 text-sm font-semibold uppercase tracking-[0.35em] text-oceano sm:text-base">
+              {WEDDING.dataNumerica}
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[0.25em] text-urbano/80">
+              {WEDDING.cidade}
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <Link href="/confirmar-presenca" className="btn-primary">
+                Confirmar presença
+              </Link>
+              <Link href="/presentes" className="btn-secondary">
+                Lista de presentes
+              </Link>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* BOAS-VINDAS */}
-      <section className="container-page py-16 text-center md:py-24">
-        <RioSpEmblem className="mx-auto mb-6 h-12 w-12" />
-        <h2 className="section-title mx-auto max-w-2xl">Sejam bem-vindos!</h2>
-        <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-urbano/70">
-          {content.hero_sub}
-        </p>
+      {/* BOAS-VINDAS (continua o azul do hero) */}
+      <section className="section-dark py-16 text-center md:py-24">
+        <div className="container-page">
+          <RioSpEmblem className="mx-auto mb-6 h-12 w-12" stroke="#FAF9F6" />
+          <h2 className="section-title mx-auto max-w-2xl">Sejam bem-vindos!</h2>
+          <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-offwhite/80">
+            {content.hero_sub}
+          </p>
+        </div>
       </section>
 
-      <WaveDivider color="#006994" />
+      {/* transição azul → claro */}
+      <div className="bg-oceanoDark">
+        <WaveDivider color="#FAF9F6" />
+      </div>
 
       {/* CONTADOR */}
-      <section className="bg-oceano/5 py-16 text-center md:py-24">
+      <section className="bg-offwhite py-16 text-center md:py-24">
         <div className="container-page">
           <span className="eyebrow">Contagem regressiva</span>
           <h2 className="section-title mb-2">Faltam só...</h2>
@@ -91,7 +95,7 @@ export default async function HomePage() {
       </section>
 
       {/* DOIS MUNDOS */}
-      <section className="bg-oceano/5 pb-16 md:pb-24">
+      <section className="bg-offwhite pb-16 md:pb-24">
         <div className="container-page grid gap-6 md:grid-cols-2">
           <div className="card border-oceano/30">
             <Waves className="h-9 w-9 text-oceano" strokeWidth={1.5} />

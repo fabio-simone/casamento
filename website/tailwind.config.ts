@@ -8,11 +8,13 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Paleta "O Rio encontra SP"
-        oceano: "#006994", // azul oceano (Copacabana)
-        areia: "#E8D5B0", // areia da praia
-        urbano: "#3A3A3A", // cinza urbano (concreto paulistano)
-        offwhite: "#FAF9F6", // branco off-white
+        // Paleta "O Rio encontra SP" — azul, laranja e cinza
+        oceano: "#006994", // azul oceano
+        oceanoDark: "#04476A", // azul profundo (fundos dark mode)
+        laranja: "#E07A3F", // laranja terroso (acento)
+        areia: "#E8D5B0", // areia (apoio suave)
+        urbano: "#3A3A3A", // cinza urbano
+        offwhite: "#FAF9F6", // off-white
       },
       fontFamily: {
         display: ["var(--font-playfair)", "Georgia", "serif"],

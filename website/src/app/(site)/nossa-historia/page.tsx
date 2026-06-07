@@ -14,7 +14,7 @@ export default async function NossaHistoriaPage() {
 
   return (
     <>
-      <section className="bg-gradient-to-b from-oceano/10 to-offwhite py-16 text-center md:py-20">
+      <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
           <span className="eyebrow">Nossa História</span>
           <h1 className="section-title mx-auto max-w-2xl">
@@ -36,11 +36,11 @@ export default async function NossaHistoriaPage() {
         </div>
       </section>
 
-      <WaveDivider />
+      <WaveDivider color="#04476A" />
 
       {/* TIMELINE */}
-      <section className="container-page py-16 md:py-20">
-        <div className="relative mx-auto max-w-3xl">
+      <section className="section-dark py-16 md:py-20">
+        <div className="container-page relative mx-auto max-w-3xl">
           <div className="absolute left-4 top-0 h-full w-0.5 bg-areia md:left-1/2 md:-translate-x-1/2" aria-hidden />
           <ul className="space-y-10">
             {content.timeline.map((item, i) => (

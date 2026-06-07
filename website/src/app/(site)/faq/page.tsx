@@ -56,7 +56,7 @@ const faqs: QA[] = [
 export default function FaqPage() {
   return (
     <>
-      <section className="bg-gradient-to-b from-oceano/10 to-offwhite py-16 text-center md:py-20">
+      <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
           <span className="eyebrow">FAQ</span>
           <h1 className="section-title">Perguntas (quase) frequentes</h1>
