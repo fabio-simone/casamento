@@ -36,7 +36,7 @@ export default function AdminLoginPage() {
         <div className="mb-6 flex flex-col items-center text-center">
           <RioSpEmblem className="h-16 w-16" />
           <h1 className="mt-3 font-display text-2xl font-bold text-urbano">
-            Painel Kafamento
+            Painel kafamento
           </h1>
           <p className="text-sm text-urbano/60">Área restrita do casal</p>
         </div>

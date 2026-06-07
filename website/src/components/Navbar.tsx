@@ -25,7 +25,7 @@ export function Navbar() {
       <nav className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 font-display text-xl font-bold text-urbano">
           <RioSpEmblem className="h-9 w-9" />
-          <span>Kafamento</span>
+          <span>kafamento</span>
         </Link>
 
         <ul className="hidden items-center gap-4 lg:flex xl:gap-5">

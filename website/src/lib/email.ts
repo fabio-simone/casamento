@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { WEDDING } from "./constants";
 
 const resendKey = process.env.RESEND_API_KEY;
-const FROM = process.env.RESEND_FROM_EMAIL ?? "Kafamento <casal@kafamento.com.br>";
+const FROM = process.env.RESEND_FROM_EMAIL ?? "kafamento <casal@kafamento.com.br>";
 
 const resend = resendKey ? new Resend(resendKey) : null;
 
@@ -39,7 +39,7 @@ export async function sendSupportNotification(params: {
     from: FROM,
     to: admin,
     replyTo: params.email,
-    subject: `[Kafamento] Problema relatado — ${params.tipo}`,
+    subject: `[kafamento] Problema relatado — ${params.tipo}`,
     html,
   });
 }

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Camera } from "lucide-react";
-import { Recados } from "@/components/Recados";
 import { WaveDivider } from "@/components/WaveDivider";
 import { SaoPauloSilhouette } from "@/components/SaoPauloSilhouette";
 import { getContent } from "@/lib/content";
@@ -85,18 +84,6 @@ export default async function NossaHistoriaPage() {
         </div>
       </section>
 
-      <WaveDivider color="#E8D5B0" />
-
-      {/* RECADOS */}
-      <section className="bg-oceano/5 py-16 md:py-20">
-        <div className="container-page">
-          <div className="mb-10 text-center">
-            <span className="eyebrow">Mural de recados</span>
-            <h2 className="section-title">Deixe seu carinho para o casal</h2>
-          </div>
-          <Recados />
-        </div>
-      </section>
     </>
   );
 }

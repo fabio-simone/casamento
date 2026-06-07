@@ -37,7 +37,7 @@ export function AdminNav({ email }: { email?: string }) {
   return (
     <aside className="flex w-full flex-row gap-1 border-b border-areia bg-white p-3 md:h-screen md:w-60 md:flex-col md:border-b-0 md:border-r md:p-4">
       <div className="hidden md:mb-6 md:block">
-        <h2 className="font-display text-xl font-bold text-urbano">Kafamento</h2>
+        <h2 className="font-display text-xl font-bold text-urbano">kafamento</h2>
         <p className="truncate text-xs text-urbano/50">{email}</p>
       </div>
 

@@ -58,12 +58,15 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(content),
       });
-      const data = await res.json();
+      const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data.error || "Erro ao salvar.");
       setSaved(true);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Erro inesperado.");
+      const msg = e instanceof Error ? e.message : "Erro inesperado.";
+      setError(msg);
+      // Garante que o erro não passe despercebido.
+      alert("Não foi possível salvar:\n\n" + msg);
     } finally {
       setSaving(false);
     }

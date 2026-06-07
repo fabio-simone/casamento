@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const supabase = createAdminClient();
   const { data, error } = await supabase
@@ -15,23 +17,4 @@ export async function GET() {
   return NextResponse.json({ recados: data });
 }
 
-export async function POST(req: Request) {
-  try {
-    const body = await req.json();
-    const nome = String(body.nome ?? "").trim().slice(0, 80);
-    const mensagem = String(body.mensagem ?? "").trim().slice(0, 500);
-
-    if (!nome || !mensagem) {
-      return NextResponse.json({ error: "Nome e mensagem obrigatórios." }, { status: 400 });
-    }
-
-    const supabase = createAdminClient();
-    const { error } = await supabase.from("recados").insert({ nome, mensagem });
-    if (error) {
-      return NextResponse.json({ error: "Erro ao salvar recado." }, { status: 500 });
-    }
-    return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "Erro inesperado." }, { status: 500 });
-  }
-}
+// Recados são criados apenas ao enviar um presente (via webhook do Mercado Pago).
