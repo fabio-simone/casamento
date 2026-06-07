@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Gift } from "lucide-react";
 import type { GiftWithQuotas } from "@/lib/types";
-import { formatBRL } from "@/lib/utils";
+import { formatBRL, objectPositionFromUrl } from "@/lib/utils";
 import { GiftModal } from "./GiftModal";
 
 export function GiftCard({ gift }: { gift: GiftWithQuotas }) {
@@ -25,6 +25,7 @@ export function GiftCard({ gift }: { gift: GiftWithQuotas }) {
               src={gift.foto_url}
               alt={gift.nome}
               className="h-full w-full object-cover"
+              style={{ objectPosition: objectPositionFromUrl(gift.foto_url) }}
               loading="lazy"
             />
           ) : (

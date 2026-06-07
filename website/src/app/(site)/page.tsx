@@ -6,6 +6,7 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { RioSpEmblem } from "@/components/SaoPauloSilhouette";
 import { WEDDING } from "@/lib/constants";
 import { getContent } from "@/lib/content";
+import { objectPositionFromUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,8 @@ export default async function HomePage() {
             <img
               src={content.hero_foto}
               alt={WEDDING.noivos}
-              className="absolute inset-0 h-full w-full object-cover object-[50%_30%]"
+              className="absolute inset-0 h-full w-full object-cover"
+              style={{ objectPosition: objectPositionFromUrl(content.hero_foto) }}
             />
             <div className="absolute inset-0 bg-gradient-to-b from-urbano/50 via-urbano/30 to-urbano/60" />
           </>
@@ -138,7 +140,13 @@ export default async function HomePage() {
               {content.galeria.slice(0, 6).map((url, i) => (
                 <div key={i} className="aspect-square overflow-hidden rounded-xl">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={url} alt={`Foto ${i + 1}`} className="h-full w-full object-cover object-[50%_30%]" loading="lazy" />
+                  <img
+                    src={url}
+                    alt={`Foto ${i + 1}`}
+                    className="h-full w-full object-cover"
+                    style={{ objectPosition: objectPositionFromUrl(url) }}
+                    loading="lazy"
+                  />
                 </div>
               ))}
             </div>

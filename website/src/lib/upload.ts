@@ -1,15 +1,23 @@
+import smartcrop from "smartcrop";
+
 /**
  * Utilitários de upload de imagem (uso no cliente/admin).
- * Redimensiona/comprime no navegador antes de enviar — evita o limite
- * de corpo da Vercel e uniformiza o formato.
+ * - Redimensiona/comprime no navegador (evita o limite da Vercel).
+ * - Usa smartcrop.js (análise determinística de tom de pele/bordas) para
+ *   achar o ponto focal (rostos) e embute na URL como "#pos=fx,fy".
  */
 
-export async function prepararImagem(
+function clamp(n: number) {
+  return Math.max(0, Math.min(100, Math.round(n)));
+}
+
+async function prepararImagem(
   file: File,
   maxDim = 1600,
   quality = 0.85
-): Promise<File> {
-  if (file.type === "image/gif") return file; // não mexe em GIF animado
+): Promise<{ file: File; pos: string }> {
+  const fallback = { file, pos: "50,30" };
+  if (file.type === "image/gif") return fallback;
   try {
     const dataUrl: string = await new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -23,6 +31,7 @@ export async function prepararImagem(
       image.onerror = () => reject(new Error("decode"));
       image.src = dataUrl;
     });
+
     let { width, height } = img;
     if (width > maxDim || height > maxDim) {
       const scale = Math.min(maxDim / width, maxDim / height);
@@ -33,21 +42,34 @@ export async function prepararImagem(
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return file;
+    if (!ctx) return fallback;
     ctx.drawImage(img, 0, 0, width, height);
+
+    // Ponto focal via smartcrop (melhor região quadrada -> centro do rosto).
+    let pos = "50,30";
+    try {
+      const lado = Math.min(width, height);
+      const { topCrop } = await smartcrop.crop(canvas, { width: lado, height: lado });
+      const fx = clamp(((topCrop.x + topCrop.width / 2) / width) * 100);
+      const fy = clamp(((topCrop.y + topCrop.height / 2) / height) * 100);
+      pos = `${fx},${fy}`;
+    } catch {
+      /* mantém o padrão */
+    }
+
     const blob: Blob | null = await new Promise((resolve) =>
       canvas.toBlob((b) => resolve(b), "image/jpeg", quality)
     );
-    if (!blob) return file;
-    return new File([blob], "foto.jpg", { type: "image/jpeg" });
+    if (!blob) return { file, pos };
+    return { file: new File([blob], "foto.jpg", { type: "image/jpeg" }), pos };
   } catch {
-    return file; // se algo falhar, envia o original
+    return fallback;
   }
 }
 
-/** Envia uma imagem para o Storage e devolve a URL pública. Lança em erro. */
+/** Envia uma imagem para o Storage e devolve a URL (com #pos=fx,fy). */
 export async function uploadImagem(original: File): Promise<string> {
-  const file = await prepararImagem(original);
+  const { file, pos } = await prepararImagem(original);
   const fd = new FormData();
   fd.append("file", file);
 
@@ -60,12 +82,12 @@ export async function uploadImagem(original: File): Promise<string> {
         const d = await res.json();
         if (d?.error) msg = d.error;
       } catch {
-        /* resposta sem JSON */
+        /* sem JSON */
       }
     }
     throw new Error(msg);
   }
   const data = await res.json().catch(() => null);
   if (!data?.url) throw new Error("Upload sem retorno. Tente novamente.");
-  return data.url as string;
+  return `${data.url}#pos=${pos}`;
 }

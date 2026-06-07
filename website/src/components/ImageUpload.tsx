@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { Upload, X, ImageOff } from "lucide-react";
 import { uploadImagem } from "@/lib/upload";
+import { objectPositionFromUrl } from "@/lib/utils";
 
 /**
  * Campo de imagem reutilizável: envia o arquivo para o Storage (via
@@ -48,7 +49,8 @@ export function ImageUpload({
             <img
               src={value}
               alt="preview"
-              className="h-full w-full object-cover object-[50%_30%]"
+              className="h-full w-full object-cover"
+              style={{ objectPosition: objectPositionFromUrl(value) }}
               onError={() => setBrokenPreview(true)}
             />
           ) : (

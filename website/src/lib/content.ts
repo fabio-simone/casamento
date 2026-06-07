@@ -1,3 +1,4 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "./supabase/admin";
 import { WEDDING } from "./constants";
 
@@ -83,6 +84,7 @@ function parseArray<T>(raw: string | undefined, fallback: T[]): T[] {
 
 /** Lê o conteúdo editável do site (com fallback para os textos padrão). */
 export async function getContent(): Promise<SiteContent> {
+  noStore(); // nunca usa cache — sempre lê o conteúdo mais recente do banco
   try {
     const supabase = createAdminClient();
     const { data } = await supabase.from("site_settings").select("key, value");

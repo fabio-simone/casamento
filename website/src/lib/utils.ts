@@ -23,3 +23,13 @@ export function formatDateSP(
 export function cn(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
+
+/**
+ * Extrai a posição de enquadramento embutida na URL (ex.: "...jpg#pos=50,35")
+ * e devolve um valor de object-position. Padrão: topo (preserva rostos).
+ */
+export function objectPositionFromUrl(url: string | null | undefined): string {
+  if (!url) return "50% 30%";
+  const m = url.match(/#pos=(\d{1,3}),(\d{1,3})/);
+  return m ? `${m[1]}% ${m[2]}%` : "50% 30%";
+}

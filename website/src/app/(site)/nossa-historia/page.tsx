@@ -4,6 +4,7 @@ import { WaveDivider } from "@/components/WaveDivider";
 import { SaoPauloSilhouette } from "@/components/SaoPauloSilhouette";
 import { getContent } from "@/lib/content";
 import { WEDDING } from "@/lib/constants";
+import { objectPositionFromUrl } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Nossa História" };
 export const dynamic = "force-dynamic";
@@ -27,7 +28,8 @@ export default async function NossaHistoriaPage() {
               <img
                 src={content.historia_foto}
                 alt={WEDDING.noivos}
-                className="h-full w-full object-cover object-[50%_30%]"
+                className="h-full w-full object-cover"
+                style={{ objectPosition: objectPositionFromUrl(content.historia_foto) }}
               />
             </div>
           )}
@@ -65,7 +67,8 @@ export default async function NossaHistoriaPage() {
                       <img
                         src={item.foto}
                         alt={item.titulo}
-                        className="aspect-video w-full object-cover object-[50%_30%]"
+                        className="aspect-video w-full object-cover"
+                        style={{ objectPosition: objectPositionFromUrl(item.foto) }}
                       />
                     </div>
                   ) : (

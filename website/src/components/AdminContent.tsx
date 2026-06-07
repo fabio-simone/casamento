@@ -6,6 +6,7 @@ import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
 import type { SiteContent, TimelineItem } from "@/lib/content";
 import { ImageUpload } from "./ImageUpload";
 import { uploadImagem } from "@/lib/upload";
+import { objectPositionFromUrl } from "@/lib/utils";
 
 export function AdminContent({ initial }: { initial: SiteContent }) {
   const router = useRouter();
@@ -226,7 +227,8 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
                 <img
                   src={foto}
                   alt={`Foto ${i + 1}`}
-                  className="h-full w-full object-cover object-[50%_30%]"
+                  className="h-full w-full object-cover"
+                  style={{ objectPosition: objectPositionFromUrl(foto) }}
                 />
                 <button
                   type="button"
