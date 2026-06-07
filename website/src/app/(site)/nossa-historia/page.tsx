@@ -51,9 +51,11 @@ export default async function NossaHistoriaPage() {
                 }`}
               >
                 <span
-                  className={`absolute top-2 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white shadow ${
+                  className={`absolute top-2 z-10 flex h-4 w-4 items-center justify-center rounded-full border-2 border-white shadow ${
                     item.lado === "rio" ? "bg-oceano" : "bg-urbano"
-                  } left-[9px] md:left-auto ${i % 2 === 0 ? "md:-right-2" : "md:-left-2"}`}
+                  } left-[9px] ${
+                    i % 2 === 0 ? "md:left-auto md:-right-2" : "md:-left-2"
+                  }`}
                 />
                 <div className="card">
                   <span className="eyebrow">{item.ano}</span>
