@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Waves, Building2 } from "lucide-react";
 import { Countdown } from "@/components/Countdown";
-import { Enquete } from "@/components/Enquete";
+import { RecadosCarousel } from "@/components/RecadosCarousel";
 import { WaveDivider } from "@/components/WaveDivider";
 import { RioSpEmblem } from "@/components/SaoPauloSilhouette";
 import { WEDDING } from "@/lib/constants";
@@ -113,14 +113,19 @@ export default async function HomePage() {
 
       <WaveDivider color="#006994" flip />
 
-      {/* ENQUETE */}
+      {/* MENSAGENS (carrossel) */}
       <section className="container-page py-16 text-center md:py-24">
-        <span className="eyebrow">Dá seu palpite</span>
-        <h2 className="section-title mb-2">{content.enquete_pergunta}</h2>
+        <span className="eyebrow">Mural de carinho</span>
+        <h2 className="section-title mb-2">Recados dos convidados</h2>
         <p className="mb-10 text-urbano/60">
-          Vote e ajude a resolver o maior impasse Rio × SP do casamento.
+          O que quem ama a gente anda mandando junto com os presentes. 💙
         </p>
-        <Enquete pergunta={content.enquete_pergunta} opcoes={content.enquete_opcoes} />
+        <RecadosCarousel />
+        <div className="mt-8">
+          <Link href="/mensagens" className="btn-secondary">
+            Ver todas as mensagens
+          </Link>
+        </div>
       </section>
 
       {/* GALERIA (teaser) */}

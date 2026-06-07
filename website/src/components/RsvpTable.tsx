@@ -41,8 +41,6 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
       "E-mail",
       "Telefone",
       "Acompanhantes",
-      "Restrição alimentar",
-      "Mensagem",
       "Data",
     ];
     const linhas = filtrados.map((r) => [
@@ -50,8 +48,6 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
       r.email,
       r.telefone ?? "",
       String(r.num_acompanhantes),
-      r.restricao_alimentar ?? "",
-      (r.mensagem ?? "").replace(/\n/g, " "),
       formatDateSP(r.created_at),
     ]);
     const csv = [header, ...linhas]
@@ -109,8 +105,6 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
               <th className="px-4 py-3 font-semibold">Nome</th>
               <th className="px-4 py-3 font-semibold">Contato</th>
               <th className="px-4 py-3 font-semibold">Acomp.</th>
-              <th className="px-4 py-3 font-semibold">Restrição</th>
-              <th className="px-4 py-3 font-semibold">Mensagem</th>
               <th className="px-4 py-3 font-semibold">Data</th>
             </tr>
           </thead>
@@ -123,8 +117,6 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
                   {r.telefone && <div className="text-xs text-urbano/50">{r.telefone}</div>}
                 </td>
                 <td className="px-4 py-3 text-urbano/70">{r.num_acompanhantes}</td>
-                <td className="px-4 py-3 text-urbano/70">{r.restricao_alimentar || "—"}</td>
-                <td className="max-w-[220px] px-4 py-3 text-urbano/70">{r.mensagem || "—"}</td>
                 <td className="whitespace-nowrap px-4 py-3 text-urbano/50">
                   {formatDateSP(r.created_at, { dateStyle: "short" })}
                 </td>
@@ -132,7 +124,7 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
             ))}
             {filtrados.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-10 text-center text-urbano/50">
+                <td colSpan={4} className="px-4 py-10 text-center text-urbano/50">
                   Nenhuma confirmação encontrada.
                 </td>
               </tr>

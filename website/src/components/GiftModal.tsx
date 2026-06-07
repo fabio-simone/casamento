@@ -19,6 +19,7 @@ export function GiftModal({
   const [quantidade, setQuantidade] = useState(1);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
+  const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -47,6 +48,7 @@ export function GiftModal({
           quantidade,
           pagador_nome: nome,
           pagador_email: email,
+          mensagem,
         }),
       });
       const data = await res.json();
@@ -136,6 +138,19 @@ export function GiftModal({
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
               placeholder="voce@email.com"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-urbano">
+              Mensagem para o casal <span className="text-urbano/40">(opcional)</span>
+            </label>
+            <textarea
+              rows={3}
+              value={mensagem}
+              onChange={(e) => setMensagem(e.target.value)}
+              maxLength={500}
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+              placeholder="Deixe um recado carinhoso — ele aparece no mural do site 💙"
             />
           </div>
 

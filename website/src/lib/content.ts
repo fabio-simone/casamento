@@ -16,8 +16,6 @@ export interface SiteContent {
   historia_foto: string; // foto do casal na página Nossa História
   timeline: TimelineItem[];
   galeria: string[]; // URLs das fotos da galeria
-  enquete_pergunta: string; // pergunta da enquete
-  enquete_opcoes: string[]; // opções de voto
 }
 
 export const DEFAULT_TIMELINE: TimelineItem[] = [
@@ -63,12 +61,6 @@ export const DEFAULT_TIMELINE: TimelineItem[] = [
   },
 ];
 
-export const DEFAULT_ENQUETE_OPCOES = [
-  "Praia paradisíaca (escolha da Karina)",
-  "Cidade grande com museus (escolha do Fábio)",
-  "Tanto faz, contanto que seja juntos 💙",
-];
-
 export const DEFAULT_CONTENT: SiteContent = {
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
@@ -76,8 +68,6 @@ export const DEFAULT_CONTENT: SiteContent = {
   historia_foto: "",
   timeline: DEFAULT_TIMELINE,
   galeria: [],
-  enquete_pergunta: "Onde a gente devia passar a lua de mel?",
-  enquete_opcoes: DEFAULT_ENQUETE_OPCOES,
 };
 
 /** Faz o parse seguro de um array JSON guardado como string. */
@@ -104,11 +94,6 @@ export async function getContent(): Promise<SiteContent> {
     );
     const timeline = timelineParsed.length > 0 ? timelineParsed : DEFAULT_TIMELINE;
 
-    const opcoes = parseArray<string>(
-      map.get("enquete_opcoes"),
-      DEFAULT_ENQUETE_OPCOES
-    );
-
     return {
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
       hero_sub: map.get("hero_sub") ?? DEFAULT_CONTENT.hero_sub,
@@ -116,8 +101,6 @@ export async function getContent(): Promise<SiteContent> {
       historia_foto: map.get("historia_foto") ?? DEFAULT_CONTENT.historia_foto,
       timeline,
       galeria: parseArray<string>(map.get("galeria"), []),
-      enquete_pergunta: map.get("enquete_pergunta") ?? DEFAULT_CONTENT.enquete_pergunta,
-      enquete_opcoes: opcoes.length > 0 ? opcoes : DEFAULT_ENQUETE_OPCOES,
     };
   } catch {
     // tabela ainda não criada / sem env — usa os padrões.

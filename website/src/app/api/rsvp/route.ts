@@ -9,10 +9,6 @@ export async function POST(req: Request) {
     const email = String(body.email ?? "").trim().toLowerCase();
     const telefone = body.telefone ? String(body.telefone).trim() : null;
     const num_acompanhantes = Math.min(5, Math.max(0, Number(body.num_acompanhantes) || 0));
-    const restricao_alimentar = body.restricao_alimentar
-      ? String(body.restricao_alimentar).trim()
-      : null;
-    const mensagem = body.mensagem ? String(body.mensagem).trim() : null;
 
     if (!nome || !email) {
       return NextResponse.json({ error: "Nome e e-mail são obrigatórios." }, { status: 400 });
@@ -27,8 +23,6 @@ export async function POST(req: Request) {
       email,
       telefone,
       num_acompanhantes,
-      restricao_alimentar,
-      mensagem,
     });
 
     if (error) {

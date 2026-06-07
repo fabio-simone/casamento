@@ -88,6 +88,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Erro ao atualizar cotas." }, { status: 500 });
     }
 
+    // Se veio mensagem junto com o presente, registra no mural de recados.
+    const mensagem = ((meta.mensagem as string) || "").trim();
+    if (updated && updated.length > 0 && mensagem) {
+      const { error: recadoErr } = await supabase
+        .from("recados")
+        .insert({ nome: pagadorNome, mensagem: mensagem.slice(0, 500) });
+      if (recadoErr) console.error("[webhook] recado insert error", recadoErr);
+    }
+
     // Envia agradecimento se algo foi efetivamente marcado como pago.
     if (updated && updated.length > 0 && pagadorEmail) {
       const { data: gift } = await supabase

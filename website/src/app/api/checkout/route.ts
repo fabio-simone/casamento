@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     const quantidade = Math.max(1, Number(body.quantidade) || 1);
     const pagadorNome = String(body.pagador_nome ?? "").trim();
     const pagadorEmail = String(body.pagador_email ?? "").trim().toLowerCase();
+    const mensagem = body.mensagem ? String(body.mensagem).trim().slice(0, 500) : "";
 
     if (!giftId || !pagadorNome || !pagadorEmail) {
       return NextResponse.json(
@@ -87,6 +88,7 @@ export async function POST(req: Request) {
           quota_ids: quotaIds,
           pagador_nome: pagadorNome,
           pagador_email: pagadorEmail,
+          mensagem,
         },
         back_urls: {
           success: `${BASE_URL}/presentes?status=sucesso`,

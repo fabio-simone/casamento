@@ -48,16 +48,6 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
     set("galeria", content.galeria.filter((_, idx) => idx !== i));
   }
 
-  // Enquete
-  function setOpcao(i: number, v: string) {
-    set("enquete_opcoes", content.enquete_opcoes.map((o, idx) => (idx === i ? v : o)));
-  }
-  function addOpcao() {
-    set("enquete_opcoes", [...content.enquete_opcoes, ""]);
-  }
-  function removeOpcao(i: number) {
-    set("enquete_opcoes", content.enquete_opcoes.filter((_, idx) => idx !== i));
-  }
 
   async function salvar() {
     setSaving(true);
@@ -228,53 +218,6 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
             <Plus className="h-4 w-4" /> Adicionar foto
           </button>
         </div>
-      </section>
-
-      {/* ENQUETE */}
-      <section className="card">
-        <h2 className="font-display text-xl font-bold text-urbano">Enquete</h2>
-        <p className="mb-4 text-sm text-urbano/60">
-          A votação que aparece na home. Os votos ficam guardados no banco.
-        </p>
-        <div>
-          <label className="mb-1 block text-sm font-medium text-urbano">Pergunta</label>
-          <input
-            value={content.enquete_pergunta}
-            onChange={(e) => set("enquete_pergunta", e.target.value)}
-            className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-          />
-        </div>
-        <h3 className="mb-2 mt-4 font-semibold text-urbano">Opções de voto</h3>
-        <div className="space-y-2">
-          {content.enquete_opcoes.map((opcao, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <input
-                value={opcao}
-                onChange={(e) => setOpcao(i, e.target.value)}
-                className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
-              />
-              <button
-                type="button"
-                onClick={() => removeOpcao(i)}
-                className="text-red-600 hover:text-red-700"
-                aria-label="Remover opção"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addOpcao}
-            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-2 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano"
-          >
-            <Plus className="h-4 w-4" /> Adicionar opção
-          </button>
-        </div>
-        <p className="mt-3 text-xs text-urbano/50">
-          Dica: evite trocar as opções depois que os votos começarem (os votos
-          são guardados pelo texto da opção).
-        </p>
       </section>
 
       {/* BARRA DE SALVAR (fixa) */}

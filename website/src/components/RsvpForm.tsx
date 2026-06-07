@@ -8,8 +8,6 @@ interface FormState {
   email: string;
   telefone: string;
   num_acompanhantes: number;
-  restricao_alimentar: string;
-  mensagem: string;
 }
 
 const initial: FormState = {
@@ -17,8 +15,6 @@ const initial: FormState = {
   email: "",
   telefone: "",
   num_acompanhantes: 0,
-  restricao_alimentar: "",
-  mensagem: "",
 };
 
 export function RsvpForm() {
@@ -125,31 +121,6 @@ export function RsvpForm() {
             </option>
           ))}
         </select>
-      </div>
-
-      <div>
-        <label className="mb-1 block text-sm font-medium text-urbano">
-          Restrição alimentar
-        </label>
-        <input
-          value={form.restricao_alimentar}
-          onChange={(e) => update("restricao_alimentar", e.target.value)}
-          className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-          placeholder="Vegetariano, sem glúten, alérgico a... (opcional)"
-        />
-      </div>
-
-      <div>
-        <label className="mb-1 block text-sm font-medium text-urbano">
-          Mensagem para o casal
-        </label>
-        <textarea
-          rows={3}
-          value={form.mensagem}
-          onChange={(e) => update("mensagem", e.target.value)}
-          className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-          placeholder="Opcional — manda aquela mensagem carinhosa (ou a piada)."
-        />
       </div>
 
       {status === "error" && (
