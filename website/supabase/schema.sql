@@ -71,6 +71,14 @@ create table if not exists public.support_messages (
   created_at  timestamptz not null default now()
 );
 
+-- ─── Votos da enquete (ex.: onde passar a lua de mel) ──
+create table if not exists public.poll_votes (
+  id         uuid primary key default gen_random_uuid(),
+  opcao      text not null,
+  created_at timestamptz not null default now()
+);
+create index if not exists idx_poll_votes_opcao on public.poll_votes(opcao);
+
 -- ============================================================
 -- Row Level Security
 -- O app acessa os dados pelo lado servidor usando a SERVICE ROLE
@@ -84,6 +92,7 @@ alter table public.gift_quotas      enable row level security;
 alter table public.recados          enable row level security;
 alter table public.site_settings    enable row level security;
 alter table public.support_messages enable row level security;
+alter table public.poll_votes       enable row level security;
 
 -- (Sem políticas para anon = acesso negado por padrão. Service role bypassa.)
 

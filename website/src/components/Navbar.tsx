@@ -11,6 +11,7 @@ const links = [
   { href: "/nossa-historia", label: "Nossa História" },
   { href: "/informacoes", label: "Informações" },
   { href: "/cronograma", label: "Cronograma" },
+  { href: "/galeria", label: "Galeria" },
   { href: "/presentes", label: "Presentes" },
   { href: "/faq", label: "FAQ" },
 ];
@@ -27,13 +28,13 @@ export function Navbar() {
           <span>Kafamento</span>
         </Link>
 
-        <ul className="hidden items-center gap-5 lg:flex">
+        <ul className="hidden items-center gap-4 lg:flex xl:gap-5">
           {links.map((l) => (
             <li key={l.href}>
               <Link
                 href={l.href}
                 className={cn(
-                  "text-xs font-semibold uppercase tracking-[0.12em] transition hover:text-oceano",
+                  "text-[11px] font-semibold uppercase tracking-[0.1em] transition hover:text-oceano xl:text-xs",
                   pathname === l.href ? "text-oceano" : "text-urbano/70"
                 )}
               >
@@ -42,7 +43,7 @@ export function Navbar() {
             </li>
           ))}
           <li>
-            <Link href="/confirmar-presenca" className="btn-primary py-2">
+            <Link href="/confirmar-presenca" className="btn-primary py-2 text-xs">
               Confirmar presença
             </Link>
           </li>

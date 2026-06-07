@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Waves, Building2 } from "lucide-react";
 import { Countdown } from "@/components/Countdown";
+import { Enquete } from "@/components/Enquete";
 import { WaveDivider } from "@/components/WaveDivider";
 import { RioSpEmblem } from "@/components/SaoPauloSilhouette";
 import { WEDDING } from "@/lib/constants";
@@ -109,6 +110,41 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <WaveDivider color="#006994" flip />
+
+      {/* ENQUETE */}
+      <section className="container-page py-16 text-center md:py-24">
+        <span className="eyebrow">Dá seu palpite</span>
+        <h2 className="section-title mb-2">{content.enquete_pergunta}</h2>
+        <p className="mb-10 text-urbano/60">
+          Vote e ajude a resolver o maior impasse Rio × SP do casamento.
+        </p>
+        <Enquete pergunta={content.enquete_pergunta} opcoes={content.enquete_opcoes} />
+      </section>
+
+      {/* GALERIA (teaser) */}
+      {content.galeria.length > 0 && (
+        <section className="bg-oceano/5 py-16 md:py-24">
+          <div className="container-page text-center">
+            <span className="eyebrow">Galeria</span>
+            <h2 className="section-title mb-8">Nossos momentos</h2>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
+              {content.galeria.slice(0, 6).map((url, i) => (
+                <div key={i} className="aspect-square overflow-hidden rounded-xl">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={url} alt={`Foto ${i + 1}`} className="h-full w-full object-cover" loading="lazy" />
+                </div>
+              ))}
+            </div>
+            {content.galeria.length > 6 && (
+              <Link href="/galeria" className="btn-secondary mt-8">
+                Ver galeria completa
+              </Link>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* CTA FINAL */}
       <section className="container-page py-16 text-center md:py-20">

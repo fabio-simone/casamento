@@ -22,14 +22,16 @@ export async function POST(req: Request) {
     push("hero_sub", body.hero_sub);
     push("historia_intro", body.historia_intro);
     push("historia_foto", body.historia_foto);
+    push("enquete_pergunta", body.enquete_pergunta);
 
-    if (Array.isArray(body.timeline)) {
-      rows.push({
-        key: "historia_timeline",
-        value: JSON.stringify(body.timeline),
-        updated_at: now,
-      });
-    }
+    const pushJson = (key: string, value: unknown) => {
+      if (Array.isArray(value)) {
+        rows.push({ key, value: JSON.stringify(value), updated_at: now });
+      }
+    };
+    pushJson("historia_timeline", body.timeline);
+    pushJson("galeria", body.galeria);
+    pushJson("enquete_opcoes", body.enquete_opcoes);
 
     const supabase = createAdminClient();
     const { error } = await supabase

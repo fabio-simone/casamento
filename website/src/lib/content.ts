@@ -15,6 +15,9 @@ export interface SiteContent {
   historia_intro: string; // parágrafo de abertura da página Nossa História
   historia_foto: string; // foto do casal na página Nossa História
   timeline: TimelineItem[];
+  galeria: string[]; // URLs das fotos da galeria
+  enquete_pergunta: string; // pergunta da enquete
+  enquete_opcoes: string[]; // opções de voto
 }
 
 export const DEFAULT_TIMELINE: TimelineItem[] = [
@@ -60,13 +63,33 @@ export const DEFAULT_TIMELINE: TimelineItem[] = [
   },
 ];
 
+export const DEFAULT_ENQUETE_OPCOES = [
+  "Praia paradisíaca (escolha da Karina)",
+  "Cidade grande com museus (escolha do Fábio)",
+  "Tanto faz, contanto que seja juntos 💙",
+];
+
 export const DEFAULT_CONTENT: SiteContent = {
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
   historia_intro: "Spoiler: deu certo. Uma linha do tempo (bem-humorada) da gente.",
   historia_foto: "",
   timeline: DEFAULT_TIMELINE,
+  galeria: [],
+  enquete_pergunta: "Onde a gente devia passar a lua de mel?",
+  enquete_opcoes: DEFAULT_ENQUETE_OPCOES,
 };
+
+/** Faz o parse seguro de um array JSON guardado como string. */
+function parseArray<T>(raw: string | undefined, fallback: T[]): T[] {
+  if (!raw) return fallback;
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 /** Lê o conteúdo editável do site (com fallback para os textos padrão). */
 export async function getContent(): Promise<SiteContent> {
@@ -75,16 +98,16 @@ export async function getContent(): Promise<SiteContent> {
     const { data } = await supabase.from("site_settings").select("key, value");
     const map = new Map((data ?? []).map((r) => [r.key as string, r.value as string]));
 
-    let timeline = DEFAULT_TIMELINE;
-    const raw = map.get("historia_timeline");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        if (Array.isArray(parsed) && parsed.length > 0) timeline = parsed;
-      } catch {
-        /* mantém o padrão */
-      }
-    }
+    const timelineParsed = parseArray<TimelineItem>(
+      map.get("historia_timeline"),
+      DEFAULT_TIMELINE
+    );
+    const timeline = timelineParsed.length > 0 ? timelineParsed : DEFAULT_TIMELINE;
+
+    const opcoes = parseArray<string>(
+      map.get("enquete_opcoes"),
+      DEFAULT_ENQUETE_OPCOES
+    );
 
     return {
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
@@ -92,6 +115,9 @@ export async function getContent(): Promise<SiteContent> {
       historia_intro: map.get("historia_intro") ?? DEFAULT_CONTENT.historia_intro,
       historia_foto: map.get("historia_foto") ?? DEFAULT_CONTENT.historia_foto,
       timeline,
+      galeria: parseArray<string>(map.get("galeria"), []),
+      enquete_pergunta: map.get("enquete_pergunta") ?? DEFAULT_CONTENT.enquete_pergunta,
+      enquete_opcoes: opcoes.length > 0 ? opcoes : DEFAULT_ENQUETE_OPCOES,
     };
   } catch {
     // tabela ainda não criada / sem env — usa os padrões.
