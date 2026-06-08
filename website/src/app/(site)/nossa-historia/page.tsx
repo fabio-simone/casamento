@@ -84,8 +84,8 @@ export default async function NossaHistoriaPage() {
           </ul>
         </div>
 
-        <div className="mx-auto mt-12 max-w-xs opacity-20">
-          <SaoPauloSilhouette className="h-auto w-full" />
+        <div className="mx-auto mt-12 max-w-xs opacity-25">
+          <SaoPauloSilhouette className="h-auto w-full" stroke="#FAF9F6" />
         </div>
       </section>
 
