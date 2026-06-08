@@ -23,7 +23,7 @@ export default async function GaleriaPage() {
         </div>
       </section>
 
-      <WaveDivider color="#04476A" />
+      <WaveDivider tone="oceanoDark" />
 
       <section className="section-dark py-12 md:py-16">
         <div className="container-page">

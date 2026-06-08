@@ -4,6 +4,13 @@
 
 :root {
   color-scheme: light;
+  /* Paleta padrão (Rio × SP) — canais RGB. Sobrescrita pela paleta escolhida no painel. */
+  --color-oceano: 0 105 148;
+  --color-oceanoDark: 4 71 106;
+  --color-laranja: 224 122 63;
+  --color-areia: 232 213 176;
+  --color-urbano: 58 58 58;
+  --color-offwhite: 250 249 246;
 }
 
 html {
@@ -72,11 +79,11 @@ body {
 /* Dentro de cartões dark: texto cinza vira claro, azul vira laranja (acento) */
 .section-dark .card [class*="text-urbano"],
 .card-dark [class*="text-urbano"] {
-  color: rgb(250 249 246 / 0.82) !important;
+  color: rgb(var(--color-offwhite) / 0.82) !important;
 }
 .section-dark .card [class*="text-oceano"],
 .card-dark [class*="text-oceano"] {
-  color: #e07a3f !important;
+  color: rgb(var(--color-laranja)) !important;
 }
 
 /* Campos de formulário têm fundo claro: o texto digitado/selecionado
@@ -87,15 +94,15 @@ body {
 .card-dark input,
 .card-dark select,
 .card-dark textarea {
-  color: #3a3a3a !important;
+  color: rgb(var(--color-urbano)) !important;
 }
 
 /* Padrão sutil de ondas como textura de fundo */
 .bg-calcadao {
   background-image: repeating-linear-gradient(
     45deg,
-    rgba(0, 105, 148, 0.04) 0px,
-    rgba(0, 105, 148, 0.04) 12px,
+    rgb(var(--color-oceano) / 0.04) 0px,
+    rgb(var(--color-oceano) / 0.04) 12px,
     transparent 12px,
     transparent 24px
   );

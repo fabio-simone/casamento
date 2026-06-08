@@ -40,7 +40,7 @@ export default async function HomePage() {
             className="mx-auto max-w-sm text-center text-offwhite sm:mx-0 sm:ml-[6%] lg:ml-[10%]"
             style={{ textShadow: "0 2px 24px rgba(4,71,106,0.6)" }}
           >
-            <RioSpEmblem className="mx-auto mb-3 h-14 w-14" stroke="#FAF9F6" />
+            <RioSpEmblem className="mx-auto mb-3 h-14 w-14" stroke="rgb(var(--color-offwhite))" />
             <span className="inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja [text-indent:0.3em]">
               O Rio encontra SP
             </span>
@@ -78,7 +78,7 @@ export default async function HomePage() {
       {/* BOAS-VINDAS (continua o azul do hero) */}
       <section className="section-dark py-16 text-center md:py-24">
         <div className="container-page">
-          <RioSpEmblem className="mx-auto mb-6 h-12 w-12" stroke="#FAF9F6" />
+          <RioSpEmblem className="mx-auto mb-6 h-12 w-12" stroke="rgb(var(--color-offwhite))" />
           <h2 className="section-title mx-auto max-w-2xl">{content.home.boas_vindas_titulo}</h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-offwhite/80">
             {content.hero_sub}
@@ -88,7 +88,7 @@ export default async function HomePage() {
 
       {/* transição azul → claro */}
       <div className="bg-oceanoDark">
-        <WaveDivider color="#FAF9F6" />
+        <WaveDivider tone="offwhite" />
       </div>
 
       {/* CONTADOR */}
@@ -121,7 +121,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <WaveDivider color="#04476A" />
+      <WaveDivider tone="oceanoDark" />
 
       {/* MENSAGENS (carrossel) */}
       <section className="section-dark py-16 text-center md:py-24">

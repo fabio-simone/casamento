@@ -18,6 +18,7 @@ export async function POST(req: Request) {
     const push = (key: string, value: unknown) =>
       rows.push({ key, value: value == null ? "" : String(value), updated_at: now });
 
+    push("paleta", body.paleta);
     push("hero_foto", body.hero_foto);
     push("hero_sub", body.hero_sub);
     push("historia_intro", body.historia_intro);

@@ -49,7 +49,7 @@ export default async function InformacoesPage() {
         </div>
       </section>
 
-      <WaveDivider color="#04476A" />
+      <WaveDivider tone="oceanoDark" />
 
       <section className="section-dark py-16 md:py-20">
         <div className="container-page grid gap-6 md:grid-cols-2 lg:grid-cols-3">

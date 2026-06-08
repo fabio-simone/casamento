@@ -54,7 +54,7 @@ export function Navbar() {
             light ? "text-offwhite" : "text-urbano"
           )}
         >
-          <RioSpEmblem className="h-9 w-9" stroke={light ? "#FAF9F6" : "#006994"} />
+          <RioSpEmblem className="h-9 w-9" stroke={light ? "rgb(var(--color-offwhite))" : "rgb(var(--color-oceano))"} />
           <span>kafamento</span>
         </Link>
 

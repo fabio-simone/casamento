@@ -42,7 +42,7 @@ export default async function CronogramaPage() {
         </div>
       </section>
 
-      <WaveDivider color="#04476A" />
+      <WaveDivider tone="oceanoDark" />
 
       <section className="section-dark py-16 md:py-20">
         <ol className="container-page mx-auto max-w-2xl space-y-6">

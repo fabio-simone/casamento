@@ -8,7 +8,7 @@ export function Footer() {
     <>
       {/* transição da seção azul (dark) para o rodapé claro (areia) */}
       <div className="bg-oceanoDark">
-        <WaveDivider color="#E8D5B0" />
+        <WaveDivider tone="areia" />
       </div>
 
       <footer className="bg-areia text-urbano">

@@ -9,6 +9,8 @@ import { uploadImagem } from "@/lib/upload";
 import { objectPositionFromUrl } from "@/lib/utils";
 import { INFO_ICONES } from "@/lib/info-icones";
 import { CRONO_ICONES } from "@/lib/crono-icones";
+import { PALETAS } from "@/lib/paletas";
+import { cn } from "@/lib/utils";
 
 const PAGINAS_LABELS: { key: string; nome: string }[] = [
   { key: "nossa_historia", nome: "Nossa História" },
@@ -184,6 +186,43 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
 
   return (
     <div className="space-y-8 pb-24">
+      {/* PALETA DE CORES */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Paleta de cores</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          Escolha o esquema de cores do site inteiro.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {PALETAS.map((p) => {
+            const ativa = content.paleta === p.id;
+            return (
+              <button
+                key={p.id}
+                type="button"
+                onClick={() => set("paleta", p.id)}
+                className={cn(
+                  "flex items-center gap-3 rounded-2xl border p-3 text-left transition",
+                  ativa
+                    ? "border-oceano ring-2 ring-oceano/30"
+                    : "border-areia hover:border-oceano/50"
+                )}
+              >
+                <div className="flex shrink-0 overflow-hidden rounded-lg border border-areia">
+                  {(["oceano", "oceanoDark", "laranja", "areia"] as const).map((c) => (
+                    <span
+                      key={c}
+                      className="h-9 w-5"
+                      style={{ backgroundColor: `rgb(${p.cores[c]})` }}
+                    />
+                  ))}
+                </div>
+                <span className="text-sm font-medium text-urbano">{p.nome}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
+
       {/* HOME */}
       <section className="card">
         <h2 className="font-display text-xl font-bold text-urbano">Página inicial</h2>

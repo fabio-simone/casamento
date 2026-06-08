@@ -4,13 +4,15 @@ import { cn } from "@/lib/utils";
  * Separador de seções em forma de onda suave — referência ao calçadão
  * de Copacabana, mas minimalista (uma curva limpa). `flip` inverte.
  */
+type Tone = "oceano" | "oceanoDark" | "laranja" | "areia" | "urbano" | "offwhite";
+
 export function WaveDivider({
   className,
-  color = "#006994",
+  tone = "oceanoDark",
   flip = false,
 }: {
   className?: string;
-  color?: string;
+  tone?: Tone;
   flip?: boolean;
 }) {
   return (
@@ -26,7 +28,7 @@ export function WaveDivider({
       >
         <path
           d="M0,40 C240,80 480,80 720,40 C960,0 1200,0 1440,40 L1440,80 L0,80 Z"
-          fill={color}
+          style={{ fill: `rgb(var(--color-${tone}))` }}
         />
       </svg>
     </div>

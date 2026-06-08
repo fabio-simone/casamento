@@ -58,6 +58,7 @@ export interface HomeContent {
 }
 
 export interface SiteContent {
+  paleta: string; // id da paleta de cores escolhida
   hero_foto: string; // foto do casal na home
   hero_sub: string; // subtítulo da home
   home: HomeContent; // demais textos da home
@@ -226,6 +227,7 @@ export const DEFAULT_HOME: HomeContent = {
 };
 
 export const DEFAULT_CONTENT: SiteContent = {
+  paleta: "rio_sp",
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
   home: DEFAULT_HOME,
@@ -276,6 +278,7 @@ export async function getContent(): Promise<SiteContent> {
     const timeline = timelineParsed.length > 0 ? timelineParsed : DEFAULT_TIMELINE;
 
     return {
+      paleta: map.get("paleta") ?? DEFAULT_CONTENT.paleta,
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
       hero_sub: map.get("hero_sub") ?? DEFAULT_CONTENT.hero_sub,
       home: parseObject<HomeContent>(map.get("home"), DEFAULT_HOME),

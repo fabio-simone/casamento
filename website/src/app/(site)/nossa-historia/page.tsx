@@ -36,7 +36,7 @@ export default async function NossaHistoriaPage() {
         </div>
       </section>
 
-      <WaveDivider color="#04476A" />
+      <WaveDivider tone="oceanoDark" />
 
       {/* TIMELINE */}
       <section className="section-dark py-16 md:py-20">
@@ -85,7 +85,7 @@ export default async function NossaHistoriaPage() {
         </div>
 
         <div className="mx-auto mt-12 max-w-xs opacity-25">
-          <SaoPauloSilhouette className="h-auto w-full" stroke="#FAF9F6" />
+          <SaoPauloSilhouette className="h-auto w-full" stroke="rgb(var(--color-offwhite))" />
         </div>
       </section>
 
