@@ -31,7 +31,8 @@ const ICONES: Record<string, LucideIcon> = {
 };
 
 export default async function InformacoesPage() {
-  const { informacoes } = await getContent();
+  const { informacoes, paginas } = await getContent();
+  const p = paginas.informacoes;
   const mapsSrc = `https://www.google.com/maps?q=${encodeURIComponent(
     informacoes.mapa_query
   )}&output=embed`;
@@ -40,10 +41,10 @@ export default async function InformacoesPage() {
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
-          <span className="eyebrow">Informações</span>
-          <h1 className="section-title">Tudo que você precisa saber</h1>
+          <span className="eyebrow">{p.eyebrow}</span>
+          <h1 className="section-title">{p.titulo}</h1>
           <p className="mx-auto mt-4 max-w-xl text-urbano/70">
-            {WEDDING.dataExtenso} · {WEDDING.cidade}
+            {p.intro || `${WEDDING.dataExtenso} · ${WEDDING.cidade}`}
           </p>
         </div>
       </section>

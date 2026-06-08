@@ -1,21 +1,23 @@
 import type { Metadata } from "next";
 import { RsvpForm } from "@/components/RsvpForm";
 import { WaveDivider } from "@/components/WaveDivider";
-import { WEDDING } from "@/lib/constants";
+import { getContent } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Confirmar Presença" };
+export const dynamic = "force-dynamic";
 
-export default function RsvpPage() {
+export default async function RsvpPage() {
+  const { paginas } = await getContent();
+  const p = paginas.confirmar;
   return (
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
-          <span className="eyebrow">RSVP · {WEDDING.dataCurta}</span>
-          <h1 className="section-title">Confirme sua presença</h1>
-          <p className="mx-auto mt-4 max-w-xl text-urbano/70">
-            Bora celebrar o encontro do Rio com SP? Preenche aí embaixo que a
-            gente já reserva seu lugar (e sua porção de feijoada).
-          </p>
+          <span className="eyebrow">{p.eyebrow}</span>
+          <h1 className="section-title">{p.titulo}</h1>
+          {p.intro && (
+            <p className="mx-auto mt-4 max-w-xl text-urbano/70">{p.intro}</p>
+          )}
         </div>
       </section>
 

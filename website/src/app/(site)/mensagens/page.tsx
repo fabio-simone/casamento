@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Quote } from "lucide-react";
 import { WaveDivider } from "@/components/WaveDivider";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getContent } from "@/lib/content";
 import { formatDateSP } from "@/lib/utils";
 import type { Recado } from "@/lib/types";
 
@@ -24,16 +25,18 @@ async function getRecados(): Promise<Recado[]> {
 
 export default async function MensagensPage() {
   const recados = await getRecados();
+  const { paginas } = await getContent();
+  const p = paginas.mensagens;
 
   return (
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
-          <span className="eyebrow">Mural de carinho</span>
-          <h1 className="section-title">Mensagens dos convidados</h1>
-          <p className="mx-auto mt-4 max-w-xl text-urbano/70">
-            Todo o carinho que recebemos de quem é importante pra gente.
-          </p>
+          <span className="eyebrow">{p.eyebrow}</span>
+          <h1 className="section-title">{p.titulo}</h1>
+          {p.intro && (
+            <p className="mx-auto mt-4 max-w-xl text-urbano/70">{p.intro}</p>
+          )}
         </div>
       </section>
 

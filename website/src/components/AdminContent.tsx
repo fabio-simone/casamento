@@ -8,6 +8,19 @@ import { ImageUpload } from "./ImageUpload";
 import { uploadImagem } from "@/lib/upload";
 import { objectPositionFromUrl } from "@/lib/utils";
 import { INFO_ICONES } from "@/lib/info-icones";
+import { CRONO_ICONES } from "@/lib/crono-icones";
+
+const PAGINAS_LABELS: { key: string; nome: string }[] = [
+  { key: "nossa_historia", nome: "Nossa História" },
+  { key: "informacoes", nome: "Informações" },
+  { key: "cronograma", nome: "Cronograma" },
+  { key: "galeria", nome: "Galeria" },
+  { key: "presentes", nome: "Presentes" },
+  { key: "faq", nome: "FAQ" },
+  { key: "confirmar", nome: "Confirmar Presença" },
+  { key: "contato", nome: "Contato / Suporte" },
+  { key: "mensagens", nome: "Mensagens" },
+];
 
 export function AdminContent({ initial }: { initial: SiteContent }) {
   const router = useRouter();
@@ -85,6 +98,37 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
     setBloco(bi, {
       itens: content.informacoes.blocos[bi].itens.filter((_, idx) => idx !== ii),
     });
+  }
+
+  // Cronograma
+  function setEvento(i: number, patch: Partial<SiteContent["cronograma"][number]>) {
+    set("cronograma", content.cronograma.map((e, idx) => (idx === i ? { ...e, ...patch } : e)));
+  }
+  function addEvento() {
+    set("cronograma", [
+      ...content.cronograma,
+      { hora: "00h00", titulo: "Novo momento", texto: "", icone: "anel", lado: "rio" },
+    ]);
+  }
+  function removeEvento(i: number) {
+    set("cronograma", content.cronograma.filter((_, idx) => idx !== i));
+  }
+
+  // FAQ
+  function setFaqItem(i: number, patch: Partial<SiteContent["faq"][number]>) {
+    set("faq", content.faq.map((f, idx) => (idx === i ? { ...f, ...patch } : f)));
+  }
+  function addFaqItem() {
+    set("faq", [...content.faq, { pergunta: "", resposta: "" }]);
+  }
+  function removeFaqItem(i: number) {
+    set("faq", content.faq.filter((_, idx) => idx !== i));
+  }
+
+  // Textos das páginas
+  function setPagina(key: string, patch: Partial<SiteContent["paginas"][string]>) {
+    const atual = content.paginas[key] ?? { eyebrow: "", titulo: "", intro: "" };
+    set("paginas", { ...content.paginas, [key]: { ...atual, ...patch } });
   }
 
   async function handleGaleriaFiles(e: React.ChangeEvent<HTMLInputElement>) {
@@ -409,6 +453,87 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
               Ex.: &quot;Espaço Vila Cordeiro, São Paulo&quot; — é o que o mapa procura.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* CRONOGRAMA */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Cronograma</h2>
+        <p className="mb-4 text-sm text-urbano/60">Os momentos do dia do casamento.</p>
+        <div className="space-y-4">
+          {content.cronograma.map((e, i) => (
+            <div key={i} className="rounded-2xl border border-areia bg-offwhite p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-oceano">
+                  Momento {i + 1}
+                </span>
+                <button type="button" onClick={() => removeEvento(i)} className="flex items-center gap-1 text-xs text-red-600 hover:underline">
+                  <Trash2 className="h-3 w-3" /> Remover
+                </button>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <input value={e.hora} onChange={(ev) => setEvento(i, { hora: ev.target.value })} placeholder="Horário" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+                <select value={e.icone} onChange={(ev) => setEvento(i, { icone: ev.target.value })} className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano">
+                  {CRONO_ICONES.map((ic) => (<option key={ic.value} value={ic.value}>{ic.label}</option>))}
+                </select>
+                <select value={e.lado} onChange={(ev) => setEvento(i, { lado: ev.target.value as "rio" | "sp" })} className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano">
+                  <option value="rio">Lado Rio (azul)</option>
+                  <option value="sp">Lado SP (laranja)</option>
+                </select>
+              </div>
+              <input value={e.titulo} onChange={(ev) => setEvento(i, { titulo: ev.target.value })} placeholder="Título" className="mt-3 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <textarea value={e.texto} onChange={(ev) => setEvento(i, { texto: ev.target.value })} placeholder="Descrição" rows={2} className="mt-3 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+          ))}
+          <button type="button" onClick={addEvento} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-3 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano">
+            <Plus className="h-4 w-4" /> Adicionar momento
+          </button>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Perguntas frequentes (FAQ)</h2>
+        <p className="mb-4 text-sm text-urbano/60">Pergunta e resposta de cada item.</p>
+        <div className="space-y-4">
+          {content.faq.map((f, i) => (
+            <div key={i} className="rounded-2xl border border-areia bg-offwhite p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-oceano">Pergunta {i + 1}</span>
+                <button type="button" onClick={() => removeFaqItem(i)} className="flex items-center gap-1 text-xs text-red-600 hover:underline">
+                  <Trash2 className="h-3 w-3" /> Remover
+                </button>
+              </div>
+              <input value={f.pergunta} onChange={(ev) => setFaqItem(i, { pergunta: ev.target.value })} placeholder="Pergunta" className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <textarea value={f.resposta} onChange={(ev) => setFaqItem(i, { resposta: ev.target.value })} placeholder="Resposta" rows={3} className="mt-3 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+          ))}
+          <button type="button" onClick={addFaqItem} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-3 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano">
+            <Plus className="h-4 w-4" /> Adicionar pergunta
+          </button>
+        </div>
+      </section>
+
+      {/* TEXTOS DAS PÁGINAS */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Títulos das páginas</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          O selo, título e descrição do topo de cada página.
+        </p>
+        <div className="space-y-4">
+          {PAGINAS_LABELS.map(({ key, nome }) => {
+            const pg = content.paginas[key] ?? { eyebrow: "", titulo: "", intro: "" };
+            return (
+              <div key={key} className="rounded-2xl border border-areia bg-offwhite p-4">
+                <p className="mb-2 text-sm font-semibold text-urbano">{nome}</p>
+                <div className="grid gap-2 sm:grid-cols-2">
+                  <input value={pg.eyebrow} onChange={(e) => setPagina(key, { eyebrow: e.target.value })} placeholder="Selo (ex: FAQ)" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+                  <input value={pg.titulo} onChange={(e) => setPagina(key, { titulo: e.target.value })} placeholder="Título" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+                </div>
+                <textarea value={pg.intro} onChange={(e) => setPagina(key, { intro: e.target.value })} placeholder="Descrição (opcional)" rows={2} className="mt-2 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              </div>
+            );
+          })}
         </div>
       </section>
 

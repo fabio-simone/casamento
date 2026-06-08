@@ -22,6 +22,25 @@ export interface InformacoesContent {
   mapa_query: string; // usado no Google Maps embed
 }
 
+export interface EventoItem {
+  hora: string;
+  titulo: string;
+  texto: string;
+  icone: string;
+  lado: "rio" | "sp";
+}
+
+export interface FaqItem {
+  pergunta: string;
+  resposta: string;
+}
+
+export interface PageHeader {
+  eyebrow: string;
+  titulo: string;
+  intro: string;
+}
+
 export interface SiteContent {
   hero_foto: string; // foto do casal na home
   hero_sub: string; // subtítulo da home
@@ -30,6 +49,9 @@ export interface SiteContent {
   timeline: TimelineItem[];
   galeria: string[]; // URLs das fotos da galeria
   informacoes: InformacoesContent; // página Informações (local, horários...)
+  cronograma: EventoItem[]; // momentos do dia
+  faq: FaqItem[]; // perguntas e respostas
+  paginas: Record<string, PageHeader>; // títulos/intro de cada página
 }
 
 export const DEFAULT_TIMELINE: TimelineItem[] = [
@@ -132,6 +154,41 @@ export const DEFAULT_INFORMACOES: InformacoesContent = {
   mapa_query: "Vila Olímpia, São Paulo - SP",
 };
 
+export const DEFAULT_CRONOGRAMA: EventoItem[] = [
+  { hora: "Ontem", titulo: "Fábio chega ao local", texto: "Paulistano que é paulistano já está lá conferindo se tudo começa no horário.", icone: "predio", lado: "sp" },
+  { hora: "15h30", titulo: "Recepção dos convidados", texto: "Welcome drink: água de coco para os cariocas, água com gás para os paulistas.", icone: "taca", lado: "rio" },
+  { hora: "16h00", titulo: "Cerimônia", texto: "Início pontual (relógio de SP). Tragam lencinho — vai ter choro garantido.", icone: "anel", lado: "sp" },
+  { hora: "16h20", titulo: "Karina entra", texto: "Karina chega no 'horário carioca' — ou seja, atrasada e linda. Vale a pena esperar.", icone: "estrela", lado: "rio" },
+  { hora: "17h00", titulo: "Fotos & cumprimentos", texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.", icone: "camera", lado: "sp" },
+  { hora: "18h00", titulo: "Festa & jantar", texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.", icone: "prato", lado: "rio" },
+  { hora: "20h00", titulo: "Pista liberada", texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.", icone: "musica", lado: "sp" },
+  { hora: "23h00", titulo: "Bem-casados & despedida", texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.", icone: "coracao", lado: "rio" },
+];
+
+export const DEFAULT_FAQ: FaqItem[] = [
+  { pergunta: "Vai ter feijoada ou pastel de feira?", resposta: "Os dois! A diplomacia Rio-SP foi negociada com carinho. Feijoada para os cariocas, pastel de feira para os paulistas, e todo mundo come das duas coisas mesmo." },
+  { pergunta: "Posso ir de havaianas?", resposta: "Karina diria que sim. Fábio implora que não. O dress code é esporte fino, então deixe a havaiana para a praia (ou para o presente do Fábio na lista)." },
+  { pergunta: "O Fábio já aprendeu a falar 'maravilhoso'?", resposta: "Está em treinamento intensivo. Já consegue dizer 'maravilhoso' sem fazer careta. Em troca, a Karina já fala 'mano' e até reclama do trânsito como uma paulistana raiz." },
+  { pergunta: "Que horas começa, no horário carioca ou paulistano?", resposta: "Horário paulistano, ou seja: pontual. A cerimônia começa às 16h em ponto. Cariocas, por favor, somem 20 minutos do seu relógio interno." },
+  { pergunta: "Posso levar acompanhante?", resposta: "Depende do seu convite — você indica o número de acompanhantes (até 5) na confirmação de presença. Confirme com antecedência para a gente organizar as mesas (e a feijoada)." },
+  { pergunta: "Vai ter estacionamento?", resposta: "Sim, com valet no local. Se você é carioca e tem medo de dirigir em SP, recomendamos app de transporte ou o metrô (que, orgulho paulistano, funciona)." },
+  { pergunta: "Crianças são bem-vindas?", resposta: "Amamos crianças! Confirme a presença delas como acompanhantes para garantirmos cardápio e cadeirinhas." },
+  { pergunta: "Como faço para dar um presente?", resposta: "Na página de Presentes! Escolha um presente (ou uma cota dele), clique em 'Presentear' e pague com cartão, Pix ou boleto via Mercado Pago." },
+  { pergunta: "Qual o time da casa: Flamengo ou Corinthians?", resposta: "Essa é proibida. Por isso temos um item na lista de presentes: 'Fundo de emergência para não brigar sobre Flamengo'. Contribua pela paz do casal." },
+];
+
+export const DEFAULT_PAGINAS: Record<string, PageHeader> = {
+  nossa_historia: { eyebrow: "Nossa História", titulo: "Como o Rio e SP decidiram morar juntos", intro: "" },
+  informacoes: { eyebrow: "Informações", titulo: "Tudo que você precisa saber", intro: "" },
+  cronograma: { eyebrow: "Cronograma · 22 de novembro", titulo: "O grande dia, minuto a minuto", intro: "Todos os horários no fuso de São Paulo. Cariocas, ajustem o relógio interno. 😉" },
+  galeria: { eyebrow: "Galeria", titulo: "Nossos momentos", intro: "Um pouquinho da gente — do Rio a SP e por onde mais a vida levar." },
+  presentes: { eyebrow: "Lista de Presentes", titulo: "Ajude a financiar essa fusão Rio-SP", intro: "Mais importante que o presente é a sua presença. Mas se quiser presentear, temos opções que vão de \"lua de mel\" a \"kit sobrevivência do Fábio no Rio\". 😄" },
+  faq: { eyebrow: "FAQ", titulo: "Perguntas (quase) frequentes", intro: "Tudo que você queria perguntar, com a dose certa de Rio vs SP." },
+  confirmar: { eyebrow: "RSVP", titulo: "Confirme sua presença", intro: "Bora celebrar o encontro do Rio com SP? Preenche aí embaixo que a gente já reserva seu lugar (e sua porção de feijoada)." },
+  contato: { eyebrow: "Suporte", titulo: "Precisa de ajuda?", intro: "Teve algum problema para confirmar presença, pagar um presente ou abrir o site? Conta pra gente aqui embaixo — o casal recebe na hora e te ajuda a resolver." },
+  mensagens: { eyebrow: "Mural de carinho", titulo: "Mensagens dos convidados", intro: "Todo o carinho que recebemos de quem é importante pra gente." },
+};
+
 export const DEFAULT_CONTENT: SiteContent = {
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
@@ -140,6 +197,9 @@ export const DEFAULT_CONTENT: SiteContent = {
   timeline: DEFAULT_TIMELINE,
   galeria: [],
   informacoes: DEFAULT_INFORMACOES,
+  cronograma: DEFAULT_CRONOGRAMA,
+  faq: DEFAULT_FAQ,
+  paginas: DEFAULT_PAGINAS,
 };
 
 /** Faz o parse seguro de um array JSON guardado como string. */
@@ -188,6 +248,18 @@ export async function getContent(): Promise<SiteContent> {
       informacoes: parseObject<InformacoesContent>(
         map.get("informacoes"),
         DEFAULT_INFORMACOES
+      ),
+      cronograma: (() => {
+        const c = parseArray<EventoItem>(map.get("cronograma"), DEFAULT_CRONOGRAMA);
+        return c.length > 0 ? c : DEFAULT_CRONOGRAMA;
+      })(),
+      faq: (() => {
+        const f = parseArray<FaqItem>(map.get("faq"), DEFAULT_FAQ);
+        return f.length > 0 ? f : DEFAULT_FAQ;
+      })(),
+      paginas: parseObject<Record<string, PageHeader>>(
+        map.get("paginas"),
+        DEFAULT_PAGINAS
       ),
     };
   } catch {

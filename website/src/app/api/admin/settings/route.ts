@@ -30,14 +30,16 @@ export async function POST(req: Request) {
     };
     pushJson("historia_timeline", body.timeline);
     pushJson("galeria", body.galeria);
+    pushJson("cronograma", body.cronograma);
+    pushJson("faq", body.faq);
 
-    if (body.informacoes && typeof body.informacoes === "object") {
-      rows.push({
-        key: "informacoes",
-        value: JSON.stringify(body.informacoes),
-        updated_at: now,
-      });
-    }
+    const pushObj = (key: string, value: unknown) => {
+      if (value && typeof value === "object") {
+        rows.push({ key, value: JSON.stringify(value), updated_at: now });
+      }
+    };
+    pushObj("informacoes", body.informacoes);
+    pushObj("paginas", body.paginas);
 
     const supabase = createAdminClient();
     const { error } = await supabase

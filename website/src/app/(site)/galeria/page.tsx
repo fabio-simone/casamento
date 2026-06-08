@@ -8,17 +8,18 @@ export const metadata: Metadata = { title: "Galeria" };
 export const dynamic = "force-dynamic";
 
 export default async function GaleriaPage() {
-  const { galeria } = await getContent();
+  const { galeria, paginas } = await getContent();
+  const p = paginas.galeria;
 
   return (
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
-          <span className="eyebrow">Galeria</span>
-          <h1 className="section-title">Nossos momentos</h1>
-          <p className="mx-auto mt-4 max-w-xl text-urbano/70">
-            Um pouquinho da gente — do Rio a SP e por onde mais a vida levar.
-          </p>
+          <span className="eyebrow">{p.eyebrow}</span>
+          <h1 className="section-title">{p.titulo}</h1>
+          {p.intro && (
+            <p className="mx-auto mt-4 max-w-xl text-urbano/70">{p.intro}</p>
+          )}
         </div>
       </section>
 

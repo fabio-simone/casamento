@@ -16,9 +16,9 @@ export default async function NossaHistoriaPage() {
     <>
       <section className="bg-gradient-to-b from-oceano/10 to-offwhite pb-12 pt-28 text-center md:pb-16 md:pt-32">
         <div className="container-page">
-          <span className="eyebrow">Nossa História</span>
+          <span className="eyebrow">{content.paginas.nossa_historia.eyebrow}</span>
           <h1 className="section-title mx-auto max-w-2xl">
-            Como o Rio e SP decidiram morar juntos
+            {content.paginas.nossa_historia.titulo}
           </h1>
           <p className="mx-auto mt-4 max-w-xl text-urbano/70">{content.historia_intro}</p>
 
