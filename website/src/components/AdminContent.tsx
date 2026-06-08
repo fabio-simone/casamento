@@ -40,6 +40,13 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
     setSaved(false);
   }
 
+  function setHome<K extends keyof SiteContent["home"]>(
+    key: K,
+    value: SiteContent["home"][K]
+  ) {
+    set("home", { ...content.home, [key]: value });
+  }
+
   function setItem(i: number, patch: Partial<TimelineItem>) {
     setContent((c) => ({
       ...c,
@@ -191,7 +198,7 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
           />
           <div>
             <label className="mb-1 block text-sm font-medium text-urbano">
-              Frase de destaque
+              Frase de destaque (abaixo dos nomes / boas-vindas)
             </label>
             <textarea
               rows={3}
@@ -199,6 +206,52 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
               onChange={(e) => set("hero_sub", e.target.value)}
               className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
             />
+          </div>
+
+          <div className="rounded-2xl border border-areia bg-offwhite p-4">
+            <p className="mb-1 text-sm font-semibold text-urbano">Boas-vindas</p>
+            <input value={content.home.boas_vindas_titulo} onChange={(e) => setHome("boas_vindas_titulo", e.target.value)} placeholder="Título (ex: Sejam bem-vindos!)" className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+          </div>
+
+          <div className="rounded-2xl border border-areia bg-offwhite p-4">
+            <p className="mb-1 text-sm font-semibold text-urbano">Contador</p>
+            <input value={content.home.contador_titulo} onChange={(e) => setHome("contador_titulo", e.target.value)} placeholder="Título (ex: Faltam só...)" className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            <textarea value={content.home.contador_texto} onChange={(e) => setHome("contador_texto", e.target.value)} placeholder="Frase abaixo do título" rows={2} className="mt-2 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="rounded-2xl border border-areia bg-offwhite p-4">
+              <p className="mb-1 text-sm font-semibold text-urbano">Lado dela (Rio)</p>
+              <input value={content.home.lado_rio_titulo} onChange={(e) => setHome("lado_rio_titulo", e.target.value)} placeholder="Título" className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <textarea value={content.home.lado_rio_texto} onChange={(e) => setHome("lado_rio_texto", e.target.value)} placeholder="Texto" rows={3} className="mt-2 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+            <div className="rounded-2xl border border-areia bg-offwhite p-4">
+              <p className="mb-1 text-sm font-semibold text-urbano">Lado dele (SP)</p>
+              <input value={content.home.lado_sp_titulo} onChange={(e) => setHome("lado_sp_titulo", e.target.value)} placeholder="Título" className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <textarea value={content.home.lado_sp_texto} onChange={(e) => setHome("lado_sp_texto", e.target.value)} placeholder="Texto" rows={3} className="mt-2 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-areia bg-offwhite p-4">
+            <p className="mb-1 text-sm font-semibold text-urbano">Carrossel de recados</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input value={content.home.recados_eyebrow} onChange={(e) => setHome("recados_eyebrow", e.target.value)} placeholder="Selo (ex: Mural de carinho)" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <input value={content.home.recados_titulo} onChange={(e) => setHome("recados_titulo", e.target.value)} placeholder="Título" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+            <textarea value={content.home.recados_texto} onChange={(e) => setHome("recados_texto", e.target.value)} placeholder="Frase abaixo do título" rows={2} className="mt-2 w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+          </div>
+
+          <div className="rounded-2xl border border-areia bg-offwhite p-4">
+            <p className="mb-1 text-sm font-semibold text-urbano">Galeria (resumo na home)</p>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input value={content.home.galeria_eyebrow} onChange={(e) => setHome("galeria_eyebrow", e.target.value)} placeholder="Selo (ex: Galeria)" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+              <input value={content.home.galeria_titulo} onChange={(e) => setHome("galeria_titulo", e.target.value)} placeholder="Título" className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-areia bg-offwhite p-4">
+            <p className="mb-1 text-sm font-semibold text-urbano">Chamada final</p>
+            <textarea value={content.home.cta_titulo} onChange={(e) => setHome("cta_titulo", e.target.value)} placeholder="Frase de chamada no fim da home" rows={2} className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano" />
           </div>
         </div>
       </section>

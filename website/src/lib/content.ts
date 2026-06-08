@@ -41,9 +41,26 @@ export interface PageHeader {
   intro: string;
 }
 
+export interface HomeContent {
+  boas_vindas_titulo: string;
+  contador_titulo: string;
+  contador_texto: string;
+  lado_rio_titulo: string;
+  lado_rio_texto: string;
+  lado_sp_titulo: string;
+  lado_sp_texto: string;
+  recados_eyebrow: string;
+  recados_titulo: string;
+  recados_texto: string;
+  galeria_eyebrow: string;
+  galeria_titulo: string;
+  cta_titulo: string;
+}
+
 export interface SiteContent {
   hero_foto: string; // foto do casal na home
   hero_sub: string; // subtítulo da home
+  home: HomeContent; // demais textos da home
   historia_intro: string; // parágrafo de abertura da página Nossa História
   historia_foto: string; // foto do casal na página Nossa História
   timeline: TimelineItem[];
@@ -189,9 +206,29 @@ export const DEFAULT_PAGINAS: Record<string, PageHeader> = {
   mensagens: { eyebrow: "Mural de carinho", titulo: "Mensagens dos convidados", intro: "Todo o carinho que recebemos de quem é importante pra gente." },
 };
 
+export const DEFAULT_HOME: HomeContent = {
+  boas_vindas_titulo: "Sejam bem-vindos!",
+  contador_titulo: "Faltam só...",
+  contador_texto:
+    "...para a Karina chegar (no horário carioca) e o Fábio reclamar do trânsito.",
+  lado_rio_titulo: "Lado Karina (Rio)",
+  lado_rio_texto:
+    'Praia, samba no pé, "maravilhoso!" a cada cinco minutos e a certeza de que 25°C é frio.',
+  lado_sp_titulo: "Lado Fábio (SP)",
+  lado_sp_texto:
+    'Garoa, rodízio de pizza às sextas, "mano" no vocabulário e orgulho do metrô que funciona.',
+  recados_eyebrow: "Mural de carinho",
+  recados_titulo: "Recados dos convidados",
+  recados_texto: "O que quem ama a gente anda mandando junto com os presentes. 💙",
+  galeria_eyebrow: "Galeria",
+  galeria_titulo: "Nossos momentos",
+  cta_titulo: "Vem celebrar com a gente essa mistura improvável que deu super certo.",
+};
+
 export const DEFAULT_CONTENT: SiteContent = {
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
+  home: DEFAULT_HOME,
   historia_intro: "Spoiler: deu certo. Uma linha do tempo (bem-humorada) da gente.",
   historia_foto: "",
   timeline: DEFAULT_TIMELINE,
@@ -241,6 +278,7 @@ export async function getContent(): Promise<SiteContent> {
     return {
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
       hero_sub: map.get("hero_sub") ?? DEFAULT_CONTENT.hero_sub,
+      home: parseObject<HomeContent>(map.get("home"), DEFAULT_HOME),
       historia_intro: map.get("historia_intro") ?? DEFAULT_CONTENT.historia_intro,
       historia_foto: map.get("historia_foto") ?? DEFAULT_CONTENT.historia_foto,
       timeline,

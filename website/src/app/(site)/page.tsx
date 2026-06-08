@@ -79,7 +79,7 @@ export default async function HomePage() {
       <section className="section-dark py-16 text-center md:py-24">
         <div className="container-page">
           <RioSpEmblem className="mx-auto mb-6 h-12 w-12" stroke="#FAF9F6" />
-          <h2 className="section-title mx-auto max-w-2xl">Sejam bem-vindos!</h2>
+          <h2 className="section-title mx-auto max-w-2xl">{content.home.boas_vindas_titulo}</h2>
           <p className="mx-auto mt-5 max-w-2xl text-lg leading-relaxed text-offwhite/80">
             {content.hero_sub}
           </p>
@@ -95,10 +95,8 @@ export default async function HomePage() {
       <section className="bg-offwhite py-16 text-center md:py-24">
         <div className="container-page">
           <span className="eyebrow">Contagem regressiva</span>
-          <h2 className="section-title mb-2">Faltam só...</h2>
-          <p className="mb-10 text-urbano/60">
-            ...para a Karina chegar (no horário carioca) e o Fábio reclamar do trânsito.
-          </p>
+          <h2 className="section-title mb-2">{content.home.contador_titulo}</h2>
+          <p className="mb-10 text-urbano/60">{content.home.contador_texto}</p>
           <Countdown />
         </div>
       </section>
@@ -108,23 +106,17 @@ export default async function HomePage() {
         <div className="container-page grid gap-6 md:grid-cols-2">
           <div className="card border-oceano/30">
             <Waves className="h-9 w-9 text-oceano" strokeWidth={1.5} />
-            <h3 className="mt-3 font-display text-2xl font-bold text-oceano">
-              Lado Karina (Rio)
+            <h3 className="mt-3 font-display text-2xl font-medium text-oceano">
+              {content.home.lado_rio_titulo}
             </h3>
-            <p className="mt-2 text-urbano/70">
-              Praia, samba no pé, "maravilhoso!" a cada cinco minutos e a
-              certeza de que 25°C é frio.
-            </p>
+            <p className="mt-2 text-urbano/70">{content.home.lado_rio_texto}</p>
           </div>
           <div className="card border-urbano/20">
             <Building2 className="h-9 w-9 text-urbano" strokeWidth={1.5} />
-            <h3 className="mt-3 font-display text-2xl font-bold text-urbano">
-              Lado Fábio (SP)
+            <h3 className="mt-3 font-display text-2xl font-medium text-urbano">
+              {content.home.lado_sp_titulo}
             </h3>
-            <p className="mt-2 text-urbano/70">
-              Garoa, rodízio de pizza às sextas, "mano" no vocabulário e
-              orgulho do metrô que funciona.
-            </p>
+            <p className="mt-2 text-urbano/70">{content.home.lado_sp_texto}</p>
           </div>
         </div>
       </section>
@@ -134,11 +126,9 @@ export default async function HomePage() {
       {/* MENSAGENS (carrossel) */}
       <section className="section-dark py-16 text-center md:py-24">
         <div className="container-page">
-          <span className="eyebrow">Mural de carinho</span>
-          <h2 className="section-title mb-2">Recados dos convidados</h2>
-          <p className="mb-10 text-offwhite/70">
-            O que quem ama a gente anda mandando junto com os presentes. 💙
-          </p>
+          <span className="eyebrow">{content.home.recados_eyebrow}</span>
+          <h2 className="section-title mb-2">{content.home.recados_titulo}</h2>
+          <p className="mb-10 text-offwhite/70">{content.home.recados_texto}</p>
           <RecadosCarousel />
           <div className="mt-8">
             <Link href="/mensagens" className="btn-light">
@@ -152,8 +142,8 @@ export default async function HomePage() {
       {content.galeria.length > 0 && (
         <section className="section-dark pb-16 md:pb-24">
           <div className="container-page text-center">
-            <span className="eyebrow">Galeria</span>
-            <h2 className="section-title mb-8">Nossos momentos</h2>
+            <span className="eyebrow">{content.home.galeria_eyebrow}</span>
+            <h2 className="section-title mb-8">{content.home.galeria_titulo}</h2>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:gap-4">
               {content.galeria.slice(0, 6).map((url, i) => (
                 <div key={i} className="aspect-square overflow-hidden rounded-xl">
@@ -180,9 +170,7 @@ export default async function HomePage() {
       {/* CTA FINAL */}
       <section className="section-dark py-16 text-center md:py-24">
         <div className="container-page">
-          <h2 className="section-title mx-auto max-w-2xl">
-            Vem celebrar com a gente essa mistura improvável que deu super certo.
-          </h2>
+          <h2 className="section-title mx-auto max-w-2xl">{content.home.cta_titulo}</h2>
           <div className="mt-8 flex flex-wrap justify-center gap-3">
             <Link href="/confirmar-presenca" className="btn-primary">
               Confirmar presença

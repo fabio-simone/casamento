@@ -40,6 +40,7 @@ export async function POST(req: Request) {
     };
     pushObj("informacoes", body.informacoes);
     pushObj("paginas", body.paginas);
+    pushObj("home", body.home);
 
     const supabase = createAdminClient();
     const { error } = await supabase
