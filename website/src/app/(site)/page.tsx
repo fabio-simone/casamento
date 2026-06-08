@@ -35,18 +35,16 @@ export default async function HomePage() {
         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 bg-gradient-to-b from-transparent to-oceanoDark" />
 
         <div className="container-page relative z-10 animate-fade-up py-24">
+          {/* bloco centralizado, posicionado na área esquerda do hero */}
           <div
-            className="max-w-lg text-offwhite"
+            className="mx-auto max-w-sm text-center text-offwhite sm:mx-0 sm:ml-[6%] lg:ml-[10%]"
             style={{ textShadow: "0 2px 24px rgba(4,71,106,0.6)" }}
           >
-            {/* emblema + frase centralizados acima dos nomes */}
-            <div className="mb-6 flex flex-col items-center">
-              <RioSpEmblem className="mb-3 h-14 w-14" stroke="#FAF9F6" />
-              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-laranja [text-indent:0.3em]">
-                O Rio encontra SP
-              </span>
-            </div>
-            <h1 className="text-left font-display font-normal leading-[1.02]">
+            <RioSpEmblem className="mx-auto mb-3 h-14 w-14" stroke="#FAF9F6" />
+            <span className="inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja [text-indent:0.3em]">
+              O Rio encontra SP
+            </span>
+            <h1 className="mt-5 font-display font-normal leading-[1.02]">
               <span className="block text-5xl sm:text-6xl md:text-7xl">Karina</span>
               <span className="my-1 block text-3xl font-normal italic text-laranja sm:text-4xl">
                 &amp;
@@ -59,7 +57,7 @@ export default async function HomePage() {
             <p className="mt-2 text-xs uppercase tracking-[0.25em] text-offwhite/70">
               {WEDDING.cidade}
             </p>
-            <div className="mt-8 flex flex-wrap gap-2.5">
+            <div className="mt-8 flex flex-wrap justify-center gap-2.5">
               <Link
                 href="/confirmar-presenca"
                 className="inline-flex items-center justify-center rounded-full bg-oceano px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-offwhite shadow-md transition hover:bg-oceano/90 active:scale-95"
