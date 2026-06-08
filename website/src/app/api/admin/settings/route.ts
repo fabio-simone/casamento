@@ -31,6 +31,14 @@ export async function POST(req: Request) {
     pushJson("historia_timeline", body.timeline);
     pushJson("galeria", body.galeria);
 
+    if (body.informacoes && typeof body.informacoes === "object") {
+      rows.push({
+        key: "informacoes",
+        value: JSON.stringify(body.informacoes),
+        updated_at: now,
+      });
+    }
+
     const supabase = createAdminClient();
     const { error } = await supabase
       .from("site_settings")

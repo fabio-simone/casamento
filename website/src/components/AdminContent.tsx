@@ -3,10 +3,11 @@
 import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
-import type { SiteContent, TimelineItem } from "@/lib/content";
+import type { SiteContent, TimelineItem, InfoBloco } from "@/lib/content";
 import { ImageUpload } from "./ImageUpload";
 import { uploadImagem } from "@/lib/upload";
 import { objectPositionFromUrl } from "@/lib/utils";
+import { INFO_ICONES } from "@/lib/info-icones";
 
 export function AdminContent({ initial }: { initial: SiteContent }) {
   const router = useRouter();
@@ -49,6 +50,43 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
   function removeFoto(i: number) {
     set("galeria", content.galeria.filter((_, idx) => idx !== i));
   }
+  // Informações
+  function setInfo<K extends keyof SiteContent["informacoes"]>(
+    key: K,
+    value: SiteContent["informacoes"][K]
+  ) {
+    set("informacoes", { ...content.informacoes, [key]: value });
+  }
+  function setBloco(i: number, patch: Partial<InfoBloco>) {
+    setInfo(
+      "blocos",
+      content.informacoes.blocos.map((b, idx) => (idx === i ? { ...b, ...patch } : b))
+    );
+  }
+  function addBloco() {
+    setInfo("blocos", [
+      ...content.informacoes.blocos,
+      { icone: "info", titulo: "Novo bloco", itens: [""] },
+    ]);
+  }
+  function removeBloco(i: number) {
+    setInfo("blocos", content.informacoes.blocos.filter((_, idx) => idx !== i));
+  }
+  function setItemBloco(bi: number, ii: number, value: string) {
+    const itens = content.informacoes.blocos[bi].itens.map((it, idx) =>
+      idx === ii ? value : it
+    );
+    setBloco(bi, { itens });
+  }
+  function addItemBloco(bi: number) {
+    setBloco(bi, { itens: [...content.informacoes.blocos[bi].itens, ""] });
+  }
+  function removeItemBloco(bi: number, ii: number) {
+    setBloco(bi, {
+      itens: content.informacoes.blocos[bi].itens.filter((_, idx) => idx !== ii),
+    });
+  }
+
   async function handleGaleriaFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
     e.target.value = "";
@@ -264,6 +302,114 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
             ? `Enviando ${galUpload.feito} de ${galUpload.total}...`
             : "Adicionar fotos (várias de uma vez)"}
         </button>
+      </section>
+
+      {/* INFORMAÇÕES */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Informações</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          Blocos da página Informações (local, horários, dress code, hospedagem...)
+          e o endereço do mapa. Tudo editável.
+        </p>
+
+        <div className="space-y-4">
+          {content.informacoes.blocos.map((b, bi) => (
+            <div key={bi} className="rounded-2xl border border-areia bg-offwhite p-4">
+              <div className="mb-3 flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wide text-oceano">
+                  Bloco {bi + 1}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => removeBloco(bi)}
+                  className="flex items-center gap-1 text-xs text-red-600 hover:underline"
+                >
+                  <Trash2 className="h-3 w-3" /> Remover bloco
+                </button>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-[1fr_1.5fr]">
+                <select
+                  value={b.icone}
+                  onChange={(e) => setBloco(bi, { icone: e.target.value })}
+                  className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+                >
+                  {INFO_ICONES.map((ic) => (
+                    <option key={ic.value} value={ic.value}>
+                      {ic.label}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  value={b.titulo}
+                  onChange={(e) => setBloco(bi, { titulo: e.target.value })}
+                  placeholder="Título do bloco"
+                  className="rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+                />
+              </div>
+
+              <p className="mb-1 mt-3 text-xs font-medium text-urbano/60">Linhas</p>
+              <div className="space-y-2">
+                {b.itens.map((it, ii) => (
+                  <div key={ii} className="flex items-center gap-2">
+                    <input
+                      value={it}
+                      onChange={(e) => setItemBloco(bi, ii, e.target.value)}
+                      className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeItemBloco(bi, ii)}
+                      className="text-red-600 hover:text-red-700"
+                      aria-label="Remover linha"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addItemBloco(bi)}
+                  className="flex items-center gap-1 text-xs font-medium text-oceano hover:underline"
+                >
+                  <Plus className="h-3 w-3" /> Adicionar linha
+                </button>
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addBloco}
+            className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-3 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano"
+          >
+            <Plus className="h-4 w-4" /> Adicionar bloco
+          </button>
+        </div>
+
+        <div className="mt-6 grid gap-3">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-urbano">
+              Endereço (mostrado acima do mapa)
+            </label>
+            <input
+              value={content.informacoes.mapa_endereco}
+              onChange={(e) => setInfo("mapa_endereco", e.target.value)}
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+            />
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium text-urbano">
+              Busca do mapa (endereço/local para o Google Maps)
+            </label>
+            <input
+              value={content.informacoes.mapa_query}
+              onChange={(e) => setInfo("mapa_query", e.target.value)}
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+            />
+            <p className="mt-1 text-xs text-urbano/50">
+              Ex.: &quot;Espaço Vila Cordeiro, São Paulo&quot; — é o que o mapa procura.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* BARRA DE SALVAR (fixa) */}
