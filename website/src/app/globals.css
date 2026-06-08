@@ -79,6 +79,17 @@ body {
   color: #e07a3f !important;
 }
 
+/* Campos de formulário têm fundo claro: o texto digitado/selecionado
+   precisa ser escuro (senão fica branco no branco). */
+.section-dark .card input,
+.section-dark .card select,
+.section-dark .card textarea,
+.card-dark input,
+.card-dark select,
+.card-dark textarea {
+  color: #3a3a3a !important;
+}
+
 /* Padrão sutil de ondas como textura de fundo */
 .bg-calcadao {
   background-image: repeating-linear-gradient(
