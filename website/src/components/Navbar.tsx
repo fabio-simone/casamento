@@ -30,6 +30,8 @@ export function Navbar() {
   }, []);
 
   const solid = scrolled || open;
+  // Texto claro só quando flutuando sobre a foto do hero (home, sem rolar).
+  const light = pathname === "/" && !solid;
 
   return (
     <header
@@ -41,12 +43,18 @@ export function Navbar() {
           : "border-b border-transparent bg-transparent"
       )}
     >
-      <nav className="container-page flex h-16 items-center justify-between">
+      <nav
+        className="container-page flex h-16 items-center justify-between"
+        style={light ? { textShadow: "0 1px 10px rgba(0,0,0,0.3)" } : undefined}
+      >
         <Link
           href="/"
-          className="flex items-center gap-2 font-display text-xl font-semibold text-urbano"
+          className={cn(
+            "flex items-center gap-2 font-display text-xl font-semibold transition-colors",
+            light ? "text-offwhite" : "text-urbano"
+          )}
         >
-          <RioSpEmblem className="h-9 w-9" />
+          <RioSpEmblem className="h-9 w-9" stroke={light ? "#FAF9F6" : "#006994"} />
           <span>kafamento</span>
         </Link>
 
@@ -57,7 +65,11 @@ export function Navbar() {
                 href={l.href}
                 className={cn(
                   "text-[11px] font-semibold uppercase tracking-[0.1em] transition hover:text-laranja xl:text-xs",
-                  pathname === l.href ? "text-laranja" : "text-urbano/80"
+                  pathname === l.href
+                    ? "text-laranja"
+                    : light
+                      ? "text-offwhite/90"
+                      : "text-urbano/80"
                 )}
               >
                 {l.label}
@@ -72,7 +84,7 @@ export function Navbar() {
         </ul>
 
         <button
-          className="text-urbano lg:hidden"
+          className={cn("lg:hidden", light ? "text-offwhite" : "text-urbano")}
           onClick={() => setOpen((v) => !v)}
           aria-label="Abrir menu"
         >

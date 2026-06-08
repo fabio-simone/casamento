@@ -40,9 +40,9 @@ export default async function HomePage() {
             style={{ textShadow: "0 2px 24px rgba(4,71,106,0.6)" }}
           >
             {/* emblema + frase centralizados acima dos nomes */}
-            <div className="mb-6 text-center">
-              <RioSpEmblem className="mx-auto mb-3 h-14 w-14" stroke="#FAF9F6" />
-              <span className="inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja">
+            <div className="mb-6 flex flex-col items-center">
+              <RioSpEmblem className="mb-3 h-14 w-14" stroke="#FAF9F6" />
+              <span className="text-xs font-semibold uppercase tracking-[0.3em] text-laranja [text-indent:0.3em]">
                 O Rio encontra SP
               </span>
             </div>
