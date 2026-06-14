@@ -100,7 +100,7 @@ export async function sendGiftThankYou(params: {
     <div style="padding:28px 24px;color:#3A3A3A;line-height:1.6">
       <p>Oi, <strong>${params.nome}</strong>!</p>
       <p>Recebemos seu presente: <strong>${params.presente}</strong> (${params.valor}).</p>
-      <p>Você acaba de contribuir para a paz mundial entre Flamengo e a garoa paulistana. Gratidão! 🌊🏙️</p>
+      <p>Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️</p>
       <p style="margin-top:24px">Com carinho,<br/><strong>${WEDDING.noivos}</strong></p>
     </div>
     <div style="background:#E8D5B0;color:#3A3A3A;padding:16px;text-align:center;font-size:12px">
