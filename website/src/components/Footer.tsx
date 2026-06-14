@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { ArrowUp } from "lucide-react";
 import { WEDDING } from "@/lib/constants";
+import type { TextosContent } from "@/lib/content";
 import { WaveDivider } from "./WaveDivider";
 
-export function Footer() {
+export function Footer({ textos }: { textos: TextosContent }) {
   return (
     <>
       {/* transição da seção azul (dark) para o rodapé claro (areia) */}
@@ -28,7 +29,7 @@ export function Footer() {
             <p className="mt-2 text-sm text-urbano/70">
               {WEDDING.dataExtenso} · {WEDDING.cidade}
             </p>
-            <p className="mt-1 text-sm text-urbano/50">O Rio encontra SP</p>
+            <p className="mt-1 text-sm text-urbano/50">{textos.footer_tagline}</p>
           </div>
           <div>
             <h4 className="mb-3 text-sm font-semibold uppercase tracking-wide text-laranja">
@@ -48,11 +49,11 @@ export function Footer() {
             <p className="text-sm text-urbano/80">{WEDDING.dominio}</p>
             <p className="mt-2 text-sm">
               <Link href="/contato" className="text-oceano hover:underline">
-                Precisa de ajuda? Fale com a gente
+                {textos.footer_ajuda}
               </Link>
             </p>
             <p className="mt-4 text-xs text-urbano/50">
-              Feito com café paulistano e água de coco carioca.
+              {textos.footer_assinatura}
             </p>
           </div>
         </div>

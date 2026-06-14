@@ -17,7 +17,7 @@ const config: Config = {
         offwhite: "rgb(var(--color-offwhite) / <alpha-value>)",
       },
       fontFamily: {
-        display: ["var(--font-playfair)", "Georgia", "serif"],
+        display: ["var(--font-display)", "var(--font-playfair)", "Georgia", "serif"],
         sans: ["var(--font-inter)", "system-ui", "sans-serif"],
       },
       keyframes: {

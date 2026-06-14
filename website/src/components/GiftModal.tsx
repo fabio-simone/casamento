@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { GiftWithQuotas } from "@/lib/types";
 import { formatBRL } from "@/lib/utils";
+import { useTextos } from "@/lib/textos-context";
 
 export function GiftModal({
   gift,
@@ -15,6 +16,7 @@ export function GiftModal({
   valorCota: number;
   onClose: () => void;
 }) {
+  const t = useTextos();
   const disponiveis = gift.num_cotas - pagas;
   const [quantidade, setQuantidade] = useState(1);
   const [nome, setNome] = useState("");
@@ -126,7 +128,7 @@ export function GiftModal({
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-              placeholder="Para o casal saber quem presenteou 💙"
+              placeholder={t.gift_ph_nome}
             />
           </div>
           <div>
@@ -137,7 +139,7 @@ export function GiftModal({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-              placeholder="voce@email.com"
+              placeholder={t.gift_ph_email}
             />
           </div>
           <div>
@@ -150,7 +152,7 @@ export function GiftModal({
               onChange={(e) => setMensagem(e.target.value)}
               maxLength={500}
               className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-              placeholder="Deixe um recado carinhoso — ele aparece no mural do site 💙"
+              placeholder={t.gift_ph_mensagem}
             />
           </div>
 
@@ -159,7 +161,7 @@ export function GiftModal({
           )}
 
           <button type="submit" disabled={loading} className="btn-primary w-full">
-            {loading ? "Redirecionando..." : `Pagar ${formatBRL(valorCota * quantidade)}`}
+            {loading ? "Redirecionando..." : `${t.gift_btn_pagar} ${formatBRL(valorCota * quantidade)}`}
           </button>
           <p className="text-center text-xs text-urbano/50">
             Pagamento seguro via Mercado Pago (cartão, Pix ou boleto).

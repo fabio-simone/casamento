@@ -10,7 +10,74 @@ import { objectPositionFromUrl } from "@/lib/utils";
 import { INFO_ICONES } from "@/lib/info-icones";
 import { CRONO_ICONES } from "@/lib/crono-icones";
 import { PALETAS } from "@/lib/paletas";
+import { FONTES } from "@/lib/fontes";
 import { cn } from "@/lib/utils";
+
+// Cores personalizadas: rótulo + chave em paleta_custom.
+const CORES_CUSTOM: { key: "oceano" | "laranja" | "areia" | "urbano"; nome: string }[] = [
+  { key: "oceano", nome: "Cor principal" },
+  { key: "laranja", nome: "Destaque" },
+  { key: "areia", nome: "Tom claro / fundo" },
+  { key: "urbano", nome: "Texto escuro" },
+];
+
+// Campos de texto editáveis, agrupados para o painel.
+const TEXTOS_GRUPOS: { titulo: string; campos: { key: keyof import("@/lib/content").TextosContent; label: string; area?: boolean }[] }[] = [
+  {
+    titulo: "Página inicial (hero)",
+    campos: [
+      { key: "hero_eyebrow", label: "Frase acima dos nomes" },
+      { key: "hero_btn_confirmar", label: "Botão — confirmar presença" },
+      { key: "hero_btn_presentes", label: "Botão — lista de presentes" },
+    ],
+  },
+  {
+    titulo: "Mensagens de pagamento",
+    campos: [
+      { key: "pgto_sucesso", label: "Pagamento recebido", area: true },
+      { key: "pgto_pendente", label: "Pagamento pendente", area: true },
+      { key: "pgto_falha", label: "Pagamento não concluído", area: true },
+    ],
+  },
+  {
+    titulo: "Confirmação de presença (RSVP)",
+    campos: [
+      { key: "rsvp_btn", label: "Botão de enviar" },
+      { key: "rsvp_sucesso_titulo", label: "Título da tela de sucesso" },
+      { key: "rsvp_sucesso_texto", label: "Texto de sucesso ({nome} {email})", area: true },
+      { key: "rsvp_ph_nome", label: "Placeholder — nome" },
+      { key: "rsvp_ph_email", label: "Placeholder — e-mail" },
+      { key: "rsvp_ph_telefone", label: "Placeholder — telefone" },
+    ],
+  },
+  {
+    titulo: "Presentes (botões e campos)",
+    campos: [
+      { key: "gift_btn_presentear", label: "Botão — presentear" },
+      { key: "gift_btn_esgotado", label: "Botão — presente completo" },
+      { key: "gift_btn_pagar", label: "Botão — pagar (antes do valor)" },
+      { key: "gift_ph_nome", label: "Placeholder — nome" },
+      { key: "gift_ph_email", label: "Placeholder — e-mail" },
+      { key: "gift_ph_mensagem", label: "Placeholder — mensagem", area: true },
+    ],
+  },
+  {
+    titulo: "Contato e rodapé",
+    campos: [
+      { key: "contato_btn", label: "Botão — enviar mensagem (contato)" },
+      { key: "footer_tagline", label: "Rodapé — frase do tema" },
+      { key: "footer_ajuda", label: "Rodapé — link de ajuda" },
+      { key: "footer_assinatura", label: "Rodapé — assinatura", area: true },
+    ],
+  },
+  {
+    titulo: "SEO (aba do navegador e compartilhamento)",
+    campos: [
+      { key: "seo_titulo", label: "Título da aba / link" },
+      { key: "seo_descricao", label: "Descrição (Google / WhatsApp)", area: true },
+    ],
+  },
+];
 
 const PAGINAS_LABELS: { key: string; nome: string }[] = [
   { key: "nossa_historia", nome: "Nossa História" },
@@ -40,6 +107,17 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
   function set<K extends keyof SiteContent>(key: K, value: SiteContent[K]) {
     setContent((c) => ({ ...c, [key]: value }));
     setSaved(false);
+  }
+
+  function setTexto<K extends keyof SiteContent["textos"]>(
+    key: K,
+    value: SiteContent["textos"][K]
+  ) {
+    set("textos", { ...content.textos, [key]: value });
+  }
+
+  function setPaletaCustom(key: keyof SiteContent["paleta_custom"], value: string) {
+    set("paleta_custom", { ...content.paleta_custom, [key]: value });
   }
 
   function setHome<K extends keyof SiteContent["home"]>(
@@ -217,6 +295,88 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
                   ))}
                 </div>
                 <span className="text-sm font-medium text-urbano">{p.nome}</span>
+              </button>
+            );
+          })}
+          {/* Paleta personalizada */}
+          <button
+            type="button"
+            onClick={() => set("paleta", "custom")}
+            className={cn(
+              "flex items-center gap-3 rounded-2xl border p-3 text-left transition",
+              content.paleta === "custom"
+                ? "border-oceano ring-2 ring-oceano/30"
+                : "border-areia hover:border-oceano/50"
+            )}
+          >
+            <div className="flex shrink-0 overflow-hidden rounded-lg border border-areia">
+              {CORES_CUSTOM.map((c) => (
+                <span
+                  key={c.key}
+                  className="h-9 w-5"
+                  style={{ backgroundColor: content.paleta_custom[c.key] }}
+                />
+              ))}
+            </div>
+            <span className="text-sm font-medium text-urbano">Personalizada 🎨</span>
+          </button>
+        </div>
+
+        {content.paleta === "custom" && (
+          <div className="mt-4 grid gap-4 rounded-2xl border border-areia bg-offwhite p-4 sm:grid-cols-2">
+            {CORES_CUSTOM.map((c) => (
+              <div key={c.key} className="flex items-center gap-3">
+                <input
+                  type="color"
+                  value={content.paleta_custom[c.key]}
+                  onChange={(e) => setPaletaCustom(c.key, e.target.value)}
+                  className="h-10 w-14 shrink-0 cursor-pointer rounded-lg border border-areia bg-white p-1"
+                  aria-label={c.nome}
+                />
+                <div>
+                  <p className="text-sm font-medium text-urbano">{c.nome}</p>
+                  <p className="text-xs uppercase text-urbano/50">
+                    {content.paleta_custom[c.key]}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <p className="text-xs text-urbano/50 sm:col-span-2">
+              O tom escuro dos fundos azuis é gerado automaticamente a partir da cor principal.
+            </p>
+          </div>
+        )}
+      </section>
+
+      {/* FONTES */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Fonte dos títulos</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          A fonte usada nos nomes e títulos do site. Escolha algo com a sua cara.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {FONTES.map((f) => {
+            const ativa = content.fonte === f.id;
+            return (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => set("fonte", f.id)}
+                className={cn(
+                  "rounded-2xl border p-4 text-left transition",
+                  ativa
+                    ? "border-oceano ring-2 ring-oceano/30"
+                    : "border-areia hover:border-oceano/50"
+                )}
+              >
+                <p
+                  className="text-2xl text-urbano"
+                  style={{ fontFamily: f.cssVar }}
+                >
+                  Karina &amp; Fábio
+                </p>
+                <p className="mt-2 text-sm font-medium text-urbano">{f.nome}</p>
+                <p className="text-xs text-urbano/50">{f.descricao}</p>
               </button>
             );
           })}
@@ -603,6 +763,46 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
           <button type="button" onClick={addFaqItem} className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-areia py-3 text-sm font-medium text-urbano/60 hover:border-oceano hover:text-oceano">
             <Plus className="h-4 w-4" /> Adicionar pergunta
           </button>
+        </div>
+      </section>
+
+      {/* MENSAGENS E TEXTOS GERAIS */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Mensagens e textos gerais</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          Botões, mensagens e frases espalhadas pelo site.
+        </p>
+        <div className="space-y-6">
+          {TEXTOS_GRUPOS.map((grupo) => (
+            <div key={grupo.titulo}>
+              <h3 className="mb-3 text-sm font-semibold uppercase tracking-wide text-laranja">
+                {grupo.titulo}
+              </h3>
+              <div className="space-y-3">
+                {grupo.campos.map((campo) => (
+                  <div key={campo.key}>
+                    <label className="mb-1 block text-xs font-medium text-urbano/70">
+                      {campo.label}
+                    </label>
+                    {campo.area ? (
+                      <textarea
+                        value={content.textos[campo.key]}
+                        onChange={(e) => setTexto(campo.key, e.target.value)}
+                        rows={2}
+                        className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+                      />
+                    ) : (
+                      <input
+                        value={content.textos[campo.key]}
+                        onChange={(e) => setTexto(campo.key, e.target.value)}
+                        className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 

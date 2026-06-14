@@ -4,9 +4,11 @@ import { useState } from "react";
 import { Gift } from "lucide-react";
 import type { GiftWithQuotas } from "@/lib/types";
 import { formatBRL, objectPositionFromUrl } from "@/lib/utils";
+import { useTextos } from "@/lib/textos-context";
 import { GiftModal } from "./GiftModal";
 
 export function GiftCard({ gift }: { gift: GiftWithQuotas }) {
+  const t = useTextos();
   const [open, setOpen] = useState(false);
 
   const pagas = gift.gift_quotas.filter((q) => q.status === "paid").length;
@@ -62,7 +64,7 @@ export function GiftCard({ gift }: { gift: GiftWithQuotas }) {
           disabled={esgotado}
           className="btn-primary mt-4 w-full disabled:cursor-not-allowed"
         >
-          {esgotado ? "Presente completo 💙" : "Presentear"}
+          {esgotado ? t.gift_btn_esgotado : t.gift_btn_presentear}
         </button>
       </div>
 

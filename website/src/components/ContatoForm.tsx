@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { LifeBuoy } from "lucide-react";
+import { useTextos } from "@/lib/textos-context";
 
 const tipos = [
   "Problema ao confirmar presença (RSVP)",
@@ -11,6 +12,7 @@ const tipos = [
 ];
 
 export function ContatoForm() {
+  const t = useTextos();
   const [form, setForm] = useState({
     nome: "",
     email: "",
@@ -135,7 +137,7 @@ export function ContatoForm() {
       )}
 
       <button type="submit" disabled={status === "sending"} className="btn-primary w-full">
-        {status === "sending" ? "Enviando..." : "Enviar mensagem"}
+        {status === "sending" ? "Enviando..." : t.contato_btn}
       </button>
     </form>
   );

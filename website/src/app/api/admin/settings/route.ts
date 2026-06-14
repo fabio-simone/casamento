@@ -19,6 +19,7 @@ export async function POST(req: Request) {
       rows.push({ key, value: value == null ? "" : String(value), updated_at: now });
 
     push("paleta", body.paleta);
+    push("fonte", body.fonte);
     push("hero_foto", body.hero_foto);
     push("hero_sub", body.hero_sub);
     push("historia_intro", body.historia_intro);
@@ -46,6 +47,8 @@ export async function POST(req: Request) {
     pushObj("informacoes", body.informacoes);
     pushObj("paginas", body.paginas);
     pushObj("home", body.home);
+    pushObj("paleta_custom", body.paleta_custom);
+    pushObj("textos", body.textos);
 
     const supabase = createAdminClient();
     const { error } = await supabase

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
+import { useTextos } from "@/lib/textos-context";
 
 interface FormState {
   nome: string;
@@ -18,6 +19,7 @@ const initial: FormState = {
 };
 
 export function RsvpForm() {
+  const t = useTextos();
   const [form, setForm] = useState<FormState>(initial);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [error, setError] = useState("");
@@ -50,12 +52,12 @@ export function RsvpForm() {
       <div className="card mx-auto max-w-lg text-center">
         <CheckCircle2 className="mx-auto h-12 w-12 text-oceano" strokeWidth={1.5} />
         <h2 className="mt-4 font-display text-2xl font-bold text-oceano">
-          Presença confirmada!
+          {t.rsvp_sucesso_titulo}
         </h2>
         <p className="mt-2 text-urbano/70">
-          Obrigado, <strong>{form.nome.split(" ")[0]}</strong>! Enviamos um e-mail de
-          confirmação para <strong>{form.email}</strong>. Já já a gente se vê em SP —
-          com sotaque misturado e tudo.
+          {t.rsvp_sucesso_texto
+            .split("{nome}").join(form.nome.split(" ")[0])
+            .split("{email}").join(form.email)}
         </p>
         <button
           onClick={() => {
@@ -79,7 +81,7 @@ export function RsvpForm() {
           value={form.nome}
           onChange={(e) => update("nome", e.target.value)}
           className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-          placeholder="Seu nome completo"
+          placeholder={t.rsvp_ph_nome}
         />
       </div>
 
@@ -92,7 +94,7 @@ export function RsvpForm() {
             value={form.email}
             onChange={(e) => update("email", e.target.value)}
             className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-            placeholder="voce@email.com"
+            placeholder={t.rsvp_ph_email}
           />
         </div>
         <div>
@@ -101,7 +103,7 @@ export function RsvpForm() {
             value={form.telefone}
             onChange={(e) => update("telefone", e.target.value)}
             className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-            placeholder="(11) 99999-9999"
+            placeholder={t.rsvp_ph_telefone}
           />
         </div>
       </div>
@@ -130,7 +132,7 @@ export function RsvpForm() {
       )}
 
       <button type="submit" disabled={status === "sending"} className="btn-primary w-full">
-        {status === "sending" ? "Confirmando..." : "Confirmar presença"}
+        {status === "sending" ? "Confirmando..." : t.rsvp_btn}
       </button>
       <p className="text-center text-xs text-urbano/50">
         Seus dados ficam só com a gente. Prometido. 🤞

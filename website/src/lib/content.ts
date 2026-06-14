@@ -1,6 +1,8 @@
 import { unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "./supabase/admin";
 import { WEDDING } from "./constants";
+import { PALETA_CUSTOM_PADRAO, type PaletaCustom } from "./paletas";
+import { FONTE_PADRAO } from "./fontes";
 
 export interface TimelineItem {
   ano: string;
@@ -41,6 +43,40 @@ export interface PageHeader {
   intro: string;
 }
 
+export interface TextosContent {
+  // Hero (home)
+  hero_eyebrow: string;
+  hero_btn_confirmar: string;
+  hero_btn_presentes: string;
+  // Status de pagamento (página Presentes)
+  pgto_sucesso: string;
+  pgto_pendente: string;
+  pgto_falha: string;
+  // RSVP (formulário)
+  rsvp_btn: string;
+  rsvp_sucesso_titulo: string;
+  rsvp_sucesso_texto: string; // marcadores: {nome} {email}
+  rsvp_ph_nome: string;
+  rsvp_ph_email: string;
+  rsvp_ph_telefone: string;
+  // Presentes (card + modal)
+  gift_btn_presentear: string;
+  gift_btn_esgotado: string;
+  gift_btn_pagar: string; // prefixo antes do valor
+  gift_ph_nome: string;
+  gift_ph_email: string;
+  gift_ph_mensagem: string;
+  // Contato / Suporte
+  contato_btn: string;
+  // Rodapé
+  footer_tagline: string;
+  footer_ajuda: string;
+  footer_assinatura: string;
+  // SEO (aba do navegador e compartilhamento)
+  seo_titulo: string;
+  seo_descricao: string;
+}
+
 export interface HomeContent {
   boas_vindas_titulo: string;
   contador_titulo: string;
@@ -58,7 +94,10 @@ export interface HomeContent {
 }
 
 export interface SiteContent {
-  paleta: string; // id da paleta de cores escolhida
+  paleta: string; // id da paleta de cores escolhida ("custom" usa paleta_custom)
+  paleta_custom: PaletaCustom; // cores personalizadas (hex) quando paleta === "custom"
+  fonte: string; // id da fonte de títulos escolhida
+  textos: TextosContent; // botões e mensagens gerais do site
   hero_foto: string; // foto do casal na home
   hero_sub: string; // subtítulo da home
   home: HomeContent; // demais textos da home
@@ -230,8 +269,42 @@ export const DEFAULT_HOME: HomeContent = {
   cta_titulo: "Vem celebrar com a gente essa mistura improvável que deu super certo.",
 };
 
+export const DEFAULT_TEXTOS: TextosContent = {
+  hero_eyebrow: "O Rio encontra SP",
+  hero_btn_confirmar: "Confirmar presença",
+  hero_btn_presentes: "Lista de presentes",
+  pgto_sucesso:
+    "🎉 Pagamento recebido! Assim que confirmado, sua cota aparece como paga. Muito obrigado!",
+  pgto_pendente:
+    "⏳ Pagamento pendente. Assim que for aprovado, atualizamos a cota.",
+  pgto_falha:
+    "😕 O pagamento não foi concluído. Você pode tentar de novo quando quiser.",
+  rsvp_btn: "Confirmar presença",
+  rsvp_sucesso_titulo: "Presença confirmada!",
+  rsvp_sucesso_texto:
+    "Obrigado, {nome}! Enviamos um e-mail de confirmação para {email}. Já já a gente se vê em SP — com sotaque misturado e tudo.",
+  rsvp_ph_nome: "Seu nome completo",
+  rsvp_ph_email: "voce@email.com",
+  rsvp_ph_telefone: "(11) 99999-9999",
+  gift_btn_presentear: "Presentear",
+  gift_btn_esgotado: "Presente completo 💙",
+  gift_btn_pagar: "Pagar",
+  gift_ph_nome: "Para o casal saber quem presenteou 💙",
+  gift_ph_email: "voce@email.com",
+  gift_ph_mensagem: "Deixe um recado carinhoso — ele aparece no mural do site 💙",
+  contato_btn: "Enviar mensagem",
+  footer_tagline: "O Rio encontra SP",
+  footer_ajuda: "Precisa de ajuda? Fale com a gente",
+  footer_assinatura: "Feito com café paulistano e água de coco carioca.",
+  seo_titulo: `${WEDDING.noivos} — Casamento`,
+  seo_descricao: `O Rio encontra SP. ${WEDDING.noivos} vão se casar em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}. Confirme presença e veja a lista de presentes.`,
+};
+
 export const DEFAULT_CONTENT: SiteContent = {
   paleta: "rio_sp",
+  paleta_custom: PALETA_CUSTOM_PADRAO,
+  fonte: FONTE_PADRAO,
+  textos: DEFAULT_TEXTOS,
   hero_foto: "",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
   home: DEFAULT_HOME,
@@ -288,6 +361,12 @@ export async function getContent(): Promise<SiteContent> {
 
     return {
       paleta: map.get("paleta") ?? DEFAULT_CONTENT.paleta,
+      paleta_custom: parseObject<PaletaCustom>(
+        map.get("paleta_custom"),
+        PALETA_CUSTOM_PADRAO
+      ),
+      fonte: map.get("fonte") ?? DEFAULT_CONTENT.fonte,
+      textos: parseObject<TextosContent>(map.get("textos"), DEFAULT_TEXTOS),
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
       hero_sub: map.get("hero_sub") ?? DEFAULT_CONTENT.hero_sub,
       home: parseObject<HomeContent>(map.get("home"), DEFAULT_HOME),

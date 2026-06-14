@@ -42,7 +42,7 @@ export default async function HomePage() {
           >
             <RioSpEmblem className="mx-auto mb-3 h-14 w-14" stroke="rgb(var(--color-offwhite))" />
             <span className="inline-block text-xs font-semibold uppercase tracking-[0.3em] text-laranja [text-indent:0.3em]">
-              O Rio encontra SP
+              {content.textos.hero_eyebrow}
             </span>
             <h1 className="mt-5 font-display font-normal leading-[1.02]">
               <span className="block text-5xl sm:text-6xl md:text-7xl">Karina</span>
@@ -62,13 +62,13 @@ export default async function HomePage() {
                 href="/confirmar-presenca"
                 className="inline-flex items-center justify-center rounded-full bg-oceano px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-offwhite shadow-md transition hover:bg-oceano/90 active:scale-95"
               >
-                Confirmar presença
+                {content.textos.hero_btn_confirmar}
               </Link>
               <Link
                 href="/presentes"
                 className="inline-flex items-center justify-center rounded-full border border-offwhite/70 px-4 py-2 text-[11px] font-semibold uppercase tracking-wide text-offwhite transition hover:bg-offwhite hover:text-oceanoDark active:scale-95"
               >
-                Lista de presentes
+                {content.textos.hero_btn_presentes}
               </Link>
             </div>
           </div>

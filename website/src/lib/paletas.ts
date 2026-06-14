@@ -79,12 +79,57 @@ export const PALETAS: Paleta[] = [
 
 export const PALETA_PADRAO = "rio_sp";
 
+/** Cores escolhidas manualmente no modo "Personalizada" (valores em hex). */
+export interface PaletaCustom {
+  oceano: string; // cor principal
+  laranja: string; // destaque
+  areia: string; // tom claro / fundo
+  urbano: string; // texto escuro
+}
+
+export const PALETA_CUSTOM_PADRAO: PaletaCustom = {
+  oceano: "#006994",
+  laranja: "#e07a3f",
+  areia: "#e8d5b0",
+  urbano: "#3a3a3a",
+};
+
+/** "#rrggbb" → "r g b" (canais usados nas variáveis CSS). */
+function hexParaCanais(hex: string): string {
+  const h = (hex || "").replace("#", "").trim();
+  const full = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const n = parseInt(full, 16);
+  if (full.length !== 6 || Number.isNaN(n)) return "0 105 148";
+  return `${(n >> 16) & 255} ${(n >> 8) & 255} ${n & 255}`;
+}
+
+/** Escurece canais "r g b" por um fator (0–1) — usado p/ derivar o tom escuro. */
+function escurecerCanais(canais: string, fator: number): string {
+  return canais
+    .split(" ")
+    .map((v) => Math.max(0, Math.round(Number(v) * fator)))
+    .join(" ");
+}
+
 export function getPaleta(id: string | undefined): Paleta {
   return PALETAS.find((p) => p.id === id) ?? PALETAS[0];
 }
 
-/** Gera o CSS (:root { --color-...}) para uma paleta. */
-export function paletaCss(id: string | undefined): string {
-  const { cores } = getPaleta(id);
+/** Gera o CSS (:root { --color-...}) para uma paleta (ou cores personalizadas). */
+export function paletaCss(id: string | undefined, custom?: PaletaCustom): string {
+  let cores;
+  if (id === "custom" && custom) {
+    const oceano = hexParaCanais(custom.oceano);
+    cores = {
+      oceano,
+      oceanoDark: escurecerCanais(oceano, 0.5),
+      laranja: hexParaCanais(custom.laranja),
+      areia: hexParaCanais(custom.areia),
+      urbano: hexParaCanais(custom.urbano),
+      offwhite: "250 249 246",
+    };
+  } else {
+    cores = getPaleta(id).cores;
+  }
   return `:root{--color-oceano:${cores.oceano};--color-oceanoDark:${cores.oceanoDark};--color-laranja:${cores.laranja};--color-areia:${cores.areia};--color-urbano:${cores.urbano};--color-offwhite:${cores.offwhite};}`;
 }

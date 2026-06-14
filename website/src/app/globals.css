@@ -4,6 +4,8 @@
 
 :root {
   color-scheme: light;
+  /* Fonte de títulos padrão — sobrescrita pela fonte escolhida no painel. */
+  --font-display: var(--font-playfair);
   /* Paleta padrão (Rio × SP) — canais RGB. Sobrescrita pela paleta escolhida no painel. */
   --color-oceano: 0 105 148;
   --color-oceanoDark: 4 71 106;
