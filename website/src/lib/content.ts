@@ -72,6 +72,8 @@ export interface SiteContent {
   paginas: Record<string, PageHeader>; // títulos/intro de cada página
   email_presente_titulo: string; // título do email de agradecimento por presente
   email_presente_texto: string; // corpo do email de agradecimento por presente
+  email_rsvp_titulo: string; // título do email de confirmação de presença
+  email_rsvp_texto: string; // corpo do email de confirmação (marcadores: {nome} {total} {data})
 }
 
 export const DEFAULT_TIMELINE: TimelineItem[] = [
@@ -243,6 +245,9 @@ export const DEFAULT_CONTENT: SiteContent = {
   paginas: DEFAULT_PAGINAS,
   email_presente_titulo: "Obrigado! 💙",
   email_presente_texto: "Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️",
+  email_rsvp_titulo: "Presença confirmada! 🎉",
+  email_rsvp_texto:
+    "Oi, {nome}! 🌊🏙️\nSua presença está confirmadíssima. Anotamos {total} no nosso mapa (sim, com sotaque carioca e paulistano misturados).\nAgora é só contar os dias para o dia {data}. Prometemos feijoada e pastel de feira. 😄",
 };
 
 /** Faz o parse seguro de um array JSON guardado como string. */
@@ -308,6 +313,8 @@ export async function getContent(): Promise<SiteContent> {
       ),
       email_presente_titulo: map.get("email_presente_titulo") ?? DEFAULT_CONTENT.email_presente_titulo,
       email_presente_texto: map.get("email_presente_texto") ?? DEFAULT_CONTENT.email_presente_texto,
+      email_rsvp_titulo: map.get("email_rsvp_titulo") ?? DEFAULT_CONTENT.email_rsvp_titulo,
+      email_rsvp_texto: map.get("email_rsvp_texto") ?? DEFAULT_CONTENT.email_rsvp_texto,
     };
   } catch {
     // tabela ainda não criada / sem env — usa os padrões.

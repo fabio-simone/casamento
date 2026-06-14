@@ -635,6 +635,43 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
         </div>
       </section>
 
+      {/* EMAIL DE CONFIRMAÇÃO DE PRESENÇA */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Email de confirmação de presença</h2>
+        <p className="mb-1 text-sm text-urbano/60">
+          O email enviado para quem confirma presença no RSVP.
+        </p>
+        <p className="mb-4 text-sm text-urbano/60">
+          Marcadores disponíveis no texto:{" "}
+          <code className="rounded bg-areia/40 px-1 text-oceano">{"{nome}"}</code>{" "}
+          <code className="rounded bg-areia/40 px-1 text-oceano">{"{total}"}</code>{" "}
+          (ex: &quot;2 pessoas&quot;){" "}
+          <code className="rounded bg-areia/40 px-1 text-oceano">{"{data}"}</code>{" "}
+          (data do casamento). Cada linha vira um parágrafo.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-urbano mb-2">Título do email</label>
+            <input
+              value={content.email_rsvp_titulo}
+              onChange={(e) => set("email_rsvp_titulo", e.target.value)}
+              placeholder="Ex: Presença confirmada! 🎉"
+              className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-urbano mb-2">Mensagem do email</label>
+            <textarea
+              value={content.email_rsvp_texto}
+              onChange={(e) => set("email_rsvp_texto", e.target.value)}
+              placeholder="Oi, {nome}! Sua presença está confirmada..."
+              rows={5}
+              className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* TEXTOS DAS PÁGINAS */}
       <section className="card">
         <h2 className="font-display text-xl font-bold text-urbano">Títulos das páginas</h2>

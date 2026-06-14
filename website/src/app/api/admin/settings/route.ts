@@ -25,6 +25,8 @@ export async function POST(req: Request) {
     push("historia_foto", body.historia_foto);
     push("email_presente_titulo", body.email_presente_titulo);
     push("email_presente_texto", body.email_presente_texto);
+    push("email_rsvp_titulo", body.email_rsvp_titulo);
+    push("email_rsvp_texto", body.email_rsvp_texto);
 
     const pushJson = (key: string, value: unknown) => {
       if (Array.isArray(value)) {

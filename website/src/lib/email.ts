@@ -57,19 +57,31 @@ export async function sendRsvpConfirmation(params: {
   }
 
   const total = 1 + params.numAcompanhantes;
+
+  // Texto editável no painel, com marcadores {nome} {total} {data}.
+  const content = await getContent();
+  const titulo = content.email_rsvp_titulo || "Presença confirmada! 🎉";
+  const textoTpl =
+    content.email_rsvp_texto || "Oi, {nome}! Sua presença está confirmada.";
+  const corpo = textoTpl
+    .split("{nome}").join(params.nome)
+    .split("{total}").join(`${total} ${total === 1 ? "pessoa" : "pessoas"}`)
+    .split("{data}").join(WEDDING.dataCurta)
+    .split("\n")
+    .map((linha) => linha.trim())
+    .filter(Boolean)
+    .map((linha) => `<p>${linha}</p>`)
+    .join("");
+
   const html = `
   <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;background:#FAF9F6;border-radius:16px;overflow:hidden;border:1px solid #E8D5B0">
     <div style="background:#006994;color:#FAF9F6;padding:32px 24px;text-align:center">
-      <h1 style="margin:0;font-family:Georgia,serif;font-size:28px">${WEDDING.noivos}</h1>
+      <h1 style="margin:0;font-family:Georgia,serif;font-size:28px">${titulo}</h1>
       <p style="margin:8px 0 0;opacity:.9">${WEDDING.dataExtenso} · ${WEDDING.cidade}</p>
     </div>
     <div style="padding:28px 24px;color:#3A3A3A;line-height:1.6">
-      <p>Oi, <strong>${params.nome}</strong>! 🌊🏙️</p>
-      <p>Sua presença está <strong>confirmadíssima</strong>. Anotamos <strong>${total} ${
-        total === 1 ? "pessoa" : "pessoas"
-      }</strong> no nosso mapa (sim, com sotaque carioca e paulistano misturados).</p>
-      <p>Agora é só contar os dias para o dia <strong>${WEDDING.dataCurta}</strong>. Prometemos feijoada <em>e</em> pastel de feira. 😄</p>
-      <p style="margin-top:24px">Com carinho,<br/><strong>Karina & Fábio</strong></p>
+      ${corpo}
+      <p style="margin-top:24px">Com carinho,<br/><strong>${WEDDING.noivos}</strong></p>
     </div>
     <div style="background:#E8D5B0;color:#3A3A3A;padding:16px;text-align:center;font-size:12px">
       ${WEDDING.dominio} — O Rio encontra SP
