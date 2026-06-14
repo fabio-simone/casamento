@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { WEDDING } from "./constants";
+import { getContent } from "./content";
 
 const resendKey = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM_EMAIL ?? "kafamento <casal@kafamento.com.br>";
@@ -92,15 +93,19 @@ export async function sendGiftThankYou(params: {
 }) {
   if (!resend) return;
 
+  const content = await getContent();
+  const titulo = content.email_presente_titulo || "Obrigado! 💙";
+  const texto = content.email_presente_texto || "Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️";
+
   const html = `
   <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;background:#FAF9F6;border-radius:16px;overflow:hidden;border:1px solid #E8D5B0">
     <div style="background:#006994;color:#FAF9F6;padding:32px 24px;text-align:center">
-      <h1 style="margin:0;font-family:Georgia,serif;font-size:26px">Obrigado! 💙</h1>
+      <h1 style="margin:0;font-family:Georgia,serif;font-size:26px">${titulo}</h1>
     </div>
     <div style="padding:28px 24px;color:#3A3A3A;line-height:1.6">
       <p>Oi, <strong>${params.nome}</strong>!</p>
       <p>Recebemos seu presente: <strong>${params.presente}</strong> (${params.valor}).</p>
-      <p>Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️</p>
+      <p>${texto}</p>
       <p style="margin-top:24px">Com carinho,<br/><strong>${WEDDING.noivos}</strong></p>
     </div>
     <div style="background:#E8D5B0;color:#3A3A3A;padding:16px;text-align:center;font-size:12px">
@@ -112,6 +117,41 @@ export async function sendGiftThankYou(params: {
     from: FROM,
     to: params.email,
     subject: `Recebemos seu presente — ${WEDDING.noivos} 💙`,
+    html,
+  });
+}
+
+/** Notifica o casal (ADMIN_EMAIL) quando alguém paga um presente. */
+export async function sendPaymentNotificationToCasal(params: {
+  pagadorNome: string;
+  presenteNome: string;
+  numeroCota: number;
+  valorCota: string;
+}) {
+  const admin = process.env.ADMIN_EMAIL;
+  if (!resend || !admin) return;
+
+  const html = `
+  <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;background:#FAF9F6;border-radius:16px;overflow:hidden;border:1px solid #E8D5B0">
+    <div style="background:#006994;color:#FAF9F6;padding:24px;text-align:center">
+      <h1 style="margin:0;font-family:Georgia,serif;font-size:22px">🎁 Presente pago!</h1>
+    </div>
+    <div style="padding:24px;color:#3A3A3A;line-height:1.6">
+      <p><strong>${params.pagadorNome}</strong> acabou de pagar uma cota de presente:</p>
+      <p style="background:#EEEEE8;border-left:4px solid #006994;padding:12px;margin:16px 0">
+        <strong>${params.presenteNome}</strong><br/>
+        Cota #${params.numeroCota} · ${params.valorCota}
+      </p>
+      <p style="margin-top:20px;font-size:14px">
+        <a href="https://${process.env.NEXT_PUBLIC_BASE_URL?.replace('https://', '') || 'www.kafamento.com.br'}/admin/presentes" style="color:#006994;text-decoration:none;font-weight:bold">Ver no painel →</a>
+      </p>
+    </div>
+  </div>`;
+
+  await resend.emails.send({
+    from: FROM,
+    to: admin,
+    subject: `[kafamento] ${params.pagadorNome} pagou um presente 🎁`,
     html,
   });
 }

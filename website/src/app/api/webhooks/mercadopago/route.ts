@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mpPayment } from "@/lib/mercadopago";
-import { sendGiftThankYou } from "@/lib/email";
+import { sendGiftThankYou, sendPaymentNotificationToCasal } from "@/lib/email";
 import { formatBRL } from "@/lib/utils";
 
 /**
@@ -81,7 +81,7 @@ export async function POST(req: Request) {
       })
       .in("id", quotaIds)
       .eq("status", "pending")
-      .select("id, gift_id");
+      .select("id, gift_id, numero_cota");
 
     if (error) {
       console.error("[webhook] update error", error);
@@ -115,6 +115,19 @@ export async function POST(req: Request) {
           });
         } catch (e) {
           console.error("[webhook] thank-you email error", e);
+        }
+        // Notifica o casal sobre o novo pagamento
+        try {
+          for (const quota of updated) {
+            await sendPaymentNotificationToCasal({
+              pagadorNome,
+              presenteNome: gift.nome,
+              numeroCota: quota.numero_cota,
+              valorCota: formatBRL(valorCota),
+            });
+          }
+        } catch (e) {
+          console.error("[webhook] casal notification error", e);
         }
       }
     }

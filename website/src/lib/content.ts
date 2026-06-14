@@ -70,6 +70,8 @@ export interface SiteContent {
   cronograma: EventoItem[]; // momentos do dia
   faq: FaqItem[]; // perguntas e respostas
   paginas: Record<string, PageHeader>; // títulos/intro de cada página
+  email_presente_titulo: string; // título do email de agradecimento por presente
+  email_presente_texto: string; // corpo do email de agradecimento por presente
 }
 
 export const DEFAULT_TIMELINE: TimelineItem[] = [
@@ -239,6 +241,8 @@ export const DEFAULT_CONTENT: SiteContent = {
   cronograma: DEFAULT_CRONOGRAMA,
   faq: DEFAULT_FAQ,
   paginas: DEFAULT_PAGINAS,
+  email_presente_titulo: "Obrigado! 💙",
+  email_presente_texto: "Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️",
 };
 
 /** Faz o parse seguro de um array JSON guardado como string. */
@@ -302,6 +306,8 @@ export async function getContent(): Promise<SiteContent> {
         map.get("paginas"),
         DEFAULT_PAGINAS
       ),
+      email_presente_titulo: map.get("email_presente_titulo") ?? DEFAULT_CONTENT.email_presente_titulo,
+      email_presente_texto: map.get("email_presente_texto") ?? DEFAULT_CONTENT.email_presente_texto,
     };
   } catch {
     // tabela ainda não criada / sem env — usa os padrões.

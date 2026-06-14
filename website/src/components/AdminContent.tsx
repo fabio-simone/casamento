@@ -606,6 +606,35 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
         </div>
       </section>
 
+      {/* EMAIL DE PRESENTE */}
+      <section className="card">
+        <h2 className="font-display text-xl font-bold text-urbano">Email de presente</h2>
+        <p className="mb-4 text-sm text-urbano/60">
+          Personalize o email que é enviado para quem pagou um presente.
+        </p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-semibold text-urbano mb-2">Título do email</label>
+            <input
+              value={content.email_presente_titulo}
+              onChange={(e) => set("email_presente_titulo", e.target.value)}
+              placeholder="Ex: Obrigado! 💙"
+              className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-semibold text-urbano mb-2">Mensagem do email</label>
+            <textarea
+              value={content.email_presente_texto}
+              onChange={(e) => set("email_presente_texto", e.target.value)}
+              placeholder="Ex: Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️"
+              rows={3}
+              className="w-full rounded-xl border border-areia px-3 py-2 text-sm outline-none focus:border-oceano"
+            />
+          </div>
+        </div>
+      </section>
+
       {/* TEXTOS DAS PÁGINAS */}
       <section className="card">
         <h2 className="font-display text-xl font-bold text-urbano">Títulos das páginas</h2>
