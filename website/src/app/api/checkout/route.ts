@@ -2,7 +2,21 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { mpPreference } from "@/lib/mercadopago";
 
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+/**
+ * Deriva a origem real da requisição (o host que está de fato no ar).
+ * Evita que um NEXT_PUBLIC_BASE_URL apontando para um domínio fora do ar
+ * quebre silenciosamente o webhook de pagamento. Env fica como fallback.
+ */
+function getOrigin(req: Request): string {
+  const h = req.headers;
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (host) {
+    const proto =
+      h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+    return `${proto}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+}
 
 /**
  * Cria uma preferência de pagamento (Checkout Pro) para 1+ cotas de um presente.
@@ -10,6 +24,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
  */
 export async function POST(req: Request) {
   try {
+    const origin = getOrigin(req);
     const body = await req.json();
     const giftId = String(body.gift_id ?? "");
     const quantidade = Math.max(1, Number(body.quantidade) || 1);
@@ -91,12 +106,12 @@ export async function POST(req: Request) {
           mensagem,
         },
         back_urls: {
-          success: `${BASE_URL}/presentes?status=sucesso`,
-          failure: `${BASE_URL}/presentes?status=falha`,
-          pending: `${BASE_URL}/presentes?status=pendente`,
+          success: `${origin}/presentes?status=sucesso`,
+          failure: `${origin}/presentes?status=falha`,
+          pending: `${origin}/presentes?status=pendente`,
         },
         auto_return: "approved",
-        notification_url: `${BASE_URL}/api/webhooks/mercadopago`,
+        notification_url: `${origin}/api/webhooks/mercadopago`,
         statement_descriptor: "KAFAMENTO",
       },
     });
