@@ -51,6 +51,28 @@ export interface GiftWithQuotas extends Gift {
   gift_quotas: GiftQuota[];
 }
 
+/** Item de um pedido (carrinho): presente + quantidade comprada. */
+export interface GiftOrderItem {
+  gift_id: string;
+  nome: string;
+  preco: number;
+  quantidade: number;
+}
+
+/** Pedido de presentes (carrinho) — substitui o modelo de cotas. */
+export interface GiftOrder {
+  id: string;
+  pagador_nome: string | null;
+  pagador_email: string | null;
+  mensagem: string | null;
+  itens: GiftOrderItem[];
+  total: number;
+  status: "pending" | "paid";
+  mercadopago_payment_id: string | null;
+  paid_at: string | null;
+  created_at: string;
+}
+
 export interface Recado {
   id: string;
   nome: string;

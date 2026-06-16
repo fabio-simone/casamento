@@ -1,6 +1,21 @@
 import { Resend } from "resend";
 import { WEDDING } from "./constants";
 import { getContent } from "./content";
+import { formatBRL } from "./utils";
+import type { GiftOrderItem } from "./types";
+
+/** Monta as linhas de uma tabela HTML com os itens comprados. */
+function linhasItens(itens: GiftOrderItem[]): string {
+  return itens
+    .map(
+      (i) =>
+        `<tr><td style="padding:6px 0;color:#3A3A3A">${i.quantidade}× ${i.nome}</td>` +
+        `<td style="padding:6px 0;text-align:right;color:#3A3A3A;white-space:nowrap">${formatBRL(
+          i.preco * i.quantidade
+        )}</td></tr>`
+    )
+    .join("");
+}
 
 const resendKey = process.env.RESEND_API_KEY;
 const FROM = process.env.RESEND_FROM_EMAIL ?? "kafamento <casal@kafamento.com.br>";
@@ -96,18 +111,20 @@ export async function sendRsvpConfirmation(params: {
   });
 }
 
-/** E-mail de agradecimento por um presente pago. */
+/** E-mail de agradecimento por um pedido de presentes pago. */
 export async function sendGiftThankYou(params: {
   nome: string;
   email: string;
-  presente: string;
-  valor: string;
+  itens: GiftOrderItem[];
+  total: string;
 }) {
   if (!resend) return;
 
   const content = await getContent();
   const titulo = content.email_presente_titulo || "Obrigado! 💙";
-  const texto = content.email_presente_texto || "Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️";
+  const texto =
+    content.email_presente_texto ||
+    "Você acaba de contribuir para a paz mundial entre Vasco e a garoa paulistana. Gratidão! 🌊🏙️";
 
   const html = `
   <div style="font-family:Inter,Arial,sans-serif;max-width:560px;margin:0 auto;background:#FAF9F6;border-radius:16px;overflow:hidden;border:1px solid #E8D5B0">
@@ -116,7 +133,16 @@ export async function sendGiftThankYou(params: {
     </div>
     <div style="padding:28px 24px;color:#3A3A3A;line-height:1.6">
       <p>Oi, <strong>${params.nome}</strong>!</p>
-      <p>Recebemos seu presente: <strong>${params.presente}</strong> (${params.valor}).</p>
+      <p>Recebemos seu${params.itens.length > 1 ? "s" : ""} presente${
+        params.itens.length > 1 ? "s" : ""
+      }:</p>
+      <table style="width:100%;border-collapse:collapse;margin:8px 0">
+        ${linhasItens(params.itens)}
+        <tr>
+          <td style="padding:10px 0 0;border-top:1px solid #E8D5B0;font-weight:bold">Total</td>
+          <td style="padding:10px 0 0;border-top:1px solid #E8D5B0;text-align:right;font-weight:bold">${params.total}</td>
+        </tr>
+      </table>
       <p>${texto}</p>
       <p style="margin-top:24px">Com carinho,<br/><strong>${WEDDING.noivos}</strong></p>
     </div>
@@ -133,12 +159,11 @@ export async function sendGiftThankYou(params: {
   });
 }
 
-/** Notifica o casal (ADMIN_EMAIL) quando alguém paga um presente. */
+/** Notifica o casal (ADMIN_EMAIL) quando alguém paga um pedido de presentes. */
 export async function sendPaymentNotificationToCasal(params: {
   pagadorNome: string;
-  presenteNome: string;
-  numeroCota: number;
-  valorCota: string;
+  itens: GiftOrderItem[];
+  total: string;
 }) {
   const admin = process.env.ADMIN_EMAIL;
   if (!resend || !admin) return;
@@ -149,13 +174,16 @@ export async function sendPaymentNotificationToCasal(params: {
       <h1 style="margin:0;font-family:Georgia,serif;font-size:22px">🎁 Presente pago!</h1>
     </div>
     <div style="padding:24px;color:#3A3A3A;line-height:1.6">
-      <p><strong>${params.pagadorNome}</strong> acabou de pagar uma cota de presente:</p>
-      <p style="background:#EEEEE8;border-left:4px solid #006994;padding:12px;margin:16px 0">
-        <strong>${params.presenteNome}</strong><br/>
-        Cota #${params.numeroCota} · ${params.valorCota}
-      </p>
+      <p><strong>${params.pagadorNome}</strong> acabou de comprar:</p>
+      <table style="width:100%;border-collapse:collapse;background:#EEEEE8;border-left:4px solid #006994;padding:12px;margin:16px 0">
+        ${linhasItens(params.itens)}
+        <tr>
+          <td style="padding:10px 8px 0;border-top:1px solid #ccc;font-weight:bold">Total</td>
+          <td style="padding:10px 8px 0;border-top:1px solid #ccc;text-align:right;font-weight:bold">${params.total}</td>
+        </tr>
+      </table>
       <p style="margin-top:20px;font-size:14px">
-        <a href="https://${process.env.NEXT_PUBLIC_BASE_URL?.replace('https://', '') || 'www.kafamento.com.br'}/admin/presentes" style="color:#006994;text-decoration:none;font-weight:bold">Ver no painel →</a>
+        <a href="https://www.kafamento.com.br/admin/pagamentos" style="color:#006994;text-decoration:none;font-weight:bold">Ver no painel →</a>
       </p>
     </div>
   </div>`;
@@ -163,7 +191,7 @@ export async function sendPaymentNotificationToCasal(params: {
   await resend.emails.send({
     from: FROM,
     to: admin,
-    subject: `[kafamento] ${params.pagadorNome} pagou um presente 🎁`,
+    subject: `[kafamento] ${params.pagadorNome} comprou presente(s) 🎁`,
     html,
   });
 }

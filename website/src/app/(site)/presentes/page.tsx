@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { GiftCard } from "@/components/GiftCard";
+import { GiftStore } from "@/components/GiftStore";
 import { WaveDivider } from "@/components/WaveDivider";
-import { getGiftsWithQuotas } from "@/lib/gifts";
+import { getGifts } from "@/lib/gifts";
 import { getContent } from "@/lib/content";
 
 export const metadata: Metadata = { title: "Lista de Presentes" };
@@ -12,7 +12,7 @@ export default async function PresentesPage({
 }: {
   searchParams: { status?: string };
 }) {
-  const gifts = await getGiftsWithQuotas();
+  const gifts = await getGifts();
   const { paginas, textos } = await getContent();
   const p = paginas.presentes;
   const status = searchParams.status;
@@ -49,17 +49,7 @@ export default async function PresentesPage({
           </div>
         )}
 
-        {gifts.length === 0 ? (
-          <p className="py-20 text-center text-offwhite/60">
-            A lista de presentes ainda está sendo preparada. Volte em breve! 🎁
-          </p>
-        ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {gifts.map((gift) => (
-              <GiftCard key={gift.id} gift={gift} />
-            ))}
-          </div>
-        )}
+        <GiftStore gifts={gifts} />
         </div>
       </section>
     </>

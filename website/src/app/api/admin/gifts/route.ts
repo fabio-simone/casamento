@@ -12,30 +12,23 @@ export async function POST(req: Request) {
     const nome = String(body.nome ?? "").trim();
     const descricao = body.descricao ? String(body.descricao).trim() : null;
     const valor_total = Number(body.valor_total);
-    const num_cotas = Math.max(1, Math.floor(Number(body.num_cotas) || 1));
     const foto_url = body.foto_url ? String(body.foto_url).trim() : null;
 
     if (!nome || !valor_total || valor_total <= 0) {
-      return NextResponse.json({ error: "Nome e valor são obrigatórios." }, { status: 400 });
+      return NextResponse.json({ error: "Nome e preço são obrigatórios." }, { status: 400 });
     }
 
     const supabase = createAdminClient();
+    // num_cotas fica fixo em 1 (modelo de carrinho — compra por quantidade).
     const { data: gift, error } = await supabase
       .from("gifts")
-      .insert({ nome, descricao, valor_total, num_cotas, foto_url })
+      .insert({ nome, descricao, valor_total, num_cotas: 1, foto_url })
       .select()
       .single();
 
     if (error || !gift) {
       return NextResponse.json({ error: "Erro ao criar presente." }, { status: 500 });
     }
-
-    const cotas = Array.from({ length: num_cotas }, (_, i) => ({
-      gift_id: gift.id,
-      numero_cota: i + 1,
-      status: "pending" as const,
-    }));
-    await supabase.from("gift_quotas").insert(cotas);
 
     return NextResponse.json({ ok: true, gift });
   } catch {
