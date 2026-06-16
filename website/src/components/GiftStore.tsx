@@ -228,7 +228,7 @@ export function GiftStore({ gifts }: { gifts: GiftType[] }) {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder={t.gift_ph_nome}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
             />
             <input
               required
@@ -236,7 +236,7 @@ export function GiftStore({ gifts }: { gifts: GiftType[] }) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t.gift_ph_email}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
             />
             <textarea
               rows={2}
@@ -244,7 +244,7 @@ export function GiftStore({ gifts }: { gifts: GiftType[] }) {
               value={mensagem}
               onChange={(e) => setMensagem(e.target.value)}
               placeholder={t.gift_ph_mensagem}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
+              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
             />
 
             {erro && (
