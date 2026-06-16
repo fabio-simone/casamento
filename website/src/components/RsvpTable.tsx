@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import type { Rsvp } from "@/lib/types";
+import { Fragment, useMemo, useState } from "react";
+import { FAIXA_LABEL, type Rsvp } from "@/lib/types";
 import { formatDateSP } from "@/lib/utils";
 
 export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
@@ -38,18 +38,27 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
   function exportarCSV() {
     const header = [
       "Nome",
+      "Tipo",
+      "Faixa etária",
       "E-mail",
       "Telefone",
-      "Acompanhantes",
       "Data",
     ];
-    const linhas = filtrados.map((r) => [
-      r.nome,
-      r.email,
-      r.telefone ?? "",
-      String(r.num_acompanhantes),
-      formatDateSP(r.created_at),
-    ]);
+    const linhas: string[][] = [];
+    filtrados.forEach((r) => {
+      const data = formatDateSP(r.created_at);
+      linhas.push([r.nome, "Confirmante", "", r.email, r.telefone ?? "", data]);
+      (r.acompanhantes ?? []).forEach((a) => {
+        linhas.push([
+          a.nome,
+          `Acompanhante de ${r.nome}`,
+          FAIXA_LABEL[a.faixa],
+          "",
+          "",
+          data,
+        ]);
+      });
+    });
     const csv = [header, ...linhas]
       .map((row) => row.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(","))
       .join("\n");
@@ -110,17 +119,36 @@ export function RsvpTable({ rsvps }: { rsvps: Rsvp[] }) {
           </thead>
           <tbody>
             {filtrados.map((r) => (
-              <tr key={r.id} className="border-t border-areia/60 align-top">
-                <td className="px-4 py-3 font-medium text-urbano">{r.nome}</td>
-                <td className="px-4 py-3 text-urbano/70">
-                  <div>{r.email}</div>
-                  {r.telefone && <div className="text-xs text-urbano/50">{r.telefone}</div>}
-                </td>
-                <td className="px-4 py-3 text-urbano/70">{r.num_acompanhantes}</td>
-                <td className="whitespace-nowrap px-4 py-3 text-urbano/50">
-                  {formatDateSP(r.created_at, { dateStyle: "short" })}
-                </td>
-              </tr>
+              <Fragment key={r.id}>
+                <tr className="border-t border-areia/60 align-top">
+                  <td className="px-4 py-3 font-medium text-urbano">{r.nome}</td>
+                  <td className="px-4 py-3 text-urbano/70">
+                    <div>{r.email}</div>
+                    {r.telefone && <div className="text-xs text-urbano/50">{r.telefone}</div>}
+                  </td>
+                  <td className="px-4 py-3 text-urbano/70">{r.num_acompanhantes}</td>
+                  <td className="whitespace-nowrap px-4 py-3 text-urbano/50">
+                    {formatDateSP(r.created_at, { dateStyle: "short" })}
+                  </td>
+                </tr>
+                {(r.acompanhantes ?? []).map((a, i) => (
+                  <tr key={`${r.id}-${i}`} className="border-t border-areia/30 bg-offwhite/60">
+                    <td className="py-2 pl-8 pr-4 text-urbano/80">
+                      <span className="text-urbano/30">↳ </span>
+                      {a.nome || <span className="text-urbano/40">(sem nome)</span>}
+                    </td>
+                    <td className="px-4 py-2 text-xs text-urbano/45">
+                      acompanhante de {r.nome.split(" ")[0]}
+                    </td>
+                    <td className="px-4 py-2">
+                      <span className="rounded-full bg-oceano/10 px-2 py-0.5 text-xs text-oceano">
+                        {FAIXA_LABEL[a.faixa]}
+                      </span>
+                    </td>
+                    <td className="px-4 py-2" />
+                  </tr>
+                ))}
+              </Fragment>
             ))}
             {filtrados.length === 0 && (
               <tr>

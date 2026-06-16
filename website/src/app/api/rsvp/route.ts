@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { sendRsvpConfirmation } from "@/lib/email";
+import { MAX_ACOMPANHANTES, type Acompanhante, type FaixaIdade } from "@/lib/types";
 
 export async function POST(req: Request) {
   try {
@@ -8,7 +9,23 @@ export async function POST(req: Request) {
     const nome = String(body.nome ?? "").trim();
     const email = String(body.email ?? "").trim().toLowerCase();
     const telefone = body.telefone ? String(body.telefone).trim() : null;
-    const num_acompanhantes = Math.min(5, Math.max(0, Number(body.num_acompanhantes) || 0));
+
+    // Normaliza os acompanhantes (nome + faixa de idade), limitando ao máximo.
+    const faixasValidas: FaixaIdade[] = ["ate7", "8mais"];
+    const acompanhantes: Acompanhante[] = Array.isArray(body.acompanhantes)
+      ? body.acompanhantes
+          .slice(0, MAX_ACOMPANHANTES)
+          .map((a: unknown) => {
+            const obj = (a ?? {}) as Record<string, unknown>;
+            const nomeAc = String(obj.nome ?? "").trim();
+            const faixa = faixasValidas.includes(obj.faixa as FaixaIdade)
+              ? (obj.faixa as FaixaIdade)
+              : "8mais";
+            return { nome: nomeAc, faixa };
+          })
+          .filter((a: Acompanhante) => a.nome.length > 0)
+      : [];
+    const num_acompanhantes = acompanhantes.length;
 
     if (!nome || !email) {
       return NextResponse.json({ error: "Nome e e-mail são obrigatórios." }, { status: 400 });
@@ -18,12 +35,24 @@ export async function POST(req: Request) {
     }
 
     const supabase = createAdminClient();
-    const { error } = await supabase.from("rsvps").insert({
+    let { error } = await supabase.from("rsvps").insert({
       nome,
       email,
       telefone,
       num_acompanhantes,
+      acompanhantes,
     });
+
+    // Se a coluna `acompanhantes` ainda não existir no banco, salva sem ela
+    // (mantém o RSVP funcionando até a migração ser aplicada).
+    if (error && /acompanhantes/i.test(error.message || "")) {
+      ({ error } = await supabase.from("rsvps").insert({
+        nome,
+        email,
+        telefone,
+        num_acompanhantes,
+      }));
+    }
 
     if (error) {
       console.error("[rsvp] insert error", error);

@@ -1,11 +1,26 @@
 export type QuotaStatus = "pending" | "paid";
 
+export type FaixaIdade = "ate7" | "8mais";
+
+export const FAIXA_LABEL: Record<FaixaIdade, string> = {
+  ate7: "Até 7 anos",
+  "8mais": "A partir de 8 anos",
+};
+
+export const MAX_ACOMPANHANTES = 3;
+
+export interface Acompanhante {
+  nome: string;
+  faixa: FaixaIdade;
+}
+
 export interface Rsvp {
   id: string;
   nome: string;
   email: string;
   telefone: string | null;
   num_acompanhantes: number;
+  acompanhantes: Acompanhante[] | null;
   restricao_alimentar: string | null;
   mensagem: string | null;
   created_at: string;

@@ -3,19 +3,25 @@
 import { useState } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { useTextos } from "@/lib/textos-context";
+import {
+  FAIXA_LABEL,
+  MAX_ACOMPANHANTES,
+  type Acompanhante,
+  type FaixaIdade,
+} from "@/lib/types";
 
 interface FormState {
   nome: string;
   email: string;
   telefone: string;
-  num_acompanhantes: number;
+  acompanhantes: Acompanhante[];
 }
 
 const initial: FormState = {
   nome: "",
   email: "",
   telefone: "",
-  num_acompanhantes: 0,
+  acompanhantes: [],
 };
 
 export function RsvpForm() {
@@ -23,9 +29,41 @@ export function RsvpForm() {
   const [form, setForm] = useState<FormState>(initial);
   const [status, setStatus] = useState<"idle" | "sending" | "ok" | "error">("idle");
   const [error, setError] = useState("");
+  const [limiteMsg, setLimiteMsg] = useState(false);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  // Ajusta a quantidade de acompanhantes (e os campos), limitando ao máximo.
+  function setQuantidade(valor: number) {
+    let n = Number.isNaN(valor) || valor < 0 ? 0 : valor;
+    if (n > MAX_ACOMPANHANTES) {
+      setLimiteMsg(true);
+      n = MAX_ACOMPANHANTES;
+    } else {
+      setLimiteMsg(false);
+    }
+    setForm((f) => {
+      const atual = f.acompanhantes;
+      let lista: Acompanhante[];
+      if (n <= atual.length) {
+        lista = atual.slice(0, n);
+      } else {
+        lista = [...atual];
+        while (lista.length < n) lista.push({ nome: "", faixa: "8mais" });
+      }
+      return { ...f, acompanhantes: lista };
+    });
+  }
+
+  function setAcomp(i: number, patch: Partial<Acompanhante>) {
+    setForm((f) => ({
+      ...f,
+      acompanhantes: f.acompanhantes.map((a, idx) =>
+        idx === i ? { ...a, ...patch } : a
+      ),
+    }));
   }
 
   async function submit(e: React.FormEvent) {
@@ -36,7 +74,12 @@ export function RsvpForm() {
       const res = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          nome: form.nome,
+          email: form.email,
+          telefone: form.telefone,
+          acompanhantes: form.acompanhantes,
+        }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Erro ao confirmar.");
@@ -62,6 +105,7 @@ export function RsvpForm() {
         <button
           onClick={() => {
             setForm(initial);
+            setLimiteMsg(false);
             setStatus("idle");
           }}
           className="btn-secondary mt-6"
@@ -71,6 +115,8 @@ export function RsvpForm() {
       </div>
     );
   }
+
+  const qtd = form.acompanhantes.length;
 
   return (
     <form onSubmit={submit} className="card mx-auto max-w-lg space-y-4">
@@ -110,20 +156,49 @@ export function RsvpForm() {
 
       <div>
         <label className="mb-1 block text-sm font-medium text-urbano">
-          Número de acompanhantes
+          Número de acompanhantes{" "}
+          <span className="text-urbano/40">(máx. {MAX_ACOMPANHANTES})</span>
         </label>
-        <select
-          value={form.num_acompanhantes}
-          onChange={(e) => update("num_acompanhantes", Number(e.target.value))}
+        <input
+          type="number"
+          min={0}
+          max={MAX_ACOMPANHANTES}
+          value={qtd}
+          onChange={(e) => setQuantidade(parseInt(e.target.value, 10))}
           className="w-full rounded-xl border border-areia px-4 py-3 text-sm outline-none focus:border-oceano"
-        >
-          {[0, 1, 2, 3, 4, 5].map((n) => (
-            <option key={n} value={n}>
-              {n === 0 ? "Vou sozinho(a)" : `${n} acompanhante${n > 1 ? "s" : ""}`}
-            </option>
-          ))}
-        </select>
+        />
+        {limiteMsg && (
+          <p className="mt-1 text-xs font-medium text-red-600">
+            Limite máximo de {MAX_ACOMPANHANTES} acompanhantes por convite atingido.
+          </p>
+        )}
       </div>
+
+      {form.acompanhantes.map((a, i) => (
+        <div key={i} className="rounded-xl border border-areia bg-offwhite p-3">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-laranja">
+            Acompanhante {i + 1}
+          </p>
+          <input
+            required
+            value={a.nome}
+            onChange={(e) => setAcomp(i, { nome: e.target.value })}
+            className="w-full rounded-xl border border-areia bg-white px-4 py-2.5 text-sm outline-none focus:border-oceano"
+            placeholder="Nome do acompanhante"
+          />
+          <select
+            value={a.faixa}
+            onChange={(e) => setAcomp(i, { faixa: e.target.value as FaixaIdade })}
+            className="mt-2 w-full rounded-xl border border-areia bg-white px-4 py-2.5 text-sm outline-none focus:border-oceano"
+          >
+            {(Object.keys(FAIXA_LABEL) as FaixaIdade[]).map((f) => (
+              <option key={f} value={f}>
+                {FAIXA_LABEL[f]}
+              </option>
+            ))}
+          </select>
+        </div>
+      ))}
 
       {status === "error" && (
         <p className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
