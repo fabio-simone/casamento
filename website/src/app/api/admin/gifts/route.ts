@@ -19,10 +19,9 @@ export async function POST(req: Request) {
     }
 
     const supabase = createAdminClient();
-    // num_cotas fica fixo em 1 (modelo de carrinho — compra por quantidade).
     const { data: gift, error } = await supabase
       .from("gifts")
-      .insert({ nome, descricao, valor_total, num_cotas: 1, foto_url })
+      .insert({ nome, descricao, valor_total, foto_url })
       .select()
       .single();
 

@@ -231,10 +231,10 @@ export const DEFAULT_FAQ: FaqItem[] = [
   { pergunta: "Posso ir de havaianas?", resposta: "Karina diria que sim. Fábio implora que não. O dress code é esporte fino, então deixe a havaiana para a praia (ou para o presente do Fábio na lista)." },
   { pergunta: "O Fábio já aprendeu a falar 'maravilhoso'?", resposta: "Está em treinamento intensivo. Já consegue dizer 'maravilhoso' sem fazer careta. Em troca, a Karina já fala 'mano' e até reclama do trânsito como uma paulistana raiz." },
   { pergunta: "Que horas começa, no horário carioca ou paulistano?", resposta: "Horário paulistano, ou seja: pontual. A cerimônia começa às 16h em ponto. Cariocas, por favor, somem 20 minutos do seu relógio interno." },
-  { pergunta: "Posso levar acompanhante?", resposta: "Depende do seu convite — você indica o número de acompanhantes (até 5) na confirmação de presença. Confirme com antecedência para a gente organizar as mesas (e a feijoada)." },
+  { pergunta: "Posso levar acompanhante?", resposta: "Depende do seu convite — você indica o número de acompanhantes (até 3) na confirmação de presença. Confirme com antecedência para a gente organizar as mesas (e a feijoada)." },
   { pergunta: "Vai ter estacionamento?", resposta: "Sim, com valet no local. Se você é carioca e tem medo de dirigir em SP, recomendamos app de transporte ou o metrô (que, orgulho paulistano, funciona)." },
   { pergunta: "Crianças são bem-vindas?", resposta: "Amamos crianças! Confirme a presença delas como acompanhantes para garantirmos cardápio e cadeirinhas." },
-  { pergunta: "Como faço para dar um presente?", resposta: "Na página de Presentes! Escolha um presente (ou uma cota dele), clique em 'Presentear' e pague com cartão, Pix ou boleto via Mercado Pago." },
+  { pergunta: "Como faço para dar um presente?", resposta: "Na página de Presentes! Escolha um ou mais presentes, ajuste a quantidade e finalize o pagamento com cartão, Pix ou boleto via Mercado Pago." },
   { pergunta: "Qual o time da casa: Flamengo ou Corinthians?", resposta: "Essa é proibida. Por isso temos um item na lista de presentes: 'Fundo de emergência para não brigar sobre Flamengo'. Contribua pela paz do casal." },
 ];
 
@@ -274,9 +274,9 @@ export const DEFAULT_TEXTOS: TextosContent = {
   hero_btn_confirmar: "Confirmar presença",
   hero_btn_presentes: "Lista de presentes",
   pgto_sucesso:
-    "🎉 Pagamento recebido! Assim que confirmado, sua cota aparece como paga. Muito obrigado!",
+    "🎉 Pagamento recebido! Assim que confirmado, seu presente é registrado. Muito obrigado!",
   pgto_pendente:
-    "⏳ Pagamento pendente. Assim que for aprovado, atualizamos a cota.",
+    "⏳ Pagamento pendente. Assim que for aprovado, registramos seu presente.",
   pgto_falha:
     "😕 O pagamento não foi concluído. Você pode tentar de novo quando quiser.",
   rsvp_btn: "Confirmar presença",

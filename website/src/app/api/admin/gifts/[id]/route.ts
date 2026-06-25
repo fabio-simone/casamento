@@ -21,39 +21,6 @@ export async function PATCH(
       update.foto_url = body.foto_url ? String(body.foto_url).trim() : null;
 
     const supabase = createAdminClient();
-
-    // Ajuste de número de cotas (cria/remove cotas pendentes conforme necessário).
-    if (body.num_cotas !== undefined) {
-      const novoNum = Math.max(1, Math.floor(Number(body.num_cotas)));
-      update.num_cotas = novoNum;
-
-      const { data: cotas } = await supabase
-        .from("gift_quotas")
-        .select("id, numero_cota, status")
-        .eq("gift_id", params.id)
-        .order("numero_cota", { ascending: true });
-
-      const atual = cotas?.length ?? 0;
-      if (novoNum > atual) {
-        const novas = Array.from({ length: novoNum - atual }, (_, i) => ({
-          gift_id: params.id,
-          numero_cota: atual + i + 1,
-          status: "pending" as const,
-        }));
-        await supabase.from("gift_quotas").insert(novas);
-      } else if (novoNum < atual) {
-        // Remove apenas cotas pendentes do final.
-        const remover = (cotas ?? [])
-          .filter((c) => c.status === "pending")
-          .sort((a, b) => b.numero_cota - a.numero_cota)
-          .slice(0, atual - novoNum)
-          .map((c) => c.id);
-        if (remover.length) {
-          await supabase.from("gift_quotas").delete().in("id", remover);
-        }
-      }
-    }
-
     const { error } = await supabase.from("gifts").update(update).eq("id", params.id);
     if (error) return NextResponse.json({ error: "Erro ao editar." }, { status: 500 });
 
@@ -63,7 +30,7 @@ export async function PATCH(
   }
 }
 
-/** Remove um presente (e suas cotas via cascade). */
+/** Remove um presente do catálogo. */
 export async function DELETE(
   _req: Request,
   { params }: { params: { id: string } }
