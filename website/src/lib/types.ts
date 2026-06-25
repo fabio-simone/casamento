@@ -47,7 +47,7 @@ export interface GiftOrder {
   mensagem: string | null;
   itens: GiftOrderItem[];
   total: number;
-  status: "pending" | "paid";
+  status: "pending" | "paid" | "failed";
   mercadopago_payment_id: string | null;
   paid_at: string | null;
   created_at: string;

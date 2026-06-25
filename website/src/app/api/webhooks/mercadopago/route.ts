@@ -32,9 +32,6 @@ export async function POST(req: Request) {
     }
 
     const payment = await mpPayment.get({ id: String(paymentId) });
-    if (payment.status !== "approved") {
-      return NextResponse.json({ status: payment.status, processed: false });
-    }
 
     const meta = (payment.metadata ?? {}) as Record<string, unknown>;
     const orderId =
@@ -45,6 +42,21 @@ export async function POST(req: Request) {
     }
 
     const supabase = createAdminClient();
+
+    // Pagamento recusado/cancelado: marca o pedido como falho (se ainda pendente).
+    if (payment.status === "rejected" || payment.status === "cancelled") {
+      await supabase
+        .from("gift_orders")
+        .update({ status: "failed", mercadopago_payment_id: String(paymentId) })
+        .eq("id", orderId)
+        .eq("status", "pending");
+      return NextResponse.json({ status: payment.status, processed: false });
+    }
+
+    // Ainda não aprovado (pending/in_process): mantém pendente.
+    if (payment.status !== "approved") {
+      return NextResponse.json({ status: payment.status, processed: false });
+    }
 
     // Idempotência: só marca pedidos ainda pendentes.
     const { data: order, error } = await supabase
