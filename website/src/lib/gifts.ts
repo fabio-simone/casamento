@@ -8,6 +8,7 @@ export async function getGifts(): Promise<Gift[]> {
     const { data, error } = await supabase
       .from("gifts")
       .select("*")
+      .order("valor_total", { ascending: true })
       .order("created_at", { ascending: true });
 
     if (error) {
