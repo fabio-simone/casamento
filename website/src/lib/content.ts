@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { unstable_noStore as noStore } from "next/cache";
 import { createAdminClient } from "./supabase/admin";
 import { WEDDING } from "./constants";
@@ -345,9 +346,13 @@ function parseObject<T>(raw: string | undefined, fallback: T): T {
   }
 }
 
-/** Lê o conteúdo editável do site (com fallback para os textos padrão). */
-export async function getContent(): Promise<SiteContent> {
-  noStore(); // nunca usa cache — sempre lê o conteúdo mais recente do banco
+/**
+ * Lê o conteúdo editável do site (com fallback para os textos padrão).
+ * Memoizado por request (React.cache): layout, metadata e página compartilham
+ * uma única consulta ao banco em vez de repetir a query.
+ */
+export const getContent = cache(async (): Promise<SiteContent> => {
+  noStore(); // sempre lê o conteúdo mais recente do banco (request a request)
   try {
     const supabase = createAdminClient();
     const { data } = await supabase.from("site_settings").select("key, value");
@@ -399,4 +404,4 @@ export async function getContent(): Promise<SiteContent> {
     // tabela ainda não criada / sem env — usa os padrões.
     return DEFAULT_CONTENT;
   }
-}
+});
