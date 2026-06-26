@@ -60,7 +60,14 @@ const FONT_VARS = [
 ].join(" ");
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { textos } = await getContent();
+  const { textos, hero_foto } = await getContent();
+  // Imagem de compartilhamento (WhatsApp, etc.): a foto do casal, sem o
+  // fragmento de ponto focal (#pos=...) que atrapalha alguns scrapers.
+  const ogImage = hero_foto ? hero_foto.split("#")[0] : undefined;
+  const imagens = ogImage
+    ? [{ url: ogImage, alt: `${WEDDING.noivos} — Casamento` }]
+    : undefined;
+
   return {
     metadataBase: new URL("https://kafamento.com.br"),
     title: {
@@ -73,6 +80,13 @@ export async function generateMetadata(): Promise<Metadata> {
       description: textos.seo_descricao,
       type: "website",
       locale: "pt_BR",
+      images: imagens,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: textos.seo_titulo,
+      description: textos.seo_descricao,
+      images: ogImage ? [ogImage] : undefined,
     },
   };
 }

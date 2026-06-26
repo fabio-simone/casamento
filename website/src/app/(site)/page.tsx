@@ -22,7 +22,7 @@ export default async function HomePage() {
           <img
             src={content.hero_foto}
             alt={WEDDING.noivos}
-            className="absolute inset-0 h-full w-full object-cover"
+            className="hero-photo absolute inset-0 h-full w-full object-cover"
             style={{ objectPosition: objectPositionFromUrl(content.hero_foto) }}
           />
         ) : (

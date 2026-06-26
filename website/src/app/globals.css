@@ -99,6 +99,14 @@ body {
   color: rgb(var(--color-urbano)) !important;
 }
 
+/* No celular, a foto do hero é centralizada — o ponto focal lateral
+   (usado no desktop) cortaria um dos noivos na tela estreita. */
+@media (max-width: 640px) {
+  .hero-photo {
+    object-position: 50% 30% !important;
+  }
+}
+
 /* Padrão sutil de ondas como textura de fundo */
 .bg-calcadao {
   background-image: repeating-linear-gradient(

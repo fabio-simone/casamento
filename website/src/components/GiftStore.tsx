@@ -1,12 +1,20 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Gift, Plus, Minus, ShoppingCart, X } from "lucide-react";
 import type { Gift as GiftType } from "@/lib/types";
 import { formatBRL, objectPositionFromUrl } from "@/lib/utils";
 import { useTextos } from "@/lib/textos-context";
 
-export function GiftStore({ gifts }: { gifts: GiftType[] }) {
+const STORAGE_KEY = "kafamento_carrinho_v1";
+
+export function GiftStore({
+  gifts,
+  status,
+}: {
+  gifts: GiftType[];
+  status?: string;
+}) {
   const t = useTextos();
   const [cart, setCart] = useState<Record<string, number>>({});
   const [aberto, setAberto] = useState(false);
@@ -15,6 +23,52 @@ export function GiftStore({ gifts }: { gifts: GiftType[] }) {
   const [mensagem, setMensagem] = useState("");
   const [loading, setLoading] = useState(false);
   const [erro, setErro] = useState("");
+  const [carregado, setCarregado] = useState(false);
+  const [retomado, setRetomado] = useState(false);
+
+  // Restaura o carrinho salvo (sobrevive a ir/voltar do Mercado Pago).
+  useEffect(() => {
+    if (status === "sucesso") {
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* ignore */
+      }
+      setCarregado(true);
+      return;
+    }
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const s = JSON.parse(raw);
+        if (s?.cart && Object.keys(s.cart).length > 0) {
+          setCart(s.cart);
+          setNome(s.nome || "");
+          setEmail(s.email || "");
+          setMensagem(s.mensagem || "");
+          setRetomado(true);
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+    setCarregado(true);
+  }, [status]);
+
+  // Persiste o carrinho a cada mudança (só após o carregamento inicial).
+  useEffect(() => {
+    if (!carregado) return;
+    try {
+      if (Object.keys(cart).length === 0) localStorage.removeItem(STORAGE_KEY);
+      else
+        localStorage.setItem(
+          STORAGE_KEY,
+          JSON.stringify({ cart, nome, email, mensagem })
+        );
+    } catch {
+      /* ignore */
+    }
+  }, [carregado, cart, nome, email, mensagem]);
 
   function add(id: string) {
     setCart((c) => ({ ...c, [id]: (c[id] ?? 0) + 1 }));
