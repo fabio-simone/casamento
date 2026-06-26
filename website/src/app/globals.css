@@ -103,7 +103,7 @@ body {
    (usado no desktop) cortaria um dos noivos na tela estreita. */
 @media (max-width: 640px) {
   .hero-photo {
-    object-position: 50% 30% !important;
+    object-position: 72% 42% !important;
   }
 }
 
