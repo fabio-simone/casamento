@@ -167,7 +167,7 @@ export const DEFAULT_INFORMACOES: InformacoesContent = {
       itens: [
         "Local: Espaço Vila Cordeiro",
         "Endereço: Rua Exemplo, 1000 — Vila Olímpia, São Paulo — SP",
-        "Horário: 16h (horário de SP — sim, pontual)",
+        "Horário: 15h (horário de SP — sim, pontual)",
       ],
     },
     {
@@ -175,7 +175,7 @@ export const DEFAULT_INFORMACOES: InformacoesContent = {
       titulo: "Recepção",
       itens: [
         "Local: mesmo da cerimônia",
-        "A partir das 18h",
+        "A partir das 17h",
         "Open bar com caipirinha (Rio) e chopp gelado (SP).",
       ],
     },
@@ -218,20 +218,20 @@ export const DEFAULT_INFORMACOES: InformacoesContent = {
 
 export const DEFAULT_CRONOGRAMA: EventoItem[] = [
   { hora: "Ontem", titulo: "Fábio chega ao local", texto: "Paulistano que é paulistano já está lá conferindo se tudo começa no horário.", icone: "predio", lado: "sp" },
-  { hora: "15h30", titulo: "Recepção dos convidados", texto: "Welcome drink: água de coco para os cariocas, água com gás para os paulistas.", icone: "taca", lado: "rio" },
-  { hora: "16h00", titulo: "Cerimônia", texto: "Início pontual (relógio de SP). Tragam lencinho — vai ter choro garantido.", icone: "anel", lado: "sp" },
-  { hora: "16h20", titulo: "Karina entra", texto: "Karina chega no 'horário carioca' — ou seja, atrasada e linda. Vale a pena esperar.", icone: "estrela", lado: "rio" },
-  { hora: "17h00", titulo: "Fotos & cumprimentos", texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.", icone: "camera", lado: "sp" },
-  { hora: "18h00", titulo: "Festa & jantar", texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.", icone: "prato", lado: "rio" },
-  { hora: "20h00", titulo: "Pista liberada", texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.", icone: "musica", lado: "sp" },
-  { hora: "23h00", titulo: "Bem-casados & despedida", texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.", icone: "coracao", lado: "rio" },
+  { hora: "14h30", titulo: "Recepção dos convidados", texto: "Welcome drink: água de coco para os cariocas, água com gás para os paulistas.", icone: "taca", lado: "rio" },
+  { hora: "15h00", titulo: "Cerimônia", texto: "Início pontual (relógio de SP). Tragam lencinho — vai ter choro garantido.", icone: "anel", lado: "sp" },
+  { hora: "15h20", titulo: "Karina entra", texto: "Karina chega no 'horário carioca' — ou seja, atrasada e linda. Vale a pena esperar.", icone: "estrela", lado: "rio" },
+  { hora: "16h00", titulo: "Fotos & cumprimentos", texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.", icone: "camera", lado: "sp" },
+  { hora: "17h00", titulo: "Festa & jantar", texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.", icone: "prato", lado: "rio" },
+  { hora: "19h00", titulo: "Pista liberada", texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.", icone: "musica", lado: "sp" },
+  { hora: "22h00", titulo: "Bem-casados & despedida", texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.", icone: "coracao", lado: "rio" },
 ];
 
 export const DEFAULT_FAQ: FaqItem[] = [
   { pergunta: "Vai ter feijoada ou pastel de feira?", resposta: "Os dois! A diplomacia Rio-SP foi negociada com carinho. Feijoada para os cariocas, pastel de feira para os paulistas, e todo mundo come das duas coisas mesmo." },
   { pergunta: "Posso ir de havaianas?", resposta: "Karina diria que sim. Fábio implora que não. O dress code é esporte fino, então deixe a havaiana para a praia (ou para o presente do Fábio na lista)." },
   { pergunta: "O Fábio já aprendeu a falar 'maravilhoso'?", resposta: "Está em treinamento intensivo. Já consegue dizer 'maravilhoso' sem fazer careta. Em troca, a Karina já fala 'mano' e até reclama do trânsito como uma paulistana raiz." },
-  { pergunta: "Que horas começa, no horário carioca ou paulistano?", resposta: "Horário paulistano, ou seja: pontual. A cerimônia começa às 16h em ponto. Cariocas, por favor, somem 20 minutos do seu relógio interno." },
+  { pergunta: "Que horas começa, no horário carioca ou paulistano?", resposta: "Horário paulistano, ou seja: pontual. A cerimônia começa às 15h em ponto. Cariocas, por favor, somem 20 minutos do seu relógio interno." },
   { pergunta: "Posso levar acompanhante?", resposta: "Depende do seu convite — você indica o número de acompanhantes (até 3) na confirmação de presença. Confirme com antecedência para a gente organizar as mesas (e a feijoada)." },
   { pergunta: "Vai ter estacionamento?", resposta: "Sim, com valet no local. Se você é carioca e tem medo de dirigir em SP, recomendamos app de transporte ou o metrô (que, orgulho paulistano, funciona)." },
   { pergunta: "Crianças são bem-vindas?", resposta: "Amamos crianças! Confirme a presença delas como acompanhantes para garantirmos cardápio e cadeirinhas." },
