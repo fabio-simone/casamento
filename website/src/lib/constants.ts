@@ -18,7 +18,7 @@ export const WEDDING = {
   },
   recepcao: {
     nome: "Mesmo local",
-    horario: "17h",
+    horario: "18h",
   },
   dressCode: "Esporte fino — sem havaianas, Fábio.",
 } as const;

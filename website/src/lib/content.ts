@@ -175,7 +175,7 @@ export const DEFAULT_INFORMACOES: InformacoesContent = {
       titulo: "Recepção",
       itens: [
         "Local: mesmo da cerimônia",
-        "A partir das 17h",
+        "A partir das 18h",
         "Open bar com caipirinha (Rio) e chopp gelado (SP).",
       ],
     },
@@ -221,10 +221,10 @@ export const DEFAULT_CRONOGRAMA: EventoItem[] = [
   { hora: "14h30", titulo: "Recepção dos convidados", texto: "Welcome drink: água de coco para os cariocas, água com gás para os paulistas.", icone: "taca", lado: "rio" },
   { hora: "15h00", titulo: "Cerimônia", texto: "Início pontual (relógio de SP). Tragam lencinho — vai ter choro garantido.", icone: "anel", lado: "sp" },
   { hora: "15h20", titulo: "Karina entra", texto: "Karina chega no 'horário carioca' — ou seja, atrasada e linda. Vale a pena esperar.", icone: "estrela", lado: "rio" },
-  { hora: "16h00", titulo: "Fotos & cumprimentos", texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.", icone: "camera", lado: "sp" },
-  { hora: "17h00", titulo: "Festa & jantar", texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.", icone: "prato", lado: "rio" },
-  { hora: "19h00", titulo: "Pista liberada", texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.", icone: "musica", lado: "sp" },
-  { hora: "22h00", titulo: "Bem-casados & despedida", texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.", icone: "coracao", lado: "rio" },
+  { hora: "17h00", titulo: "Fotos & cumprimentos", texto: "Hora de tirar foto com todo mundo. Sim, inclusive com a tia que você não vê há 10 anos.", icone: "camera", lado: "sp" },
+  { hora: "18h00", titulo: "Festa & jantar", texto: "Feijoada E pastel de feira. A diplomacia Rio-SP venceu. Open bar liberado.", icone: "prato", lado: "rio" },
+  { hora: "20h00", titulo: "Pista liberada", texto: "Samba do Rio se mistura com o pop rock paulistano. Ninguém senta.", icone: "musica", lado: "sp" },
+  { hora: "23h00", titulo: "Bem-casados & despedida", texto: "Leve seu bem-casado. O Fábio volta pra SP, a Karina sonha com a praia. Felizes para sempre.", icone: "coracao", lado: "rio" },
 ];
 
 export const DEFAULT_FAQ: FaqItem[] = [
