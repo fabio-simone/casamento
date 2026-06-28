@@ -52,11 +52,6 @@ export default async function PresentesPage({
         <GiftStore gifts={gifts} />
         </div>
       </section>
-
-      {/* transição azul → claro */}
-      <div className="bg-oceanoDark">
-        <WaveDivider tone="offwhite" />
-      </div>
     </>
   );
 }
