@@ -31,7 +31,7 @@ export default async function PresentesPage({
 
       <WaveDivider tone="oceanoDark" />
 
-      <section className="section-dark py-12 md:py-16">
+      <section className="section-dark overflow-hidden py-12 md:py-16">
         <div className="container-page">
         {status === "sucesso" && (
           <div className="mx-auto mb-8 max-w-2xl rounded-2xl bg-oceano/10 px-5 py-4 text-center text-oceano">

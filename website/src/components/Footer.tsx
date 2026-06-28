@@ -8,7 +8,7 @@ export function Footer({ textos }: { textos: TextosContent }) {
   return (
     <>
       {/* transição da seção azul (dark) para o rodapé claro (areia) */}
-      <div className="bg-oceanoDark">
+      <div className="overflow-hidden bg-oceanoDark">
         <WaveDivider tone="areia" />
       </div>
 
