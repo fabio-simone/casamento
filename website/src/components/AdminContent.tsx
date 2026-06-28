@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Trash2, GripVertical, Upload, X } from "lucide-react";
 import type { SiteContent, TimelineItem, InfoBloco } from "@/lib/content";
@@ -150,6 +150,17 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
   function removeFoto(i: number) {
     set("galeria", content.galeria.filter((_, idx) => idx !== i));
   }
+  const galDragIdx = useRef<number | null>(null);
+  const moveGaleriaFoto = useCallback(
+    (from: number, to: number) => {
+      if (from === to) return;
+      const arr = [...content.galeria];
+      const [item] = arr.splice(from, 1);
+      arr.splice(to, 0, item);
+      set("galeria", arr);
+    },
+    [content.galeria]
+  );
   // Informações
   function setInfo<K extends keyof SiteContent["informacoes"]>(
     key: K,
@@ -618,8 +629,16 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
           <div className="mb-4 grid grid-cols-3 gap-3 sm:grid-cols-4">
             {content.galeria.map((foto, i) => (
               <div
-                key={i}
-                className="group relative aspect-square overflow-hidden rounded-xl border border-areia"
+                key={foto}
+                draggable
+                onDragStart={() => { galDragIdx.current = i; }}
+                onDragOver={(e) => { e.preventDefault(); }}
+                onDrop={() => {
+                  if (galDragIdx.current !== null) moveGaleriaFoto(galDragIdx.current, i);
+                  galDragIdx.current = null;
+                }}
+                onDragEnd={() => { galDragIdx.current = null; }}
+                className="group relative aspect-square cursor-grab overflow-hidden rounded-xl border border-areia active:cursor-grabbing"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -628,6 +647,10 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
                   className="h-full w-full object-cover"
                   style={{ objectPosition: objectPositionFromUrl(foto) }}
                 />
+                {/* handle drag (canto superior esquerdo) */}
+                <div className="pointer-events-none absolute left-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-urbano/60 text-white opacity-0 transition group-hover:opacity-100">
+                  <GripVertical className="h-4 w-4" />
+                </div>
                 <button
                   type="button"
                   onClick={() => removeFoto(i)}
