@@ -57,7 +57,7 @@ export function Footer({ textos }: { textos: TextosContent }) {
             </p>
           </div>
         </div>
-        <div className="border-t border-urbano/10 py-4 text-center text-xs text-urbano/50">
+        <div className="border-t border-black/[.08] py-4 text-center text-xs text-urbano/50">
           © {new Date().getFullYear()} {WEDDING.noivos}. Todos os direitos (e algumas piadas) reservados.
         </div>
       </footer>
