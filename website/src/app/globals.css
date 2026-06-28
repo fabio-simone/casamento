@@ -74,7 +74,7 @@ body {
   /* Cartões em modo dark: preenchimento escuro, borda e texto claros */
   .section-dark .card,
   .card-dark {
-    @apply border-white/15 bg-white/[0.06] text-offwhite shadow-none backdrop-blur-sm;
+    @apply border-white/15 bg-white/[0.10] text-offwhite shadow-none;
   }
 }
 
