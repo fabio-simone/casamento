@@ -12,10 +12,20 @@ export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const content = await getContent();
+  // Enquadramento da foto no celular (ajustável no painel), aplicado via media query.
+  const [mx, my] = (content.hero_pos_mobile || "72,42")
+    .split(",")
+    .map((n) => Number(n) || 0);
   return (
     <>
       {/* HERO — tela cheia com foto do casal */}
       <section className="relative flex min-h-screen items-center overflow-hidden">
+        {/* enquadramento da foto no celular (definido no painel) */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `@media (max-width:640px){.hero-photo{object-position:${mx}% ${my}% !important}}`,
+          }}
+        />
         {/* fundo: foto do casal (clara, sem escurecer) ou gradiente */}
         {content.hero_foto ? (
           // eslint-disable-next-line @next/next/no-img-element

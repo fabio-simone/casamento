@@ -21,6 +21,7 @@ export async function POST(req: Request) {
     push("paleta", body.paleta);
     push("fonte", body.fonte);
     push("hero_foto", body.hero_foto);
+    push("hero_pos_mobile", body.hero_pos_mobile);
     push("hero_sub", body.hero_sub);
     push("historia_intro", body.historia_intro);
     push("historia_foto", body.historia_foto);

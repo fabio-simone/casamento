@@ -395,6 +395,68 @@ export function AdminContent({ initial }: { initial: SiteContent }) {
             maxDim={2560}
             quality={0.9}
           />
+
+          {content.hero_foto &&
+            (() => {
+              const [mx, my] = (content.hero_pos_mobile || "72,42")
+                .split(",")
+                .map((n) => Number(n) || 0);
+              const setPos = (x: number, y: number) =>
+                set("hero_pos_mobile", `${x},${y}`);
+              return (
+                <div className="rounded-2xl border border-areia bg-offwhite p-4">
+                  <p className="mb-1 text-sm font-semibold text-urbano">
+                    Enquadramento no celular
+                  </p>
+                  <p className="mb-3 text-xs text-urbano/60">
+                    No celular a foto aparece mais &quot;fechada&quot;. Ajuste para mostrar
+                    os dois — o desktop usa o foco da própria foto.
+                  </p>
+                  <div className="flex gap-4">
+                    <div className="h-60 w-28 shrink-0 overflow-hidden rounded-xl border border-areia bg-areia/30">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={content.hero_foto}
+                        alt="Prévia no celular"
+                        className="h-full w-full object-cover"
+                        style={{ objectPosition: `${mx}% ${my}%` }}
+                      />
+                    </div>
+                    <div className="flex flex-1 flex-col justify-center gap-5">
+                      <div>
+                        <label className="flex justify-between text-xs font-medium text-urbano/70">
+                          <span>↔ Horizontal</span>
+                          <span>{mx}%</span>
+                        </label>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={mx}
+                          onChange={(e) => setPos(Number(e.target.value), my)}
+                          className="w-full accent-oceano"
+                        />
+                      </div>
+                      <div>
+                        <label className="flex justify-between text-xs font-medium text-urbano/70">
+                          <span>↕ Vertical</span>
+                          <span>{my}%</span>
+                        </label>
+                        <input
+                          type="range"
+                          min={0}
+                          max={100}
+                          value={my}
+                          onChange={(e) => setPos(mx, Number(e.target.value))}
+                          className="w-full accent-oceano"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
           <div>
             <label className="mb-1 block text-sm font-medium text-urbano">
               Frase de destaque (abaixo dos nomes / boas-vindas)

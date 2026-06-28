@@ -100,6 +100,7 @@ export interface SiteContent {
   fonte: string; // id da fonte de títulos escolhida
   textos: TextosContent; // botões e mensagens gerais do site
   hero_foto: string; // foto do casal na home
+  hero_pos_mobile: string; // enquadramento da foto do hero no celular ("x,y" em %)
   hero_sub: string; // subtítulo da home
   home: HomeContent; // demais textos da home
   historia_intro: string; // parágrafo de abertura da página Nossa História
@@ -307,6 +308,7 @@ export const DEFAULT_CONTENT: SiteContent = {
   fonte: FONTE_PADRAO,
   textos: DEFAULT_TEXTOS,
   hero_foto: "",
+  hero_pos_mobile: "72,42",
   hero_sub: `Ela do Rio, ele de SP. Dois mundos, uma garoa, uma praia — e um casamento em ${WEDDING.dataExtenso}, em ${WEDDING.cidade}.`,
   home: DEFAULT_HOME,
   historia_intro: "Spoiler: deu certo. Uma linha do tempo (bem-humorada) da gente.",
@@ -373,6 +375,7 @@ export const getContent = cache(async (): Promise<SiteContent> => {
       fonte: map.get("fonte") ?? DEFAULT_CONTENT.fonte,
       textos: parseObject<TextosContent>(map.get("textos"), DEFAULT_TEXTOS),
       hero_foto: map.get("hero_foto") ?? DEFAULT_CONTENT.hero_foto,
+      hero_pos_mobile: map.get("hero_pos_mobile") ?? DEFAULT_CONTENT.hero_pos_mobile,
       hero_sub: map.get("hero_sub") ?? DEFAULT_CONTENT.hero_sub,
       home: parseObject<HomeContent>(map.get("home"), DEFAULT_HOME),
       historia_intro: map.get("historia_intro") ?? DEFAULT_CONTENT.historia_intro,
