@@ -8,6 +8,7 @@ import {
   Tenor_Sans,
 } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { WEDDING } from "@/lib/constants";
 import { getContent } from "@/lib/content";
 
@@ -98,7 +99,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR" className={FONT_VARS}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

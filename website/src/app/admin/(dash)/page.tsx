@@ -1,4 +1,4 @@
-import { ClipboardCheck, Users, Wallet, Gift, type LucideIcon } from "lucide-react";
+import { ClipboardCheck, Users, Wallet, Gift, Eye, UserCheck, type LucideIcon } from "lucide-react";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGifts, getGiftOrders } from "@/lib/gifts";
 import { formatBRL, formatDateSP } from "@/lib/utils";
@@ -9,6 +9,13 @@ export default async function AdminDashboard() {
   const supabase = createAdminClient();
 
   const { data: rsvps } = await supabase.from("rsvps").select("num_acompanhantes");
+  const { count: totalVisitas } = await supabase
+    .from("page_views")
+    .select("*", { count: "exact", head: true });
+  const { data: visitantesData } = await supabase
+    .from("page_views")
+    .select("visitor_id");
+  const totalVisitantes = new Set(visitantesData?.map((r) => r.visitor_id)).size;
   const gifts = await getGifts();
   const orders = await getGiftOrders();
   const pagos = orders.filter((o) => o.status === "paid");
@@ -19,6 +26,8 @@ export default async function AdminDashboard() {
   const arrecadado = pagos.reduce((acc, o) => acc + (Number(o.total) || 0), 0);
 
   const cards: { label: string; value: string | number; icon: LucideIcon }[] = [
+    { label: "Visitas ao site", value: totalVisitas ?? 0, icon: Eye },
+    { label: "Visitantes únicos", value: totalVisitantes, icon: UserCheck },
     { label: "Confirmações (RSVP)", value: totalConfirmacoes, icon: ClipboardCheck },
     { label: "Total de pessoas", value: totalPessoas, icon: Users },
     { label: "Arrecadado em presentes", value: formatBRL(arrecadado), icon: Wallet },
@@ -30,7 +39,7 @@ export default async function AdminDashboard() {
       <h1 className="font-display text-3xl font-bold text-urbano">Dashboard</h1>
       <p className="mt-1 text-urbano/60">Visão geral do casamento Karina &amp; Fábio.</p>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {cards.map((c) => {
           const Icon = c.icon;
           return (

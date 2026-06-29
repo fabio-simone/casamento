@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { BackToTop } from "@/components/BackToTop";
+import { TrackPageView } from "@/components/TrackPageView";
 import { getContent } from "@/lib/content";
 import { paletaCss } from "@/lib/paletas";
 import { fonteCss } from "@/lib/fontes";
@@ -28,6 +29,7 @@ export default async function SiteLayout({
         <main>{children}</main>
         <Footer textos={textos} />
         <BackToTop />
+        <TrackPageView />
       </TextosProvider>
     </>
   );
