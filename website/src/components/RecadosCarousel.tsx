@@ -25,10 +25,10 @@ export function RecadosCarousel() {
   const prev = () =>
     setI((v) => (recados.length ? (v - 1 + recados.length) % recados.length : 0));
 
-  // auto-avança a cada 5s
+  // auto-avança a cada 8s
   useEffect(() => {
     if (recados.length < 2) return;
-    const id = setInterval(next, 5000);
+    const id = setInterval(next, 8000);
     return () => clearInterval(id);
   }, [recados.length, next]);
 
