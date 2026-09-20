@@ -330,7 +330,7 @@ export function GiftStore({
                 <button type="submit" disabled={loading || totalItens === 0} className="btn-primary w-full">
                   {loading ? "Gerando PIX…" : `Pagar com PIX — ${formatBRL(totalValor)}`}
                 </button>
-                <button type="button" disabled={loading} onClick={pagarCartao} className="flex w-full items-center justify-center gap-2 rounded-xl border border-areia py-3 text-sm font-medium text-urbano/60 transition hover:border-oceano/40 hover:text-urbano disabled:opacity-50">
+                <button type="button" disabled={loading} onClick={pagarCartao} className="flex w-full items-center justify-center gap-2 rounded-xl border border-oceano/30 py-3 text-sm font-medium text-oceano transition hover:bg-oceano/5 disabled:opacity-50">
                   <CreditCard className="h-4 w-4" /> Pagar com cartão ou boleto
                 </button>
               </form>
