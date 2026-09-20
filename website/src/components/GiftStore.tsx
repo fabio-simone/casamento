@@ -371,6 +371,14 @@ export function GiftStore({
                 </div>
 
                 <p className="text-xs text-urbano/40">Aguardando confirmação do pagamento…</p>
+
+                <button
+                  type="button"
+                  onClick={() => setFase("formulario")}
+                  className="w-full rounded-xl py-2 text-sm text-urbano/50 hover:text-urbano"
+                >
+                  ← Trocar forma de pagamento
+                </button>
               </div>
             )}
 
