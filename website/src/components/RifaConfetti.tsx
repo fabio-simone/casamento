@@ -53,12 +53,10 @@ export function RifaConfetti() {
     }
 
     draw();
-    const stop = setTimeout(() => { alive = false; cancelAnimationFrame(raf); }, 5_000);
 
     return () => {
       alive = false;
       cancelAnimationFrame(raf);
-      clearTimeout(stop);
     };
   }, []);
 
