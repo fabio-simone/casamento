@@ -262,8 +262,8 @@ export function RifaPage({
                 )}
               >
                 <span className={cn(
-                  "pointer-events-none absolute inset-0 flex select-none items-center justify-center text-4xl font-black sm:text-3xl",
-                  sel ? "text-white/40" : n.status === "reservado" ? "text-white/10" : "text-white/25"
+                  "pointer-events-none absolute inset-0 flex select-none items-center justify-center text-3xl font-black sm:text-2xl",
+                  sel ? "text-white/50" : n.status === "reservado" ? "text-white/10" : n.status === "pago" ? "text-white/20" : "text-white/40"
                 )}>
                   {n.numero}
                 </span>
