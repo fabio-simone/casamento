@@ -29,6 +29,9 @@ export async function POST(req: NextRequest) {
     if (numeros.length === 0) {
       return NextResponse.json({ error: "Selecione ao menos um número." }, { status: 400 });
     }
+    if (numeros.length > 4) {
+      return NextResponse.json({ error: "Máximo de 4 números por pessoa." }, { status: 400 });
+    }
 
     const supabase = createAdminClient();
 

@@ -111,13 +111,15 @@ export function RifaPage({
     return () => clearInterval(timerRef.current);
   }, [fase, pixData]);
 
+  const MAX_NUMEROS = 4;
+
   function toggleNumero(n: number) {
     const num = numeros.find((x) => x.numero === n);
     if (!num || num.status !== "disponivel") return;
     setSelecionados((prev) => {
       const next = new Set(prev);
       if (next.has(n)) next.delete(n);
-      else next.add(n);
+      else if (next.size < MAX_NUMEROS) next.add(n);
       return next;
     });
   }
@@ -286,6 +288,9 @@ export function RifaPage({
             <div>
               <p className="text-sm font-semibold text-offwhite">
                 {selecionados.size} número{selecionados.size !== 1 ? "s" : ""} selecionado{selecionados.size !== 1 ? "s" : ""}
+                {selecionados.size >= MAX_NUMEROS && (
+                  <span className="ml-2 text-xs font-normal text-laranja">limite atingido</span>
+                )}
               </p>
               <p className="text-xs text-offwhite/60">
                 {[...selecionados].sort((a, b) => a - b).join(", ")}
