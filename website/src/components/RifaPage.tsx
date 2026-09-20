@@ -63,7 +63,8 @@ export function RifaPage({
     try {
       const r = await fetch("/api/rifa/numeros");
       const d = await r.json();
-      setNumeros(d.numeros ?? []);
+      const lista: RifaNumero[] = d.numeros ?? [];
+      if (lista.length > 0) setNumeros(lista);
     } catch {}
   }, []);
 

@@ -30,7 +30,16 @@ export default async function Rifa() {
       comprador_nome: r.status === "pago" ? r.comprador_nome : null,
     }));
   } catch {
-    // DB not ready — show empty grid
+    // DB not ready yet — generate placeholder grid
+  }
+
+  // If table doesn't exist or is empty, show all 50 as disponivel
+  if (numerosIniciais.length === 0) {
+    numerosIniciais = Array.from({ length: 50 }, (_, i) => ({
+      numero: i + 1,
+      status: "disponivel" as const,
+      comprador_nome: null,
+    }));
   }
 
   return <RifaPage config={config} numerosIniciais={numerosIniciais} />;
