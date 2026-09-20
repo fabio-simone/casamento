@@ -263,10 +263,10 @@ export function RifaPage({
               >
                 {n.status === "pago" && n.comprador_nome ? (
                   <>
-                    <span className="absolute right-1 top-1 text-[8px] font-semibold leading-none text-laranja/70 sm:right-0.5 sm:top-0.5 sm:text-[7px]">
+                    <span className="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-4xl font-black text-white/10 sm:text-3xl">
                       {n.numero}
                     </span>
-                    <span className="w-full px-1 text-center text-[11px] font-bold leading-tight text-offwhite [overflow-wrap:break-word] sm:px-0.5 sm:text-[8px]">
+                    <span className="relative w-full px-1 text-center text-[11px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[8px]">
                       {n.comprador_nome}
                     </span>
                   </>
