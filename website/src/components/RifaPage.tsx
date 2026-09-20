@@ -113,6 +113,12 @@ export function RifaPage({
 
   const MAX_NUMEROS = 4;
 
+  function nomeExibido(nome: string): string {
+    const parts = nome.trim().split(/\s+/);
+    if (parts.length <= 2) return nome;
+    return `${parts[0]} ${parts[parts.length - 1]}`;
+  }
+
   function toggleNumero(n: number) {
     const num = numeros.find((x) => x.numero === n);
     if (!num || num.status !== "disponivel") return;
@@ -268,8 +274,8 @@ export function RifaPage({
                   {n.numero}
                 </span>
                 {n.status === "pago" && n.comprador_nome && (
-                  <span className="relative w-full px-1 text-center text-[15px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[11px]">
-                    {n.comprador_nome}
+                  <span className="relative w-full px-1 text-center text-xl font-bold leading-snug text-laranja [overflow-wrap:break-word] sm:text-sm">
+                    {nomeExibido(n.comprador_nome)}
                   </span>
                 )}
               </button>
