@@ -1,10 +1,24 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Gift, Plus, Minus, ShoppingCart, X } from "lucide-react";
+import { Gift, Plus, Minus, ShoppingCart, X, Copy, Check, CreditCard } from "lucide-react";
 import type { Gift as GiftType } from "@/lib/types";
 import { formatBRL, objectPositionFromUrl } from "@/lib/utils";
 import { useTextos } from "@/lib/textos-context";
+
+type Fase = "formulario" | "pix" | "pago";
+interface PixData {
+  order_id: string;
+  qr_code: string;
+  qr_code_base64: string;
+  total: number;
+  expira_em: string;
+}
+
+function fmtTempo(ms: number): string {
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return `${Math.floor(t / 60)}:${String(t % 60).padStart(2, "0")}`;
+}
 
 const STORAGE_KEY = "kafamento_carrinho_v1";
 
@@ -25,6 +39,10 @@ export function GiftStore({
   const [erro, setErro] = useState("");
   const [carregado, setCarregado] = useState(false);
   const [retomado, setRetomado] = useState(false);
+  const [fase, setFase] = useState<Fase>("formulario");
+  const [pixData, setPixData] = useState<PixData | null>(null);
+  const [copiado, setCopiado] = useState(false);
+  const [tempoRestante, setTempoRestante] = useState(0);
 
   // Restaura o carrinho salvo (sobrevive a ir/voltar do Mercado Pago).
   useEffect(() => {
@@ -96,34 +114,76 @@ export function GiftStore({
     [itensCarrinho, cart]
   );
 
-  async function finalizar(e: React.FormEvent) {
+  useEffect(() => {
+    if (fase !== "pix" || !pixData) return;
+    const poll = setInterval(async () => {
+      try {
+        const r = await fetch(`/api/checkout/status?order_id=${pixData.order_id}`);
+        const d = await r.json();
+        if (d.status === "paid") {
+          setFase("pago");
+          try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
+        }
+      } catch { /* ignore */ }
+    }, 3_000);
+    const tick = () => {
+      const rem = new Date(pixData.expira_em).getTime() - Date.now();
+      setTempoRestante(Math.max(0, rem));
+    };
+    tick();
+    const countdown = setInterval(tick, 1_000);
+    return () => { clearInterval(poll); clearInterval(countdown); };
+  }, [fase, pixData]);
+
+  async function pagarPix(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setErro("");
     try {
-      const itens = itensCarrinho.map((g) => ({
-        gift_id: g.id,
-        quantidade: cart[g.id] ?? 0,
-      }));
+      const itens = itensCarrinho.map((g) => ({ gift_id: g.id, quantidade: cart[g.id] ?? 0 }));
+      const res = await fetch("/api/checkout/pix", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ itens, pagador_nome: nome, pagador_email: email, mensagem }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Erro ao gerar PIX.");
+      setPixData(data);
+      setFase("pix");
+    } catch (err) {
+      setErro(err instanceof Error ? err.message : "Erro inesperado.");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function pagarCartao() {
+    if (!nome || !email) { setErro("Preencha nome e e-mail antes de continuar."); return; }
+    setLoading(true);
+    setErro("");
+    try {
+      const itens = itensCarrinho.map((g) => ({ gift_id: g.id, quantidade: cart[g.id] ?? 0 }));
       const res = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          itens,
-          pagador_nome: nome,
-          pagador_email: email,
-          mensagem,
-        }),
+        body: JSON.stringify({ itens, pagador_nome: nome, pagador_email: email, mensagem }),
       });
       const data = await res.json();
-      if (!res.ok || !data.init_point) {
-        throw new Error(data.error ?? "Não foi possível iniciar o pagamento.");
-      }
+      if (!res.ok || !data.init_point) throw new Error(data.error ?? "Erro ao iniciar pagamento.");
       window.location.href = data.init_point;
     } catch (err) {
       setErro(err instanceof Error ? err.message : "Erro inesperado.");
       setLoading(false);
     }
+  }
+
+  async function copiarPix() {
+    if (!pixData?.qr_code) return;
+    try {
+      await navigator.clipboard.writeText(pixData.qr_code);
+      setCopiado(true);
+      setTimeout(() => setCopiado(false), 3_000);
+    } catch { /* ignore */ }
   }
 
   if (gifts.length === 0) {
@@ -223,99 +283,114 @@ export function GiftStore({
       {aberto && (
         <div
           className="fixed inset-0 z-[100] flex items-end justify-center bg-urbano/60 p-0 backdrop-blur-sm sm:items-center sm:p-4"
-          onClick={() => !loading && setAberto(false)}
+          onClick={() => fase === "formulario" && !loading && setAberto(false)}
         >
-          <form
+          <div
             onClick={(e) => e.stopPropagation()}
-            onSubmit={finalizar}
-            className="max-h-[92vh] w-full max-w-md space-y-3 overflow-y-auto rounded-t-3xl bg-offwhite p-6 shadow-2xl sm:rounded-3xl"
+            className="max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-3xl bg-offwhite p-6 shadow-2xl sm:rounded-3xl"
           >
-            <div className="flex items-center justify-between">
-              <h3 className="font-display text-2xl font-bold text-urbano">Seu carrinho</h3>
-              <button
-                type="button"
-                onClick={() => !loading && setAberto(false)}
-                aria-label="Fechar"
-                className="text-urbano/50 hover:text-urbano"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="rounded-2xl border border-areia bg-white p-3">
-              {itensCarrinho.map((g) => (
-                <div
-                  key={g.id}
-                  className="flex items-center justify-between gap-2 border-b border-areia/50 py-2 last:border-0"
-                >
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => dec(g.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-areia text-urbano/70 hover:bg-areia/40"
-                    >
-                      <Minus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="w-6 text-center text-sm font-semibold">{cart[g.id]}</span>
-                    <button
-                      type="button"
-                      onClick={() => add(g.id)}
-                      className="flex h-7 w-7 items-center justify-center rounded-full border border-areia text-urbano/70 hover:bg-areia/40"
-                    >
-                      <Plus className="h-3.5 w-3.5" />
-                    </button>
-                    <span className="ml-1 text-sm text-urbano">{g.nome}</span>
-                  </div>
-                  <span className="text-sm font-medium text-oceano">
-                    {formatBRL(g.valor_total * (cart[g.id] ?? 0))}
-                  </span>
+            {/* ── Fase: formulário ── */}
+            {fase === "formulario" && (
+              <form onSubmit={pagarPix} className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-2xl font-bold text-urbano">Seu carrinho</h3>
+                  <button type="button" onClick={() => !loading && setAberto(false)} aria-label="Fechar" className="text-urbano/50 hover:text-urbano">
+                    <X className="h-5 w-5" />
+                  </button>
                 </div>
-              ))}
-              <div className="flex items-center justify-between pt-2 text-sm font-bold text-urbano">
-                <span>Total</span>
-                <span>{formatBRL(totalValor)}</span>
-              </div>
-            </div>
 
-            <input
-              required
-              value={nome}
-              onChange={(e) => setNome(e.target.value)}
-              placeholder={t.gift_ph_nome}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
-            />
-            <input
-              required
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder={t.gift_ph_email}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
-            />
-            <textarea
-              rows={2}
-              maxLength={500}
-              value={mensagem}
-              onChange={(e) => setMensagem(e.target.value)}
-              placeholder={t.gift_ph_mensagem}
-              className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano"
-            />
+                <div className="rounded-2xl border border-areia bg-white p-3">
+                  {itensCarrinho.map((g) => (
+                    <div key={g.id} className="flex items-center justify-between gap-2 border-b border-areia/50 py-2 last:border-0">
+                      <div className="flex items-center gap-2">
+                        <button type="button" onClick={() => dec(g.id)} className="flex h-7 w-7 items-center justify-center rounded-full border border-areia text-urbano/70 hover:bg-areia/40">
+                          <Minus className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="w-6 text-center text-sm font-semibold">{cart[g.id]}</span>
+                        <button type="button" onClick={() => add(g.id)} className="flex h-7 w-7 items-center justify-center rounded-full border border-areia text-urbano/70 hover:bg-areia/40">
+                          <Plus className="h-3.5 w-3.5" />
+                        </button>
+                        <span className="ml-1 text-sm text-urbano">{g.nome}</span>
+                      </div>
+                      <span className="text-sm font-medium text-oceano">{formatBRL(g.valor_total * (cart[g.id] ?? 0))}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center justify-between pt-2 text-sm font-bold text-urbano">
+                    <span>Total</span>
+                    <span>{formatBRL(totalValor)}</span>
+                  </div>
+                </div>
 
-            {erro && (
-              <p className="rounded-xl bg-red-50 px-4 py-2 text-sm text-red-700">{erro}</p>
+                <input required value={nome} onChange={(e) => setNome(e.target.value)} placeholder={t.gift_ph_nome} className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano" />
+                <input required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder={t.gift_ph_email} className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano" />
+                <textarea rows={2} maxLength={500} value={mensagem} onChange={(e) => setMensagem(e.target.value)} placeholder={t.gift_ph_mensagem} className="w-full rounded-xl border border-areia px-4 py-3 text-sm text-urbano placeholder:text-urbano/40 outline-none focus:border-oceano" />
+
+                {erro && <p className="rounded-xl bg-red-50 px-4 py-2 text-sm text-red-700">{erro}</p>}
+
+                <button type="submit" disabled={loading || totalItens === 0} className="btn-primary w-full">
+                  {loading ? "Gerando PIX…" : `Pagar com PIX — ${formatBRL(totalValor)}`}
+                </button>
+                <button type="button" disabled={loading} onClick={pagarCartao} className="flex w-full items-center justify-center gap-2 rounded-xl border border-areia py-3 text-sm font-medium text-urbano/60 transition hover:border-oceano/40 hover:text-urbano disabled:opacity-50">
+                  <CreditCard className="h-4 w-4" /> Pagar com cartão ou boleto
+                </button>
+              </form>
             )}
 
-            <button
-              type="submit"
-              disabled={loading || totalItens === 0}
-              className="btn-primary w-full"
-            >
-              {loading ? "Redirecionando..." : `${t.gift_btn_pagar} ${formatBRL(totalValor)}`}
-            </button>
-            <p className="text-center text-xs text-urbano/50">
-              Pagamento seguro via Mercado Pago (cartão, Pix ou boleto).
-            </p>
-          </form>
+            {/* ── Fase: QR Code PIX ── */}
+            {fase === "pix" && pixData && (
+              <div className="space-y-4 text-center">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-display text-xl font-bold text-urbano">Pagamento via PIX</h3>
+                  <span className="rounded-full bg-oceano/10 px-3 py-1 text-sm font-semibold tabular-nums text-oceano">
+                    {fmtTempo(tempoRestante)}
+                  </span>
+                </div>
+
+                <p className="text-sm text-urbano/60">Escaneie o QR Code ou copie o código abaixo</p>
+
+                {pixData.qr_code_base64 && (
+                  <div className="flex justify-center">
+                    <img
+                      src={`data:image/png;base64,${pixData.qr_code_base64}`}
+                      alt="QR Code PIX"
+                      className="h-48 w-48 rounded-2xl border border-areia"
+                    />
+                  </div>
+                )}
+
+                <button
+                  onClick={copiarPix}
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-areia bg-white py-3 text-sm font-medium text-urbano transition hover:border-oceano/40"
+                >
+                  {copiado ? <><Check className="h-4 w-4 text-green-600" /> Copiado!</> : <><Copy className="h-4 w-4" /> Copiar código PIX</>}
+                </button>
+
+                <div className="rounded-xl bg-areia/40 px-4 py-3 text-left">
+                  <p className="text-xs text-urbano/50">Total a pagar</p>
+                  <p className="text-lg font-bold text-urbano">{formatBRL(pixData.total)}</p>
+                </div>
+
+                <p className="text-xs text-urbano/40">Aguardando confirmação do pagamento…</p>
+              </div>
+            )}
+
+            {/* ── Fase: pago ── */}
+            {fase === "pago" && (
+              <div className="space-y-4 py-4 text-center">
+                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+                  <Check className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="font-display text-2xl font-bold text-urbano">Presente enviado!</h3>
+                <p className="text-sm text-urbano/60">Obrigado pelo carinho. Enviamos um e-mail de confirmação para {pixData?.order_id ? email : "você"}.</p>
+                <button
+                  onClick={() => { setAberto(false); setFase("formulario"); setCart({}); setPixData(null); }}
+                  className="btn-primary w-full"
+                >
+                  Fechar
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </>
