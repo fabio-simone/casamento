@@ -261,18 +261,15 @@ export function RifaPage({
                     : "bg-white/10 text-offwhite hover:bg-laranja/20 hover:ring-1 hover:ring-laranja/50 active:scale-95"
                 )}
               >
-                {n.status === "pago" && n.comprador_nome ? (
-                  <>
-                    <span className="pointer-events-none absolute inset-0 flex select-none items-center justify-center text-4xl font-black text-white/10 sm:text-3xl">
-                      {n.numero}
-                    </span>
-                    <span className="relative w-full px-1 text-center text-[11px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[8px]">
-                      {n.comprador_nome}
-                    </span>
-                  </>
-                ) : (
-                  <span className={cn("text-base font-bold sm:text-xs", n.status === "pago" && "text-offwhite/90")}>
-                    {n.numero}
+                <span className={cn(
+                  "pointer-events-none absolute inset-0 flex select-none items-center justify-center text-4xl font-black sm:text-3xl",
+                  sel ? "text-white/40" : n.status === "reservado" ? "text-white/10" : "text-white/25"
+                )}>
+                  {n.numero}
+                </span>
+                {n.status === "pago" && n.comprador_nome && (
+                  <span className="relative w-full px-1 text-center text-[11px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[8px]">
+                    {n.comprador_nome}
                   </span>
                 )}
               </button>
