@@ -82,7 +82,6 @@ export async function POST(req: NextRequest) {
         payer: {
           email: "rifa@kafamento.com.br",
           first_name: nome,
-          identification: { type: "CPF", number: "00000000000" },
         },
         external_reference: externalRef,
         metadata: { numeros, nome, whatsapp },
@@ -110,10 +109,11 @@ export async function POST(req: NextRequest) {
       numeros,
       expira_em: reservadoAte,
     });
-  } catch (e) {
-    console.error("[rifa/reservar]", e);
+  } catch (e: unknown) {
+    const err = e as { message?: string; cause?: unknown };
+    console.error("[rifa/reservar]", JSON.stringify(err?.cause ?? e, null, 2));
     return NextResponse.json(
-      { error: e instanceof Error ? e.message : "Erro ao criar reserva." },
+      { error: err?.message ?? "Erro ao criar reserva.", detalhe: err?.cause ?? null },
       { status: 500 }
     );
   }
