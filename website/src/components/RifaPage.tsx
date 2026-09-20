@@ -268,7 +268,7 @@ export function RifaPage({
                   {n.numero}
                 </span>
                 {n.status === "pago" && n.comprador_nome && (
-                  <span className="relative w-full px-1 text-center text-[13px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[9px]">
+                  <span className="relative w-full px-1 text-center text-[15px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[11px]">
                     {n.comprador_nome}
                   </span>
                 )}
