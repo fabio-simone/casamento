@@ -327,10 +327,11 @@ export function GiftStore({
 
                 {erro && <p className="rounded-xl bg-red-50 px-4 py-2 text-sm text-red-700">{erro}</p>}
 
-                <button type="submit" disabled={loading || totalItens === 0} className="btn-primary w-full">
+                <button type="submit" disabled={loading || totalItens === 0} className="btn-primary flex w-full items-center justify-center gap-2">
+                  <svg viewBox="0 0 24 24" className="h-4 w-4 fill-current" xmlns="http://www.w3.org/2000/svg"><path d="M6.09 5.5a3.86 3.86 0 0 1 2.73 1.13l2.36 2.36c.22.22.58.22.8 0l2.35-2.35a3.86 3.86 0 0 1 2.73-1.14h.47L14.8 2.76a3.86 3.86 0 0 0-5.46 0L6.6 5.5h-.51Zm11.82 1.41h-.47c-.52 0-1.01.2-1.37.57L14.12 9.8a2.17 2.17 0 0 1-3.07 0L8.7 7.48a1.94 1.94 0 0 0-1.37-.57H5.93L3.25 9.59a3.86 3.86 0 0 0 0 5.46l2.68 2.68h1.4c.52 0 1.01-.2 1.37-.57l2.35-2.35a2.17 2.17 0 0 1 3.07 0l2.35 2.35c.36.37.85.57 1.37.57h.47l2.68-2.68a3.86 3.86 0 0 0 0-5.46l-2.68-2.68Zm-4.07 8.06-2.36 2.36a3.86 3.86 0 0 1-2.73 1.13H8.2l2.74 2.74a3.86 3.86 0 0 0 5.46 0l2.74-2.74h-.45a3.86 3.86 0 0 1-2.73-1.13l-2.12-2.36Z"/></svg>
                   {loading ? "Gerando PIX…" : `Pagar com PIX — ${formatBRL(totalValor)}`}
                 </button>
-                <button type="button" disabled={loading} onClick={pagarCartao} className="flex w-full items-center justify-center gap-2 rounded-xl border border-oceano/30 py-3 text-sm font-medium text-oceano transition hover:bg-oceano/5 disabled:opacity-50">
+                <button type="button" disabled={loading} onClick={pagarCartao} className="flex w-full items-center justify-center gap-2 rounded-xl bg-oceano/15 py-3 text-sm font-semibold text-oceano transition hover:bg-oceano/25 disabled:opacity-50">
                   <CreditCard className="h-4 w-4" /> Pagar com cartão ou boleto
                 </button>
               </form>
