@@ -278,8 +278,8 @@ export function RifaPage({
                     {(() => {
                       const p = n.comprador_nome.trim().split(/\s+/);
                       return <>
-                        <span className="w-full truncate text-center text-[15px] font-bold leading-tight text-laranja sm:text-[9px]">{p[0]}</span>
-                        {p.length > 1 && <span className="w-full truncate text-center text-[15px] font-bold leading-tight text-laranja sm:text-[9px]">{p[p.length - 1]}</span>}
+                        <span className="w-full truncate text-center text-[11px] font-bold leading-tight text-laranja sm:text-[9px]">{p[0]}</span>
+                        {p.length > 1 && <span className="w-full truncate text-center text-[11px] font-bold leading-tight text-laranja sm:text-[9px]">{p[p.length - 1]}</span>}
                       </>;
                     })()}
                   </span>
