@@ -274,8 +274,8 @@ export function RifaPage({
                   {n.numero}
                 </span>
                 {n.status === "pago" && n.comprador_nome && (
-                  <span className="relative w-full px-1 text-center text-xl font-bold leading-snug text-laranja [overflow-wrap:break-word] sm:text-sm">
-                    {nomeExibido(n.comprador_nome)}
+                  <span className="relative w-full truncate px-1 text-center text-lg font-bold leading-none text-laranja sm:text-[9px]">
+                    {n.comprador_nome.split(/\s+/)[0]}
                   </span>
                 )}
               </button>
