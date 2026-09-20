@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Loader2 } from "lucide-react";
+import { Check, Loader2, Unlock } from "lucide-react";
 import { formatBRL } from "@/lib/utils";
 
 interface Reserva {
@@ -15,6 +15,7 @@ interface Reserva {
 
 export function RifaReservas({ reservas }: { reservas: Reserva[] }) {
   const [confirmados, setConfirmados] = useState<Set<string>>(new Set());
+  const [liberados, setLiberados] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState<string | null>(null);
   const [erros, setErros] = useState<Record<string, string>>({});
 
@@ -29,6 +30,25 @@ export function RifaReservas({ reservas }: { reservas: Reserva[] }) {
       });
       if (!r.ok) throw new Error((await r.json()).error ?? "Erro");
       setConfirmados((s) => new Set([...s, ref]));
+    } catch (e) {
+      setErros((prev) => ({ ...prev, [ref]: e instanceof Error ? e.message : "Erro" }));
+    } finally {
+      setLoading(null);
+    }
+  }
+
+  async function liberar(ref: string, nums: number[]) {
+    if (!confirm(`Liberar número(s) ${nums.join(", ")} de volta ao estoque?`)) return;
+    setLoading(`lib_${ref}`);
+    setErros((e) => ({ ...e, [ref]: "" }));
+    try {
+      const r = await fetch("/api/rifa/liberar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ numeros: nums }),
+      });
+      if (!r.ok) throw new Error((await r.json()).error ?? "Erro");
+      setLiberados((s) => new Set([...s, ref]));
     } catch (e) {
       setErros((prev) => ({ ...prev, [ref]: e instanceof Error ? e.message : "Erro" }));
     } finally {
@@ -51,13 +71,14 @@ export function RifaReservas({ reservas }: { reservas: Reserva[] }) {
         const nums = itens.map((i) => i.numero).sort((a, b) => a - b);
         const total = itens.reduce((acc, i) => acc + (Number(i.valor_pago) || 0), 0);
         const confirmado = confirmados.has(ref);
+        const liberado = liberados.has(ref);
         const expira = first.reservado_ate ? new Date(first.reservado_ate) : null;
         const expirado = expira ? expira < new Date() : false;
 
         return (
           <div
             key={ref}
-            className={`card flex items-center justify-between gap-4 ${confirmado ? "opacity-50" : ""}`}
+            className={`card flex items-center justify-between gap-4 ${confirmado || liberado ? "opacity-40" : ""}`}
           >
             <div className="flex items-start gap-3">
               <div className="flex flex-wrap gap-1">
@@ -82,21 +103,29 @@ export function RifaReservas({ reservas }: { reservas: Reserva[] }) {
 
             <div className="flex shrink-0 flex-col items-end gap-2">
               <span className="font-semibold text-oceano">{formatBRL(total)}</span>
-              {!confirmado ? (
-                <button
-                  onClick={() => confirmar(ref)}
-                  disabled={loading === ref}
-                  className="flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-60"
-                >
-                  {loading === ref ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Check className="h-3.5 w-3.5" />
-                  )}
-                  Confirmar PIX
-                </button>
-              ) : (
+              {liberado ? (
+                <span className="text-xs font-semibold text-urbano/40">Liberado</span>
+              ) : confirmado ? (
                 <span className="text-xs font-semibold text-green-600">Confirmado!</span>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  <button
+                    onClick={() => confirmar(ref)}
+                    disabled={!!loading}
+                    className="flex items-center gap-1 rounded-lg bg-green-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-green-700 disabled:opacity-60"
+                  >
+                    {loading === ref ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                    Confirmar PIX
+                  </button>
+                  <button
+                    onClick={() => liberar(ref, nums)}
+                    disabled={!!loading}
+                    className="flex items-center gap-1 rounded-lg border border-urbano/20 px-3 py-1.5 text-xs font-semibold text-urbano/60 transition hover:border-red-300 hover:text-red-600 disabled:opacity-60"
+                  >
+                    {loading === `lib_${ref}` ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Unlock className="h-3.5 w-3.5" />}
+                    Liberar número
+                  </button>
+                </div>
               )}
             </div>
           </div>

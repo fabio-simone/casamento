@@ -4,6 +4,7 @@ import { formatBRL } from "@/lib/utils";
 import { Wine, Users, Wallet, Hash } from "lucide-react";
 import { RifaAdminContent } from "@/components/RifaAdminContent";
 import { RifaReservas } from "@/components/RifaReservas";
+import { RifaPagos } from "@/components/RifaPagos";
 
 export const dynamic = "force-dynamic";
 
@@ -65,24 +66,7 @@ export default async function AdminRifaPage() {
         {pagos.length === 0 ? (
           <p className="card mt-4 text-center text-urbano/50">Nenhum número confirmado ainda.</p>
         ) : (
-          <div className="mt-4 space-y-2">
-            {pagos.map((r) => (
-              <div key={r.numero} className="card flex items-center justify-between gap-4">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-oceano/10 font-bold text-oceano">
-                    {r.numero}
-                  </span>
-                  <div>
-                    <p className="font-medium text-urbano">{r.comprador_nome ?? "—"}</p>
-                    <p className="text-sm text-urbano/50">{r.comprador_whatsapp ?? ""}</p>
-                  </div>
-                </div>
-                <span className="font-semibold text-oceano">
-                  {r.valor_pago ? formatBRL(Number(r.valor_pago)) : "—"}
-                </span>
-              </div>
-            ))}
-          </div>
+          <RifaPagos pagos={pagos} />
         )}
       </div>
 
