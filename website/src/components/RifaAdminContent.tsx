@@ -118,10 +118,12 @@ export function RifaAdminContent({ initialConfig }: { initialConfig: RifaConfig 
           <label className="text-sm font-medium text-urbano">Rifa ativa</label>
           <button
             type="button"
+            role="switch"
+            aria-checked={config.ativa}
             onClick={() => set("ativa", !config.ativa)}
-            className={`relative h-6 w-11 rounded-full transition ${config.ativa ? "bg-oceano" : "bg-urbano/20"}`}
+            className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 ${config.ativa ? "bg-oceano" : "bg-urbano/20"}`}
           >
-            <span className={`absolute top-1 h-4 w-4 rounded-full bg-white shadow transition-transform ${config.ativa ? "translate-x-6" : "translate-x-1"}`} />
+            <span className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform duration-200 ${config.ativa ? "translate-x-6" : "translate-x-1"}`} />
           </button>
         </div>
       </div>
