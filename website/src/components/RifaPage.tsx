@@ -274,8 +274,14 @@ export function RifaPage({
                   {n.numero}
                 </span>
                 {n.status === "pago" && n.comprador_nome && (
-                  <span className="relative w-full px-1 text-center text-[15px] font-bold leading-tight text-laranja [overflow-wrap:break-word] sm:text-[9px]">
-                    {nomeExibido(n.comprador_nome)}
+                  <span className="relative flex w-full flex-col items-center px-1">
+                    {(() => {
+                      const p = n.comprador_nome.trim().split(/\s+/);
+                      return <>
+                        <span className="w-full truncate text-center text-[15px] font-bold leading-tight text-laranja sm:text-[9px]">{p[0]}</span>
+                        {p.length > 1 && <span className="w-full truncate text-center text-[15px] font-bold leading-tight text-laranja sm:text-[9px]">{p[p.length - 1]}</span>}
+                      </>;
+                    })()}
                   </span>
                 )}
               </button>
