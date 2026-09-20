@@ -1,20 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { mpPayment } from "@/lib/mercadopago";
-
-function getOrigin(req: Request): string {
-  const h = req.headers;
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  if (host) {
-    const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
-    return `${proto}://${host}`;
-  }
-  return process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
-}
+import { getRifaConfig } from "@/lib/rifa";
+import { gerarPixPayload } from "@/lib/pix";
+import QRCode from "qrcode";
 
 export async function POST(req: NextRequest) {
   try {
-    const origin = getOrigin(req);
     const body = await req.json();
     const numeros: number[] = (body.numeros ?? []).filter(
       (n: unknown) => typeof n === "number" && n >= 1 && n <= 50
@@ -30,9 +21,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Selecione ao menos um número." }, { status: 400 });
     }
 
+    const config = await getRifaConfig();
+    if (!config.pix_chave) {
+      return NextResponse.json({ error: "Chave PIX não configurada. Acesse o painel admin → Rifa para configurar." }, { status: 503 });
+    }
+
     const supabase = createAdminClient();
 
-    // Expire old reservations first
+    // Expire stale reservations
     await supabase
       .from("rifa_numeros")
       .update({ status: "disponivel", comprador_nome: null, comprador_whatsapp: null, external_reference: null })
@@ -45,7 +41,10 @@ export async function POST(req: NextRequest) {
       .select("numero, status")
       .in("numero", numeros);
 
-    const indisponiveis = (rows ?? []).filter((r) => r.status !== "disponivel").map((r) => r.numero);
+    const indisponiveis = (rows ?? [])
+      .filter((r) => r.status !== "disponivel")
+      .map((r) => r.numero);
+
     if (indisponiveis.length > 0) {
       return NextResponse.json(
         { error: `Número(s) ${indisponiveis.join(", ")} já ${indisponiveis.length === 1 ? "foi" : "foram"} reservado(s). Escolha outros.` },
@@ -54,10 +53,11 @@ export async function POST(req: NextRequest) {
     }
 
     const total = Number((valorPorNumero * numeros.length).toFixed(2));
-    const externalRef = `rifa_${crypto.randomUUID()}`;
+    const txid = `KF${Date.now().toString(36).toUpperCase()}`;
+    const externalRef = `rifa_${txid}`;
     const reservadoAte = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
-    // Reserve the numbers
+    // Reserve numbers
     const { error: updateErr } = await supabase
       .from("rifa_numeros")
       .update({
@@ -73,47 +73,37 @@ export async function POST(req: NextRequest) {
 
     if (updateErr) throw updateErr;
 
-    // Create PIX payment via MP Payment API
-    const payment = await mpPayment.create({
-      body: {
-        transaction_amount: total,
-        description: `Rifa Kafamento — números: ${numeros.join(", ")}`,
-        payment_method_id: "pix",
-        payer: {
-          email: "rifa@kafamento.com.br",
-          first_name: nome,
-        },
-        external_reference: externalRef,
-        metadata: { numeros, nome, whatsapp },
-        notification_url: `${origin}/api/rifa/webhook`,
-        date_of_expiration: reservadoAte,
-      },
-    });
+    // Generate PIX payload
+    const pixString = gerarPixPayload(
+      config.pix_chave,
+      config.pix_nome || "Kafamento",
+      config.pix_cidade || "Sao Paulo",
+      total,
+      txid
+    );
 
-    const txData = payment.point_of_interaction?.transaction_data;
-    if (!txData?.qr_code) {
-      // Roll back reservations on MP failure
-      await supabase
-        .from("rifa_numeros")
-        .update({ status: "disponivel", comprador_nome: null, comprador_whatsapp: null, external_reference: null })
-        .in("numero", numeros);
-      throw new Error("MP não retornou QR Code PIX.");
-    }
+    // Generate QR code as base64 PNG
+    const qrBase64 = await QRCode.toDataURL(pixString, {
+      errorCorrectionLevel: "M",
+      margin: 1,
+      width: 300,
+    });
+    // Strip the data:image/png;base64, prefix
+    const qrCodeBase64 = qrBase64.replace(/^data:image\/png;base64,/, "");
 
     return NextResponse.json({
-      payment_id: payment.id,
       external_reference: externalRef,
-      qr_code: txData.qr_code,
-      qr_code_base64: txData.qr_code_base64 ?? "",
+      qr_code: pixString,
+      qr_code_base64: qrCodeBase64,
       total,
       numeros,
       expira_em: reservadoAte,
     });
   } catch (e: unknown) {
-    const err = e as { message?: string; cause?: unknown };
-    console.error("[rifa/reservar]", JSON.stringify(err?.cause ?? e, null, 2));
+    const err = e as { message?: string };
+    console.error("[rifa/reservar]", e);
     return NextResponse.json(
-      { error: err?.message ?? "Erro ao criar reserva.", detalhe: err?.cause ?? null },
+      { error: err?.message ?? "Erro ao criar reserva." },
       { status: 500 }
     );
   }

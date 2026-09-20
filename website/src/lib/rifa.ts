@@ -15,6 +15,10 @@ export interface RifaConfig {
   total_numeros: number;
   faixas: RifaFaixa[];
   ativa: boolean;
+  // PIX direto (sem Mercado Pago)
+  pix_chave: string;   // chave PIX do recebedor
+  pix_nome: string;    // nome do recebedor (até 25 chars)
+  pix_cidade: string;  // cidade (até 15 chars)
 }
 
 export const DEFAULT_FAIXAS: RifaFaixa[] = [
@@ -34,6 +38,9 @@ export const DEFAULT_RIFA_CONFIG: RifaConfig = {
   total_numeros: 50,
   faixas: DEFAULT_FAIXAS,
   ativa: true,
+  pix_chave: "",
+  pix_nome: "Kafamento",
+  pix_cidade: "Sao Paulo",
 };
 
 export function getMensagemFaixa(valor: number, faixas: RifaFaixa[]): string {

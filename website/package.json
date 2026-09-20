@@ -16,6 +16,7 @@
     "lucide-react": "^1.17.0",
     "mercadopago": "^2.0.15",
     "next": "14.2.15",
+    "qrcode": "^1.5.4",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "resend": "^4.0.0",
@@ -23,6 +24,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.16.11",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.20",

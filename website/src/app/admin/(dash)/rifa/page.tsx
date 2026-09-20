@@ -3,6 +3,7 @@ import { getRifaConfig } from "@/lib/rifa";
 import { formatBRL } from "@/lib/utils";
 import { Wine, Users, Wallet, Hash } from "lucide-react";
 import { RifaAdminContent } from "@/components/RifaAdminContent";
+import { RifaReservas } from "@/components/RifaReservas";
 
 export const dynamic = "force-dynamic";
 
@@ -12,7 +13,7 @@ export default async function AdminRifaPage() {
 
   const { data: rows } = await supabase
     .from("rifa_numeros")
-    .select("numero, status, comprador_nome, comprador_whatsapp, valor_pago, paid_at")
+    .select("numero, status, comprador_nome, comprador_whatsapp, valor_pago, paid_at, external_reference, reservado_ate")
     .order("numero");
 
   const pagos = (rows ?? []).filter((r) => r.status === "pago");
@@ -24,13 +25,19 @@ export default async function AdminRifaPage() {
       <h1 className="font-display text-3xl font-bold text-urbano">Rifa</h1>
       <p className="mt-1 text-urbano/60">Gestão e configuração da rifa virtual.</p>
 
+      {!config.pix_chave && (
+        <div className="mt-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          ⚠️ <strong>Chave PIX não configurada.</strong> Os convidados não conseguirão gerar o QR Code. Configure abaixo.
+        </div>
+      )}
+
       {/* Stats */}
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Números vendidos", value: `${pagos.length} / ${config.total_numeros}`, icon: Hash },
-          { label: "Reservas ativas", value: reservados.length, icon: Users },
+          { label: "Reservas pendentes", value: reservados.length, icon: Users },
           { label: "Total arrecadado", value: formatBRL(totalArrecadado), icon: Wallet },
-          { label: "Prêmio", value: config.titulo, icon: Wine },
+          { label: "Status", value: config.ativa ? "Ativa" : "Pausada", icon: Wine },
         ].map((c) => {
           const Icon = c.icon;
           return (
@@ -43,11 +50,20 @@ export default async function AdminRifaPage() {
         })}
       </div>
 
-      {/* Compradores */}
+      {/* Reservas pendentes com confirmação */}
+      {reservados.length > 0 && (
+        <div className="mt-8">
+          <h2 className="font-display text-lg font-bold text-urbano">Reservas aguardando confirmação</h2>
+          <p className="mt-1 text-sm text-urbano/60">Confirme manualmente após verificar o recebimento do PIX.</p>
+          <RifaReservas reservas={reservados} />
+        </div>
+      )}
+
+      {/* Compradores confirmados */}
       <div className="mt-8">
-        <h2 className="font-display text-lg font-bold text-urbano">Números vendidos</h2>
+        <h2 className="font-display text-lg font-bold text-urbano">Números pagos</h2>
         {pagos.length === 0 ? (
-          <p className="card mt-4 text-center text-urbano/50">Nenhum número vendido ainda.</p>
+          <p className="card mt-4 text-center text-urbano/50">Nenhum número confirmado ainda.</p>
         ) : (
           <div className="mt-4 space-y-2">
             {pagos.map((r) => (

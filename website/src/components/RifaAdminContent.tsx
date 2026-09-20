@@ -79,6 +79,42 @@ export function RifaAdminContent({ initialConfig }: { initialConfig: RifaConfig 
             className="input w-full resize-none"
           />
         </div>
+        <div className="border-t border-areia pt-4">
+          <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-urbano/50">Chave PIX para recebimento</p>
+          <div className="space-y-3">
+            <div>
+              <label className="mb-1 block text-xs font-semibold text-urbano/60">Chave PIX <span className="text-red-500">*</span></label>
+              <input
+                value={config.pix_chave}
+                onChange={(e) => set("pix_chave", e.target.value)}
+                placeholder="CPF, e-mail, telefone ou chave aleatória"
+                className="input w-full"
+              />
+              <p className="mt-1 text-xs text-urbano/40">Use qualquer chave cadastrada no seu banco. O QR Code gerado já embute o valor.</p>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-urbano/60">Nome do recebedor (até 25 chars)</label>
+                <input
+                  value={config.pix_nome}
+                  onChange={(e) => set("pix_nome", e.target.value.slice(0, 25))}
+                  placeholder="Kafamento"
+                  className="input w-full"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs font-semibold text-urbano/60">Cidade (até 15 chars, sem acento)</label>
+                <input
+                  value={config.pix_cidade}
+                  onChange={(e) => set("pix_cidade", e.target.value.slice(0, 15))}
+                  placeholder="Sao Paulo"
+                  className="input w-full"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div className="flex items-center gap-3">
           <label className="text-sm font-medium text-urbano">Rifa ativa</label>
           <button
