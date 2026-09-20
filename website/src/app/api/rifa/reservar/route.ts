@@ -1,11 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getRifaConfig } from "@/lib/rifa";
-import { gerarPixPayload } from "@/lib/pix";
-import QRCode from "qrcode";
+import { mpPayment } from "@/lib/mercadopago";
+
+function getOrigin(req: Request): string {
+  const h = req.headers;
+  const host = h.get("x-forwarded-host") ?? h.get("host");
+  if (host) {
+    const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");
+    return `${proto}://${host}`;
+  }
+  return process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+}
 
 export async function POST(req: NextRequest) {
   try {
+    const origin = getOrigin(req);
     const body = await req.json();
     const numeros: number[] = (body.numeros ?? []).filter(
       (n: unknown) => typeof n === "number" && n >= 1 && n <= 50
@@ -19,11 +28,6 @@ export async function POST(req: NextRequest) {
     }
     if (numeros.length === 0) {
       return NextResponse.json({ error: "Selecione ao menos um número." }, { status: 400 });
-    }
-
-    const config = await getRifaConfig();
-    if (!config.pix_chave) {
-      return NextResponse.json({ error: "Chave PIX não configurada. Acesse o painel admin → Rifa para configurar." }, { status: 503 });
     }
 
     const supabase = createAdminClient();
@@ -53,8 +57,7 @@ export async function POST(req: NextRequest) {
     }
 
     const total = Number((valorPorNumero * numeros.length).toFixed(2));
-    const txid = `KF${Date.now().toString(36).toUpperCase()}`;
-    const externalRef = `rifa_${txid}`;
+    const externalRef = `rifa_${crypto.randomUUID()}`;
     const reservadoAte = new Date(Date.now() + 15 * 60 * 1000).toISOString();
 
     // Reserve numbers
@@ -73,35 +76,54 @@ export async function POST(req: NextRequest) {
 
     if (updateErr) throw updateErr;
 
-    // Generate PIX payload
-    const pixString = gerarPixPayload(
-      config.pix_chave,
-      config.pix_nome || "Kafamento",
-      config.pix_cidade || "Sao Paulo",
-      total,
-      txid
-    );
+    // Create PIX payment via Mercado Pago Payment API
+    let payment;
+    try {
+      payment = await mpPayment.create({
+        body: {
+          transaction_amount: total,
+          description: `Rifa Kafamento — números: ${numeros.join(", ")}`,
+          payment_method_id: "pix",
+          payer: {
+            email: "rifa@kafamento.com.br",
+            first_name: nome,
+          },
+          external_reference: externalRef,
+          metadata: { numeros, nome, whatsapp },
+          notification_url: `${origin}/api/rifa/webhook`,
+          date_of_expiration: reservadoAte,
+        },
+      });
+    } catch (mpErr) {
+      // Roll back reservations on MP failure
+      await supabase
+        .from("rifa_numeros")
+        .update({ status: "disponivel", comprador_nome: null, comprador_whatsapp: null, external_reference: null })
+        .in("numero", numeros);
+      throw mpErr;
+    }
 
-    // Generate QR code as base64 PNG
-    const qrBase64 = await QRCode.toDataURL(pixString, {
-      errorCorrectionLevel: "M",
-      margin: 1,
-      width: 300,
-    });
-    // Strip the data:image/png;base64, prefix
-    const qrCodeBase64 = qrBase64.replace(/^data:image\/png;base64,/, "");
+    const txData = payment.point_of_interaction?.transaction_data;
+    if (!txData?.qr_code) {
+      await supabase
+        .from("rifa_numeros")
+        .update({ status: "disponivel", comprador_nome: null, comprador_whatsapp: null, external_reference: null })
+        .in("numero", numeros);
+      throw new Error("Mercado Pago não retornou QR Code PIX. Verifique se a chave PIX está cadastrada na conta.");
+    }
 
     return NextResponse.json({
+      payment_id: payment.id,
       external_reference: externalRef,
-      qr_code: pixString,
-      qr_code_base64: qrCodeBase64,
+      qr_code: txData.qr_code,
+      qr_code_base64: txData.qr_code_base64 ?? "",
       total,
       numeros,
       expira_em: reservadoAte,
     });
   } catch (e: unknown) {
-    const err = e as { message?: string };
-    console.error("[rifa/reservar]", e);
+    const err = e as { message?: string; cause?: unknown };
+    console.error("[rifa/reservar]", err?.cause ?? e);
     return NextResponse.json(
       { error: err?.message ?? "Erro ao criar reserva." },
       { status: 500 }
