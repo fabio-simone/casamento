@@ -249,9 +249,9 @@ export function RifaPage({
                 disabled={n.status !== "disponivel"}
                 title={n.status === "pago" ? (n.comprador_nome ?? "Vendido") : n.status === "reservado" ? "Reservado" : `Número ${n.numero}`}
                 className={cn(
-                  "relative flex aspect-square w-full items-center justify-center rounded-lg text-xs font-bold transition-all duration-150",
+                  "relative flex aspect-square w-full items-center justify-center rounded-lg transition-all duration-150",
                   n.status === "pago"
-                    ? "cursor-default bg-oceano/30 text-offwhite/90 ring-1 ring-oceano/50"
+                    ? "cursor-default bg-oceano/30 ring-1 ring-oceano/50"
                     : n.status === "reservado"
                     ? "cursor-not-allowed bg-white/5 text-offwhite/20 ring-1 ring-white/10"
                     : sel
@@ -259,10 +259,18 @@ export function RifaPage({
                     : "bg-white/10 text-offwhite hover:bg-laranja/20 hover:ring-1 hover:ring-laranja/50 active:scale-95"
                 )}
               >
-                {n.numero}
-                {n.status === "pago" && n.comprador_nome && (
-                  <span className="absolute -bottom-0.5 left-0 right-0 truncate px-0.5 text-[7px] font-normal leading-tight text-laranja">
-                    {n.comprador_nome.split(" ")[0]}
+                {n.status === "pago" && n.comprador_nome ? (
+                  <>
+                    <span className="absolute right-0.5 top-0.5 text-[7px] font-semibold leading-none text-laranja/70">
+                      {n.numero}
+                    </span>
+                    <span className="w-full px-0.5 text-center text-[8px] font-bold leading-tight text-offwhite [overflow-wrap:break-word]">
+                      {n.comprador_nome}
+                    </span>
+                  </>
+                ) : (
+                  <span className={cn("text-xs font-bold", n.status === "pago" && "text-offwhite/90")}>
+                    {n.numero}
                   </span>
                 )}
               </button>
