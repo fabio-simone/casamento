@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import type { RifaConfig, RifaFaixa } from "@/lib/rifa";
-import { createClient } from "@/lib/supabase/client";
 
 export function RifaAdminContent({ initialConfig }: { initialConfig: RifaConfig }) {
   const [config, setConfig] = useState<RifaConfig>(initialConfig);
@@ -36,12 +35,12 @@ export function RifaAdminContent({ initialConfig }: { initialConfig: RifaConfig 
     setSaving(true);
     setError("");
     try {
-      const supabase = createClient();
-      const { error: err } = await supabase.from("site_settings").upsert(
-        { key: "rifa_config", value: JSON.stringify(config) },
-        { onConflict: "key" }
-      );
-      if (err) throw err;
+      const r = await fetch("/api/admin/rifa-settings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(config),
+      });
+      if (!r.ok) throw new Error((await r.json()).error ?? "Erro ao salvar.");
       setSaved(true);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Erro ao salvar.");
