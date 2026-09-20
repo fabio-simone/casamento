@@ -126,6 +126,10 @@ export async function POST(req: Request) {
         auto_return: "approved",
         notification_url: `${origin}/api/webhooks/mercadopago`,
         statement_descriptor: "KAFAMENTO",
+        payment_methods: {
+          excluded_payment_types: [],
+          installments: 12,
+        },
       },
     });
 

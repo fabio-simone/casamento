@@ -9,6 +9,7 @@ import {
   CreditCard,
   FileText,
   LifeBuoy,
+  Ticket,
   type LucideIcon,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
@@ -21,6 +22,7 @@ const items: { href: string; label: string; icon: LucideIcon }[] = [
   { href: "/admin/pagamentos", label: "Pagamentos", icon: CreditCard },
   { href: "/admin/conteudo", label: "Conteúdo", icon: FileText },
   { href: "/admin/suporte", label: "Suporte", icon: LifeBuoy },
+  { href: "/admin/rifa", label: "Rifa", icon: Ticket },
 ];
 
 export function AdminNav({ email }: { email?: string }) {

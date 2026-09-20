@@ -60,6 +60,12 @@ export interface Recado {
   created_at: string;
 }
 
+export interface RifaNumero {
+  numero: number;
+  status: "disponivel" | "reservado" | "pago";
+  comprador_nome: string | null;
+}
+
 export interface SupportMessage {
   id: string;
   nome: string;
