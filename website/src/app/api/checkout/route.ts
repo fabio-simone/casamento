@@ -129,6 +129,7 @@ export async function POST(req: Request) {
         payment_methods: {
           excluded_payment_types: [],
           installments: 12,
+          default_payment_method_id: "pix",
         },
       },
     });
