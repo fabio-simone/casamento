@@ -241,7 +241,7 @@ export function RifaPage({
       {/* Grid — always visible */}
       <div className="px-4 pb-32">
         <p className="mb-4 text-center text-sm text-offwhite/60">{config.descricao_rifa}</p>
-        <div className="mx-auto grid max-w-lg grid-cols-10 gap-1.5 sm:gap-2">
+        <div className="mx-auto grid max-w-lg grid-cols-5 gap-2 sm:grid-cols-10">
           {numeros.map((n) => {
             const sel = selecionados.has(n.numero);
             return (
@@ -251,27 +251,27 @@ export function RifaPage({
                 disabled={n.status !== "disponivel"}
                 title={n.status === "pago" ? (n.comprador_nome ?? "Vendido") : n.status === "reservado" ? "Reservado" : `Número ${n.numero}`}
                 className={cn(
-                  "relative flex aspect-square w-full items-center justify-center rounded-lg transition-all duration-150",
+                  "relative flex aspect-square w-full items-center justify-center rounded-xl transition-all duration-150 sm:rounded-lg",
                   n.status === "pago"
                     ? "cursor-default bg-oceano/30 ring-1 ring-oceano/50"
                     : n.status === "reservado"
                     ? "cursor-not-allowed bg-white/5 text-offwhite/20 ring-1 ring-white/10"
                     : sel
-                    ? "scale-110 bg-laranja text-white shadow-lg shadow-laranja/30 ring-2 ring-laranja"
+                    ? "scale-105 bg-laranja text-white shadow-lg shadow-laranja/30 ring-2 ring-laranja"
                     : "bg-white/10 text-offwhite hover:bg-laranja/20 hover:ring-1 hover:ring-laranja/50 active:scale-95"
                 )}
               >
                 {n.status === "pago" && n.comprador_nome ? (
                   <>
-                    <span className="absolute right-0.5 top-0.5 text-[7px] font-semibold leading-none text-laranja/70">
+                    <span className="absolute right-1 top-1 text-[8px] font-semibold leading-none text-laranja/70 sm:right-0.5 sm:top-0.5 sm:text-[7px]">
                       {n.numero}
                     </span>
-                    <span className="w-full px-0.5 text-center text-[8px] font-bold leading-tight text-offwhite [overflow-wrap:break-word]">
+                    <span className="w-full px-1 text-center text-[11px] font-bold leading-tight text-offwhite [overflow-wrap:break-word] sm:px-0.5 sm:text-[8px]">
                       {n.comprador_nome}
                     </span>
                   </>
                 ) : (
-                  <span className={cn("text-xs font-bold", n.status === "pago" && "text-offwhite/90")}>
+                  <span className={cn("text-base font-bold sm:text-xs", n.status === "pago" && "text-offwhite/90")}>
                     {n.numero}
                   </span>
                 )}
